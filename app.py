@@ -42,6 +42,8 @@ from routes.search import search_bp
 from routes.complaint import complaint_bp
 from routes.ocr import ocr_bp
 from routes.rights import rights_bp
+from routes.lawyer_chat import lawyer_chat_bp
+from routes.lawyer import lawyer_bp
 
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
@@ -51,6 +53,8 @@ app.register_blueprint(search_bp, url_prefix='/search')
 app.register_blueprint(complaint_bp, url_prefix='/complaint')
 app.register_blueprint(ocr_bp, url_prefix='/ocr')
 app.register_blueprint(rights_bp, url_prefix='/rights')
+app.register_blueprint(lawyer_chat_bp, url_prefix='/lawyer-chat')
+app.register_blueprint(lawyer_bp, url_prefix='/lawyer')
 
 # Custom Filters
 @app.template_filter('decrypt_name')
@@ -81,8 +85,20 @@ def inject_globals():
 
 @app.route('/')
 def index():
-    # Only render the landing page; do not automatically redirect to dashboard
+    from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+    try:
+        verify_jwt_in_request(optional=True)
+        if get_jwt_identity():
+            return redirect(url_for('dashboard.member_home'))
+    except:
+        pass
     return render_template('index.html')
+
+@app.route('/lawyers')
+@jwt_required()
+def list_lawyers():
+    lawyers = user_model.get_lawyers()
+    return render_template('lawyers.html', lawyers=lawyers)
 
 if __name__ == '__main__':
     app.run(debug=True)

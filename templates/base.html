@@ -18,14 +18,31 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="/" class="logo">
-                <i class="fas fa-balance-scale gold-icon"></i> Lex<span>AI</span>
+                <div class="logo-badge"
+                    style="background: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    <img src="{{ url_for('static', filename='lexai_logo.png') }}" alt="LexAI Logo"
+                        style="height: 20px; width: auto;">
+                </div>
+                Lex<span>AI</span>
             </a>
-            <div class="nav-links">
-                <a href="{{ url_for('index') }}">Home</a>
+
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="nav-links" id="nav-links">
                 {% if current_user %}
-                <a href="{{ url_for('dashboard.home') }}">Dashboard</a>
+                <a href="{{ url_for('dashboard.member_home') }}">Home</a>
+                {% if current_user.role == 'lawyer' %}
+                <a href="{{ url_for('lawyer_panel.messages') }}">Consultations</a>
+                <a href="{{ url_for('lawyer_panel.profile') }}">Professional Profile</a>
+                {% endif %}
+                <a href="{{ url_for('dashboard.dashboard_view') }}">Dashboard</a>
                 <a href="{{ url_for('auth.logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 {% else %}
+                <a href="{{ url_for('index') }}">Home</a>
                 <a href="{{ url_for('auth.login') }}">Login</a>
                 <a href="{{ url_for('auth.signup') }}" class="btn-primary"
                     style="padding: 0.5rem 1.2rem; margin-left: 1rem;">Get Started</a>
@@ -41,10 +58,31 @@
     <footer class="footer">
         <div class="footer-container">
             <p class="disclaimer">{{ legal_disclaimer }}</p>
-            <p>&copy; 2024 LexAI. All Rights Reserved.</p>
+            <p>&copy; 2026 LexAI. All Rights Reserved.</p>
         </div>
     </footer>
 
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+
+            // Hamburger animation
+            const spans = mobileMenu.querySelectorAll('span');
+            if (mobileMenu.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(5px, 6px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(5px, -6px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 

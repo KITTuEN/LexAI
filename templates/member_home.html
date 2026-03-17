@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container professional-workspace">
+    <div class="workspace-header animate-up">
+        <div class="context-path">LexAI Workspace / <span class="active-node">Hub</span></div>
+        <div class="user-greeting">
+            <span class="hub-label">PRO ACCESS</span>
+            <h1>Member Portal: {{ user.name_encrypted | decrypt_name }}</h1>
+            <p>Advanced Legal Intelligence Suite — Version 2.4.1</p>
+        </div>
+    </div>
+
+    <div class="workspace-layout">
+        <div class="workspace-main">
+            <!-- Quick Launch Services -->
+            <section class="service-hub animate-up">
+                <h2 class="section-heading">Core Intelligence Services</h2>
+                <div class="hub-grid">
+                    <a href="{{ url_for('cases.new_case_view') }}" class="service-card animate-up">
+                        <div class="card-indicator"></div>
+                        <div class="card-icon">
+                            <div class="hub-logo-badge">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Smart Case Helper</h3>
+                            <p>Get instant legal advice and see exactly which laws apply to your situation.</p>
+                            <span class="card-link">Start Analysis <i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    </a>
+
+                    <a href="{{ url_for('complaint.index') }}" class="service-card animate-up"
+                        style="animation-delay: 0.1s;">
+                        <div class="card-indicator"></div>
+                        <div class="card-icon">
+                            <div class="hub-logo-badge">
+                                <i class="fa-solid fa-pen-nib"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Legal Paper Writer</h3>
+                            <p>Create professional police reports and legal documents ready for filing.</p>
+                            <span class="card-link">Start Writing <i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    </a>
+
+                    <a href="{{ url_for('search.index') }}" class="service-card animate-up"
+                        style="animation-delay: 0.2s;">
+                        <div class="card-indicator"></div>
+                        <div class="card-icon">
+                            <div class="hub-logo-badge">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Easy Law Finder</h3>
+                            <p>Search and understand Indian laws and sections in simple language.</p>
+                            <span class="card-link">Find Law <i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    </a>
+
+                    <a href="{{ url_for('rights.index') }}" class="service-card animate-up"
+                        style="animation-delay: 0.3s;">
+                        <div class="card-indicator"></div>
+                        <div class="card-icon">
+                            <div class="hub-logo-badge">
+                                <i class="fa-solid fa-gavel"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Bail & Rights Checker</h3>
+                            <p>Check your fundamental rights and see if you are eligible for bail.</p>
+                            <span class="card-link">Check Rights <i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    </a>
+
+                    <a href="{{ url_for('ocr.index') }}" class="service-card animate-up" style="animation-delay: 0.4s;">
+                        <div class="card-indicator"></div>
+                        <div class="card-icon">
+                            <div class="hub-logo-badge">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Smart Paper Reader</h3>
+                            <p>Upload photos of legal notices or reports to understand them instantly.</p>
+                            <span class="card-link">Read Paper <i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    </a>
+
+                    {% if user.role == 'lawyer' %}
+                    <a href="{{ url_for('lawyer_panel.messages') }}" class="service-card lawyer-prime animate-up"
+                        style="animation-delay: 0.5s;">
+                        <div class="card-indicator gold"></div>
+                        <div class="card-icon">
+                            <div class="hub-logo-badge">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Client Consultations</h3>
+                            <p>Manage your private chats and consultations with citizens.</p>
+                            <span class="card-link white">Open Inbox <i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('list_lawyers') }}" class="service-card animate-up"
+                        style="animation-delay: 0.5s;">
+                        <div class="card-indicator"></div>
+                        <div class="card-icon">
+                            <div class="hub-logo-badge">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Talk to a Lawyer</h3>
+                            <p>Find and connect with expert lawyers to guide you personally.</p>
+                            <span class="card-link">Find Help <i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    </a>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<style>
+    .professional-workspace {
+        padding: 3rem 5rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .workspace-header {
+        margin-bottom: 4rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 2.5rem;
+    }
+
+    .context-path {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+    }
+
+    .active-node {
+        color: var(--accent-gold);
+        font-weight: 700;
+    }
+
+    .hub-label {
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: var(--accent-gold);
+        border: 1px solid var(--accent-gold);
+        padding: 0.2rem 0.6rem;
+        border-radius: 3px;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+
+    .user-greeting h1 {
+        font-size: 2.8rem;
+        color: #fff;
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 0.5rem;
+    }
+
+    .user-greeting p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .workspace-layout {
+        display: block;
+    }
+
+    .section-heading {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        font-family: 'IBM Plex Sans', sans-serif;
+    }
+
+    .hub-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        gap: 2rem;
+    }
+
+    .service-card {
+        background: #0D1117;
+        border: 1px solid #21262d;
+        border-radius: 12px;
+        padding: 3rem;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        overflow: hidden;
+    }
+
+    .card-indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 0;
+        background: var(--accent-gold);
+        transition: all 0.4s ease;
+    }
+
+    .service-card:hover .card-indicator {
+        height: 100%;
+    }
+
+    .service-card:hover {
+        background: #161b22;
+        border-color: #8b949e;
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-icon {
+        margin-bottom: 2.5rem;
+        transition: all 0.4s ease;
+    }
+
+    .hub-logo-badge {
+        font-size: 2.2rem;
+        color: var(--accent-gold);
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(201, 168, 76, 0.05);
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .service-card:hover .hub-logo-badge {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+    }
+
+    .service-card:hover .card-icon {
+        transform: scale(1.1) translateX(5px);
+    }
+
+    .card-body h3 {
+        font-size: 1.6rem;
+        color: #fff;
+        margin-bottom: 1rem;
+    }
+
+    .card-body p {
+        color: #8b949e;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+    }
+
+    .card-link {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--accent-gold);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-top: auto;
+    }
+
+    .card-link.white {
+        color: #fff;
+    }
+
+    .lawyer-prime {
+        background: linear-gradient(135deg, #0D1117 0%, #1c2533 100%);
+        border-color: var(--accent-gold);
+    }
+
+    @media (max-width: 850px) {
+        .professional-workspace {
+            padding: 2rem;
+        }
+
+        .user-greeting h1 {
+            font-size: 2.2rem;
+        }
+    }
+
+    .animate-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

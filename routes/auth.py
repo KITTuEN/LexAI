@@ -22,7 +22,18 @@ def signup():
         if user_model.find_by_email(email):
             return render_template('signup.html', error="Email already registered")
 
-        user_model.create_user(name, email, phone, password)
+        role = data.get('role', 'user')
+        lawyer_data = None
+        if role == 'lawyer':
+            lawyer_data = {
+                'aadhar': data.get('aadhar'),
+                'father_name': data.get('father_name'),
+                'mother_name': data.get('mother_name'),
+                'lawyer_id': data.get('lawyer_id'),
+                'experience_summary': data.get('experience_summary')
+            }
+
+        user_model.create_user(name, email, phone, password, role=role, lawyer_data=lawyer_data)
         return redirect(url_for('auth.login'))
 
     return render_template('signup.html')
@@ -38,7 +49,7 @@ def login():
         if user and user_model.verify_password(password, user['password_hash']):
             expires = 30 if remember else 1
             access_token = create_access_token(identity=str(user['_id']))
-            resp = make_response(redirect(url_for('index')))
+            resp = make_response(redirect(url_for('dashboard.member_home')))
             set_access_cookies(resp, access_token)
             return resp
         
@@ -48,6 +59,6 @@ def login():
 
 @auth_bp.route('/logout')
 def logout():
-    resp = make_response(redirect(url_for('auth.login')))
+    resp = make_response(redirect(url_for('index')))
     unset_jwt_cookies(resp)
     return resp

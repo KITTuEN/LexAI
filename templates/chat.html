@@ -27,7 +27,7 @@
             <div class="message {{ msg.role }}">
                 <div class="bubble">
                     {{ msg.content }}
-                    {% if msg.timestamp %}
+                    {% if msg.timestamp and msg.timestamp.strftime %}
                     <span class="timestamp">{{ msg.timestamp.strftime('%H:%M') }}</span>
                     {% endif %}
                 </div>
@@ -64,9 +64,9 @@
         display: grid;
         grid-template-columns: 350px 1fr;
         gap: 2rem;
-        height: calc(100vh - 120px);
+        height: 75vh;
         max-width: 1400px;
-        margin: 0 auto;
+        margin: 2rem auto;
         padding: 0 2rem;
     }
 

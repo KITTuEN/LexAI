@@ -116,12 +116,42 @@ class GeminiService:
             system_instruction=system_prompt
         )
         
-        prompt = "Analyze this legal document. Provide a summary, identify key dates, parties involved, and potential legal implications/advice based on Indian law."
+        prompt = """
+        Analyze this legal document (Contract, Policy, or Notice) and provide a professional breakdown in Indian Legal context.
+        Provide the analysis in STRICT JSON format:
+        {
+            "simplified_summary": "An easy-to-understand explanation for a common person",
+            "pros": ["Benefit 1", "Benefit 2"],
+            "cons": ["Risk 1", "Risk 2"],
+            "beneficiary": {
+                "party": "Who does this favor more?",
+                "reason": "Why?"
+            },
+            "key_clauses": [
+                {
+                    "clause": "Name of clause",
+                    "impact": "What does it mean for the user?"
+                }
+            ],
+            "recommendation": "Final professional advice"
+        }
+        """
         
-        response = model.generate_content([
-            {"mime_type": mime_type, "data": image_data},
-            prompt
-        ])
-        return response.text
+        response = model.generate_content(
+            [{"mime_type": mime_type, "data": image_data}, prompt],
+            generation_config=genai.GenerationConfig(
+                response_mime_type="application/json",
+            )
+        )
+        try:
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Error parsing Document Analysis: {e}")
+            return {
+                "simplified_summary": "Failed to parse analysis.",
+                "pros": [], "cons": [], "beneficiary": {"party": "N/A", "reason": "N/A"},
+                "key_clauses": [], "recommendation": "Error in AI generation.",
+                "raw_text": response.text
+            }
 
 gemini_service = GeminiService()

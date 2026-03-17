@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <h1>Advocate Panel: {{ user.name_encrypted | decrypt_name }}</h1>
+        <p>Manage your professional profile and citizen consultations.</p>
+    </header>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <i class="fas fa-comments gold-icon"></i>
+            <div class="stat-info">
+                <h3>{{ total_consultations }}</h3>
+                <p>Consultations</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-certificate gold-icon"></i>
+            <div class="stat-info">
+                <h3>Verified</h3>
+                <p>Status</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-id-card gold-icon"></i>
+            <div class="stat-info">
+                <h3 style="font-size: 0.9rem;">{{ user.lawyer_id_encrypted | decrypt_name }}</h3>
+                <p>License ID</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="lawyer-dashboard-grid">
+        <div class="main-content">
+            <div class="recent-chats card">
+                <div class="card-header">
+                    <h2 class="premium-title" style="font-size: 2rem;">Recent Consultations</h2>
+                </div>
+
+                <div class="responsive-table-container">
+                    <table class="cases-table">
+                        <thead>
+                            <tr>
+                                <th>Citizen Name</th>
+                                <th>Last Message</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for chat in chats[:5] %}
+                            <tr>
+                                <td>
+                                    <strong>Citizen</strong> <!-- We can improve this by passing user names -->
+                                </td>
+                                <td>{{ chat.last_message_at.strftime('%d %b, %H:%M') }}</td>
+                                <td>
+                                    <a href="{{ url_for('lawyer_chat.view_chat', chat_id=chat._id) }}"
+                                        class="btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;">View
+                                        Chat</a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center"
+                                    style="padding: 2rem; color: var(--text-secondary);">No consultations yet. You will
+                                    see messages here once citizens contact you.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if chats|length > 5 %}
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <a href="{{ url_for('lawyer_panel.messages') }}" class="btn-primary-outline">View All
+                        Consultations</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="profile-quick-edit card glass-accent">
+                <h3 class="premium-title" style="font-size: 1.4rem; margin-bottom: 1rem;"><i
+                        class="fas fa-user-edit"></i> Profile Status</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Keep your experience
+                    summary updated to attract more clients.</p>
+                <div class="experience-preview"
+                    style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; font-size: 0.85rem; line-height: 1.6; margin-bottom: 1.5rem;">
+                    {{ user.experience_summary[:150] }}...
+                </div>
+                <a href="{{ url_for('lawyer_panel.profile') }}" class="btn-primary w-100">Edit Professional Info</a>
+            </div>
+
+            <div class="system-alerts card" style="margin-top: 2rem;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem;">Professional Guidelines</h3>
+                <div class="alert-item" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <i class="fas fa-info-circle gold-text"></i>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Respond to citizen queries within 24
+                        hours for better professional ranking.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+</div>
+{% endblock %}

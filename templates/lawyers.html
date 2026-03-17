@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="lawyer-listing-container">
+    <header class="listing-header">
+        <h1 class="premium-title">Legal Professionals</h1>
+        <p>Verified lawyers ready to assist you with your legal matters.</p>
+    </header>
+
+    <div class="lawyer-grid">
+        {% for lawyer in lawyers %}
+        <div class="lawyer-card card glass-accent">
+            <div class="lawyer-badge">Verified</div>
+            <div class="lawyer-icon">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="lawyer-info">
+                <h3>{{ lawyer.name_encrypted | decrypt_name }}</h3>
+                <p class="lawyer-id"><i class="fas fa-id-card"></i> {{ lawyer.lawyer_id_encrypted | decrypt_name }}</p>
+
+                <div class="lawyer-experience card glass-accent"
+                    style="padding: 1rem; margin-bottom: 2rem; border-color: rgba(255,255,255,0.05);">
+                    <h4
+                        style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 0.5rem;">
+                        Experience & Success Stories</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; text-align: left;">
+                        {{ lawyer.experience_summary or "Professional legal services with a focus on client rights." }}
+                    </p>
+                </div>
+
+                <div class="contact-methods">
+                    <a href="mailto:{{ lawyer.email_encrypted | decrypt_name }}" class="btn-action-round gold"
+                        title="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                    <a href="tel:{{ lawyer.phone_encrypted | decrypt_name }}" class="btn-action-round gold"
+                        title="Call">
+                        <i class="fas fa-phone"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="lawyer-footer">
+                <a href="{{ url_for('lawyer_chat.initiate', lawyer_id=lawyer._id) }}" class="btn-primary w-100">Start
+                    Private Consultation</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="no-lawyers card">
+            <i class="fas fa-info-circle"></i>
+            <p>No verified legal professionals are registered at the moment. Please check back later.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .lawyer-listing-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+    }
+
+    .listing-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .listing-header h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .listing-header p {
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+    }
+
+    .lawyer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2.5rem;
+    }
+
+    .lawyer-card {
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .lawyer-badge {
+        position: absolute;
+        top: 15px;
+        right: -30px;
+        background: var(--gold-gradient);
+        color: #000;
+        padding: 2px 30px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        transform: rotate(45deg);
+        text-transform: uppercase;
+    }
+
+    .lawyer-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        border: 1px solid rgba(201, 168, 76, 0.2);
+    }
+
+    .lawyer-icon i {
+        font-size: 2.5rem;
+        background: var(--gold-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .lawyer-info h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .lawyer-id {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .contact-methods {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .no-lawyers {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem;
+        color: var(--text-secondary);
+    }
+
+    .no-lawyers i {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        color: var(--accent-gold);
+    }
+</style>
+{% endblock %}

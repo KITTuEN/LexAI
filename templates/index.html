@@ -2,215 +2,732 @@
 
 {% block content %}
 <div class="landing-page">
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">Your AI-Powered <span>Legal Sentinel</span></h1>
-            <p class="hero-subtitle">Navigating Indian Law with Precision. Get instant AI-driven analysis, identify
-                sections (IPC/BNS), and generate police complaints in minutes.</p>
-            <div class="hero-actions">
-                <a href="{{ url_for('auth.signup') }}" class="btn-primary btn-large">Protect Your Rights Now</a>
-                <a href="#how-it-works" class="btn-secondary">Learn How it Works</a>
+    <!-- Mesh Gradient Background for Hero -->
+    <div class="mesh-bg"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-premium">
+        <div class="hero-container">
+            <div class="hero-text animate-up">
+                <div class="premium-badge">
+                    <span class="badge-dot"></span>
+                    Powered by Gemini Pro Intelligence
+                </div>
+                <h1 class="hero-title">Next-Gen <br><span>Justice Engine</span></h1>
+                <p class="hero-subtitle">The definitive AI sentinel for the Indian Legal System. Navigate statutes,
+                    automate documentation, and assess rights with absolute neural precision.</p>
+                <div class="hero-actions">
+                    <a href="{{ url_for('auth.signup') }}" class="btn-primary main-cta">
+                        Deploy LexAI Now <i class="fas fa-bolt"></i>
+                    </a>
+                    <a href="#how-it-works" class="btn-glass">
+                        System Overview
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-visual animate-fade-in">
+                <div class="visual-stack">
+                    <div class="visual-card terminal-peek">
+                        <div class="card-header">
+                            <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span>
+                            </div>
+                            <div class="title">BNS_ANALYZER v2.4</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="line">Analyzing case complexity...</div>
+                            <div class="line progress"><span></span></div>
+                            <div class="line match">MATCH FOUND: BNS SECTION 115</div>
+                        </div>
+                    </div>
+                    <div class="visual-card status-peek">
+                        <div class="stat-row">
+                            <span class="label">PRECISION</span>
+                            <span class="val">99.8%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="label">LATENCY</span>
+                            <span class="val">0.2s</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="hero-image">
-            <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-                alt="Legal Gavel" class="premium-shadow">
+    </section>
+
+    <!-- Trust Bar - High End Framework Carousel -->
+    <div class="framework-trust">
+        <div class="trust-container">
+            <p class="trust-label">Architecture Verified For</p>
+            <div class="framework-carousel">
+                <div class="framework-item">
+                    <img src="{{ url_for('static', filename='ipc_logo.png') }}" alt="IPC">
+                    <span>IPC 1860</span>
+                </div>
+                <div class="framework-item">
+                    <img src="{{ url_for('static', filename='bns_logo.png') }}" alt="BNS">
+                    <span>BNS 2023</span>
+                </div>
+                <div class="framework-item">
+                    <img src="{{ url_for('static', filename='bnss_logo.png') }}" alt="BNSS">
+                    <span>BNSS 2023</span>
+                </div>
+                <div class="framework-item">
+                    <img src="{{ url_for('static', filename='bsa_logo.png') }}" alt="BSA">
+                    <span>BSA 2023</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Capabilities Section -->
+    <section id="how-it-works" class="capabilities">
+        <div class="section-header center animate-up">
+            <h2 class="premium-title">Next-Gen <br>Legal Architect</h2>
+            <p class="section-subtitle">A decentralized intelligence suite for the Indian Legal Framework.</p>
+        </div>
+
+        <div class="capabilities-grid">
+            <div class="cap-card glass-panel animate-up">
+                <div class="cap-header">
+                    <div class="cap-icon-box">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="header-text">
+                        <h3>AI Legal Analyst</h3>
+                        <p>Statutory Prediction Engine</p>
+                    </div>
+                </div>
+                <div class="cap-body">
+                    <p>Harness Gemini Pro to predict criminal sections and case outcomes with high-confidence
+                        probability mapping across BNS and IPC.</p>
+                    <ul class="cap-list">
+                        <li><i class="fas fa-check"></i> Deep Statute Mapping</li>
+                        <li><i class="fas fa-check"></i> Case Precedent Briefs</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="cap-card glass-panel animate-up" style="animation-delay: 0.1s;">
+                <div class="cap-header">
+                    <div class="cap-icon-box">
+                        <i class="fas fa-scroll"></i>
+                    </div>
+                    <div class="header-text">
+                        <h3>Document Architect</h3>
+                        <p>Standardized FIR Drafter</p>
+                    </div>
+                </div>
+                <div class="cap-body">
+                    <p>Generate professionally formatted police complaints and FIR drafts ready for filing, adhering to
+                        latest legal standards.</p>
+                    <ul class="cap-list">
+                        <li><i class="fas fa-check"></i> Multi-Section Inclusion</li>
+                        <li><i class="fas fa-check"></i> Instant PDF Export</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="cap-card glass-panel animate-up" style="animation-delay: 0.2s;">
+                <div class="cap-header">
+                    <div class="cap-icon-box">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <div class="header-text">
+                        <h3>Rights Sentinel</h3>
+                        <p>Procedural Liberty Guard</p>
+                    </div>
+                </div>
+                <div class="cap-body">
+                    <p>Real-time assessment of fundamental rights, procedural bail eligibility, and citizen protections
+                        under constitutional law.</p>
+                    <ul class="cap-list">
+                        <li><i class="fas fa-check"></i> Bail Assessment Engine</li>
+                        <li><i class="fas fa-check"></i> Rights Protection Audit</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section id="how-it-works" class="features">
-        <div class="section-header">
-            <h2>{{ 'Our Services' if current_user else 'Why Choose LexAI?' }}</h2>
-            <p>{{ 'Select a tool to begin your legal journey.' if current_user else 'Advanced AI technology tailored for
-                the Indian Legal System.' }}</p>
-        </div>
-        <div class="feature-grid">
-            <a href="{{ url_for('dashboard.home') if current_user else url_for('auth.login') }}" class="feature-card">
-                <i class="fas fa-balance-scale"></i>
-                <h3>AI Legal Advisor</h3>
-                <p>Discuss your situation with our AI and get detailed analysis of applicable sections under BNS 2023
-                    and IPC.</p>
-            </a>
-            <a href="{{ url_for('complaint.index') if current_user else url_for('auth.login') }}" class="feature-card">
-                <i class="fas fa-file-contract"></i>
-                <h3>Complaint Generator</h3>
-                <p>Create professional police complaints ready for filing with all necessary legal formatting and
-                    sections.</p>
-            </a>
-            <a href="{{ url_for('search.index') if current_user else url_for('auth.login') }}" class="feature-card">
-                <i class="fas fa-search"></i>
-                <h3>Search IPC/BNS Law</h3>
-                <p>Instantly search for specific legal sections and get AI summaries of their implications and
-                    punishments.</p>
-            </a>
-            <a href="{{ url_for('rights.index') if current_user else url_for('auth.login') }}" class="feature-card">
-                <i class="fas fa-shield-alt"></i>
-                <h3>Know Your Rights</h3>
-                <p>Understand your fundamental rights and assess bail possibilities for various legal conditions.</p>
-            </a>
-            <a href="{{ url_for('ocr.index') if current_user else url_for('auth.login') }}" class="feature-card">
-                <i class="fas fa-file-upload"></i>
-                <h3>OCR Doc Analysis</h3>
-                <p>Upload legal notices or documents to extract key information and get immediate AI-based advice.</p>
-            </a>
+    <!-- Stats Section - Modern Counter -->
+    <section class="quick-stats">
+        <div class="stats-grid animate-up">
+            <div class="stat-item glass-panel">
+                <span class="stat-num">1.5M+</span>
+                <span class="stat-label">Statutory Nodes</span>
+            </div>
+            <div class="stat-item glass-panel gold-glow">
+                <span class="stat-num">0.2s</span>
+                <span class="stat-label">AI Latency</span>
+            </div>
+            <div class="stat-item glass-panel">
+                <span class="stat-num">100%</span>
+                <span class="stat-label">Zero-Log Privacy</span>
+            </div>
         </div>
     </section>
 
-    <section class="cta-banner">
-        <h2>Ready to seek legal clarity?</h2>
-        <p>Join thousands of citizens empowering themselves with LexAI.</p>
-        <a href="{{ url_for('auth.signup') }}" class="btn-primary">Create Your Free Account</a>
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="cta-inner card glass-dark">
+            <h2 class="premium-title">Ready for Legal Clarity?</h2>
+            <p>Join the thousands of citizens and advocates empowering themselves with LexAI intelligence.</p>
+            <div class="cta-btns">
+                <a href="{{ url_for('auth.signup') }}" class="btn-primary">Create Your Free Account</a>
+                <p class="sub-text">No credit card required • GDPR Compliant</p>
+            </div>
+        </div>
     </section>
 </div>
 
 <style>
-    .landing-page {
-        padding-top: 2rem;
+    /* Cinematic Background */
+    .mesh-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(at 0% 0%, rgba(201, 168, 76, 0.1) 0, transparent 40%),
+            radial-gradient(at 100% 100%, rgba(10, 14, 26, 1) 0, transparent 40%),
+            radial-gradient(at 50% 50%, rgba(5, 8, 16, 1) 0, transparent 100%);
+        z-index: -1;
     }
 
-    .hero {
+    /* Hero Refinement */
+    .hero-premium {
+        position: relative;
+        min-height: 95vh;
+        padding-top: 100px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .hero-container {
+        position: relative;
+        z-index: 3;
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 4rem;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.2fr 0.8fr;
         gap: 4rem;
         align-items: center;
-        min-height: 80vh;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
-
-    .hero-title {
-        font-size: 4rem;
-        line-height: 1.1;
-        margin-bottom: 2rem;
-    }
-
-    .hero-title span {
-        color: var(--accent-gold);
-    }
-
-    .hero-subtitle {
-        font-size: 1.2rem;
-        color: var(--text-secondary);
-        margin-bottom: 3rem;
-        max-width: 500px;
-    }
-
-    .hero-actions {
-        display: flex;
-        gap: 1.5rem;
-    }
-
-    .btn-large {
-        padding: 1rem 2.5rem;
-        font-size: 1.1rem;
-    }
-
-    .btn-secondary {
-        border: 1px solid var(--accent-gold);
-        color: var(--accent-gold);
-        padding: 1rem 2.5rem;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: background 0.3s;
-    }
-
-    .btn-secondary:hover {
-        background: rgba(201, 168, 76, 0.1);
-    }
-
-    .hero-image img {
         width: 100%;
-        border-radius: 12px;
-        border: var(--border-gold);
     }
 
-    .features {
-        padding: 8rem 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
+    .premium-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 8px 16px;
+        border-radius: 100px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+        margin-bottom: 2.5rem;
     }
 
-    .section-header {
-        text-align: center;
-        margin-bottom: 5rem;
-    }
-
-    .section-header h2 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .feature-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-    }
-
-    .feature-card {
-        background: var(--card-bg);
-        padding: 3rem;
-        border-radius: 16px;
-        border: var(--border-gold);
-        transition: all 0.3s ease;
-        text-decoration: none;
-        color: inherit;
+    .badge-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--accent-gold);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent-gold);
         display: block;
     }
 
-    .feature-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 10px 30px rgba(201, 168, 76, 0.2);
-        border-color: var(--accent-gold);
+    .hero-title {
+        font-size: clamp(2.5rem, 8vw, 6.5rem);
+        line-height: 1;
+        margin-bottom: 2.5rem;
+        background: linear-gradient(180deg, #FFFFFF 30%, #636E72 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
-    .feature-card i {
-        font-size: 3rem;
+    .hero-title span {
+        background: var(--vibrant-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        max-width: 580px;
+        line-height: 1.8;
+        color: var(--text-secondary);
+        margin-bottom: 4rem;
+    }
+
+    /* Buttons */
+    .btn-primary.main-cta {
+        padding: 1.2rem 2.8rem;
+        font-size: 1.05rem;
+        border-radius: 12px;
+        background: var(--vibrant-gradient);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-glass {
+        padding: 1.2rem 2.8rem;
+        font-size: 1.05rem;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition-smooth);
+    }
+
+    .btn-glass:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    /* Hero Visual - Terminal Peak */
+    .hero-visual {
+        position: relative;
+    }
+
+    .visual-stack {
+        position: relative;
+        width: 100%;
+        height: 500px;
+    }
+
+    .visual-card {
+        position: absolute;
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        background: rgba(10, 14, 26, 0.6);
+        box-shadow: var(--shadow-premium);
+    }
+
+    .terminal-peek {
+        width: 450px;
+        top: 0;
+        right: 0;
+        padding: 0;
+        overflow: hidden;
+        z-index: 5;
+    }
+
+    .terminal-peek .card-header {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .dots {
+        display: flex;
+        gap: 8px;
+    }
+
+    .dots span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+    .dots .r {
+        background: #FF5F56;
+    }
+
+    .dots .y {
+        background: #FFBD2E;
+    }
+
+    .dots .g {
+        background: #27C93F;
+    }
+
+    .terminal-peek .title {
+        font-size: 0.75rem;
+        font-family: 'Monaco', monospace;
+        color: var(--text-secondary);
+        opacity: 0.6;
+    }
+
+    .terminal-peek .card-body {
+        padding: 25px;
+        font-family: 'Monaco', 'Consolas', monospace;
+        font-size: 0.85rem;
+        color: #A0AEC0;
+    }
+
+    .line {
+        margin-bottom: 15px;
+    }
+
+    .progress {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 2px;
+        position: relative;
+    }
+
+    .progress span {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 65%;
+        background: var(--accent-gold);
+        box-shadow: 0 0 10px var(--accent-gold);
+        animation: progress-slide 3s ease-in-out infinite;
+    }
+
+    .line.match {
         color: var(--accent-gold);
-        margin-bottom: 2rem;
+        font-weight: 700;
+        animation: pulse 2s infinite;
     }
 
-    .feature-card h3 {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
+    .status-peek {
+        width: 250px;
+        bottom: 50px;
+        left: 50px;
+        padding: 25px;
+        z-index: 10;
+        background: rgba(201, 168, 76, 0.05);
+        border: 1px solid rgba(201, 168, 76, 0.2);
     }
 
-    .feature-card p {
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .stat-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .stat-row .label {
+        font-size: 0.7rem;
+        font-weight: 800;
         color: var(--text-secondary);
     }
 
-    .cta-banner {
-        text-align: center;
-        background: linear-gradient(rgba(20, 27, 45, 0.9), rgba(20, 27, 45, 0.9)),
-            url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-        background-size: cover;
-        background-position: center;
-        padding: 8rem 2rem;
-        margin-top: 4rem;
-        border-top: var(--border-gold);
+    .stat-row .val {
+        font-weight: 700;
+        color: var(--accent-gold);
     }
 
-    .cta-banner h2 {
-        font-size: 3rem;
+
+    /* Framework Trust */
+    .framework-trust {
+        padding: 6rem 0;
+        background: rgba(0, 0, 0, 0.2);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .trust-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 4rem;
+        text-align: center;
+    }
+
+    .trust-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        color: var(--text-secondary);
+        margin-bottom: 3.5rem;
+        opacity: 0.6;
+    }
+
+    .framework-carousel {
+        display: flex;
+        justify-content: center;
+        gap: 6rem;
+        flex-wrap: wrap;
+    }
+
+    .framework-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        opacity: 0.5;
+        transition: var(--transition-smooth);
+        filter: grayscale(1);
+    }
+
+    .framework-item:hover {
+        opacity: 1;
+        filter: grayscale(0);
+        transform: translateY(-5px);
+    }
+
+    .framework-item img {
+        height: 35px;
+        width: auto;
+    }
+
+    .framework-item span {
+        font-weight: 700;
+        font-size: 1rem;
+        color: white;
+    }
+
+    /* Glass Panel System */
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        transition: var(--transition-smooth);
+    }
+
+    .glass-panel:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(201, 168, 76, 0.4);
+        transform: translateY(-8px);
+    }
+
+    /* Capabilities Overhaul */
+    .capabilities {
+        padding: 12rem 4rem;
+        max-width: 1350px;
+        margin: 0 auto;
+    }
+
+    .premium-title {
+        font-size: 4rem;
+        line-height: 1;
         margin-bottom: 1.5rem;
     }
 
-    .cta-banner p {
-        margin-bottom: 3rem;
+    .section-subtitle {
+        font-size: 1.1rem;
         color: var(--text-secondary);
+        opacity: 0.7;
+    }
+
+    .capabilities-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem;
+    }
+
+    .cap-card {
+        padding: 4rem 3rem;
+    }
+
+    .cap-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 2.5rem;
+    }
+
+    .cap-icon-box {
+        width: 65px;
+        height: 65px;
+        background: rgba(201, 168, 76, 0.1);
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        color: var(--accent-gold);
+        transition: var(--transition-smooth);
+    }
+
+    .cap-card:hover .cap-icon-box {
+        background: var(--accent-gold);
+        color: black;
+        box-shadow: 0 0 20px rgba(201, 168, 76, 0.4);
+    }
+
+    .header-text h3 {
+        font-size: 1.6rem;
+        margin: 0;
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 1.5s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    .header-text p {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--accent-gold);
+        font-weight: 700;
+        margin-top: 5px;
+    }
+
+    .cap-body p {
+        color: var(--text-secondary);
+        line-height: 1.7;
+        margin-bottom: 2.5rem;
+    }
+
+    /* Quick Stats */
+    .quick-stats {
+        padding: 6rem 4rem;
+        max-width: 1350px;
+        margin: 0 auto;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem;
+    }
+
+    .stat-item {
+        padding: 5rem 2rem;
+        text-align: center;
+    }
+
+    .stat-item.gold-glow {
+        background: rgba(201, 168, 76, 0.05);
+        border-color: rgba(201, 168, 76, 0.3);
+    }
+
+    .stat-num {
+        display: block;
+        font-size: 4rem;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        background: var(--vibrant-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--text-secondary);
+        font-weight: 700;
+        opacity: 0.6;
+    }
+
+    /* Final CTA */
+    .final-cta {
+        padding: 10rem 4rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .cta-inner {
+        text-align: center;
+        padding: 8rem 4rem;
+        border-radius: 48px;
+        background: rgba(10, 14, 26, 0.8);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .cta-inner h2 {
+        font-size: clamp(2.5rem, 5vw, 4.5rem);
+        margin-bottom: 1rem;
+    }
+
+    .cta-inner p {
         font-size: 1.2rem;
+        color: var(--text-secondary);
+        max-width: 650px;
+        margin: 0 auto;
     }
 
-    .premium-shadow {
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    .cta-btns {
+        margin-top: 3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
     }
 
-    @media (max-width: 968px) {
-        .hero {
+    .sub-text {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        opacity: 0.6;
+    }
+
+    /* Animations */
+    @keyframes progress-slide {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        100% {
+            transform: translateX(100%);
+        }
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+            text-shadow: 0 0 10px rgba(201, 168, 76, 0.5);
+        }
+
+        50% {
+            opacity: 0.5;
+            text-shadow: none;
+        }
+    }
+
+
+
+    /* RESPONSIVE OVERRIDES */
+    @media (max-width: 1024px) {
+        .hero-container {
             grid-template-columns: 1fr;
             text-align: center;
-            padding-top: 4rem;
+            padding: 0 2rem;
+            gap: 2rem;
+        }
+
+        .hero-text {
+            order: 2;
+            padding: 4rem 0;
+        }
+
+        .hero-visual {
+            order: 1;
+            display: flex;
+            justify-content: center;
+            width: 100%;
         }
 
         .hero-subtitle {
@@ -222,8 +739,72 @@
             justify-content: center;
         }
 
-        .hero-title {
-            font-size: 3rem;
+        .visual-stack {
+            height: auto;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .terminal-peek {
+            position: relative;
+            right: auto;
+            top: auto;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .status-peek,
+        .floating-emblem {
+            display: none;
+        }
+
+        .capabilities,
+        .quick-stats,
+        .final-cta {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+
+        .capabilities-grid,
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .framework-carousel {
+            gap: 2.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-premium {
+            padding-top: 80px;
+        }
+
+        .btn-primary.main-cta,
+        .btn-glass {
+            width: 100%;
+            justify-content: center;
+            padding: 1rem 1.5rem;
+        }
+
+        .cta-inner {
+            padding: 5rem 2rem;
+            border-radius: 32px;
+        }
+
+        .cta-inner h2 {
+            font-size: 2.2rem;
+        }
+
+        .cap-card {
+            padding: 2.5rem 1.5rem;
+        }
+
+        .stat-num {
+            font-size: clamp(2.5rem, 10vw, 3.5rem);
         }
     }
 </style>

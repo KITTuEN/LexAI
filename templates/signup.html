@@ -13,9 +13,27 @@
         <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
 
-        <form method="POST" action="{{ url_for('auth.signup') }}">
+        <form method="POST" action="{{ url_for('auth.signup') }}" id="signupForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+            <div class="role-selector">
+                <label class="role-option">
+                    <input type="radio" name="role" value="user" checked>
+                    <div class="role-card">
+                        <i class="fas fa-user"></i>
+                        <span>Citizen</span>
+                    </div>
+                </label>
+                <label class="role-option">
+                    <input type="radio" name="role" value="lawyer">
+                    <div class="role-card">
+                        <i class="fas fa-gavel"></i>
+                        <span>Legal Professional</span>
+                    </div>
+                </label>
+            </div>
+
             <div class="form-group">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <label>Full Name</label>
                 <input type="text" name="name" required placeholder="John Doe">
             </div>
@@ -27,6 +45,32 @@
                 <label>Phone Number</label>
                 <input type="tel" name="phone" required placeholder="+91 98765-43210">
             </div>
+
+            <!-- Lawyer Specific Fields -->
+            <div id="lawyerFields" style="display: none;">
+                <div class="form-group">
+                    <label>Father's Name</label>
+                    <input type="text" name="father_name" placeholder="Father's Full Name">
+                </div>
+                <div class="form-group">
+                    <label>Mother's Name</label>
+                    <input type="text" name="mother_name" placeholder="Mother's Full Name">
+                </div>
+                <div class="form-group">
+                    <label>Aadhar Number</label>
+                    <input type="text" name="aadhar" placeholder="12-digit Aadhar Number">
+                </div>
+                <div class="form-group">
+                    <label>Lawyer ID Card / Bar Council Number</label>
+                    <input type="text" name="lawyer_id" placeholder="e.g. BC/123/2024">
+                </div>
+                <div class="form-group">
+                    <label>Cases Won & Professional Experience</label>
+                    <textarea name="experience_summary" rows="4" style="width: 100%;"
+                        placeholder="Describe your successful cases and years of practice..."></textarea>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label>Password</label>
                 <input type="password" name="password" required placeholder="••••••••">
@@ -35,58 +79,26 @@
                 <label>Confirm Password</label>
                 <input type="password" name="confirm_password" required placeholder="••••••••">
             </div>
-            <button type="submit" class="btn-primary w-100">Sign Up</button>
+            <button type="submit" class="btn-primary w-100">Create Account</button>
         </form>
 
         <p class="auth-footer">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
     </div>
 </div>
 
-<style>
-    .auth-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 80vh;
-    }
-
-    .auth-card {
-        width: 100%;
-        max-width: 500px;
-    }
-
-    .auth-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .large-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-
-    .w-100 {
-        width: 100%;
-    }
-
-    .auth-footer {
-        text-align: center;
-        margin-top: 1.5rem;
-        color: var(--text-secondary);
-    }
-
-    .auth-footer a {
-        color: var(--accent-gold);
-        text-decoration: none;
-    }
-
-    .alert-danger {
-        background: rgba(255, 0, 0, 0.1);
-        color: #ff4d4d;
-        padding: 1rem;
-        border-radius: 6px;
-        margin-bottom: 1rem;
-        border: 1px solid rgba(255, 0, 0, 0.2);
-    }
-</style>
+<script>
+    document.querySelectorAll('input[name="role"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const lawyerFields = document.getElementById('lawyerFields');
+            const inputs = lawyerFields.querySelectorAll('input, textarea');
+            if (e.target.value === 'lawyer') {
+                lawyerFields.style.display = 'block';
+                inputs.forEach(input => input.required = true);
+            } else {
+                lawyerFields.style.display = 'none';
+                inputs.forEach(input => input.required = false);
+            }
+        });
+    });
+</script>
 {% endblock %}

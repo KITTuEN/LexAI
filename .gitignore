@@ -39,3 +39,6 @@ auth_token.txt
 # OS files
 .DS_Store
 Thumbs.db
+
+# Project credentials
+credentials.txt

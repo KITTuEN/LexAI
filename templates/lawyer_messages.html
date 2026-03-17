@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="lawyer-listing-container">
+    <header class="listing-header">
+        <h1 class="premium-title">Consultation Hub</h1>
+        <p>Manage all your active conversations and inquiries from citizens.</p>
+    </header>
+
+    <div class="chats-list grid" style="max-width: 1000px; margin: 0 auto; gap: 1.5rem;">
+        {% for chat in chats %}
+        <div class="chat-item card glass-accent"
+            style="display: flex; justify-content: space-between; align-items: center; padding: 2rem;">
+            <div class="chat-info" style="display: flex; align-items: center; gap: 1.5rem;">
+                <div class="user-avatar"
+                    style="width: 50px; height: 50px; border-radius: 50%; background: var(--gold-gradient); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000;">
+                    {{ (chat.citizen_name | decrypt_name)[0] | upper }}
+                </div>
+                <div>
+                    <h3 style="font-size: 1.4rem; margin-bottom: 0.2rem;">{{ chat.citizen_name | decrypt_name }}</h3>
+                    <p
+                        style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+                        Last Contact: {{ chat.last_message_at.strftime('%d %b, %H:%M') }}
+                    </p>
+                </div>
+            </div>
+            <div class="chat-actions">
+                <a href="{{ url_for('lawyer_chat.view_chat', chat_id=chat._id) }}" class="btn-primary">View
+                    Consultation</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state card">
+            <i class="fas fa-comment-slash"></i>
+            <h2>No Consultations Yet</h2>
+            <p>You haven't received any legal inquiries from citizens yet. Make sure your professional profile is
+                complete to attract more consultations.</p>
+            <a href="{{ url_for('lawyer_panel.profile') }}" class="btn-primary-outline"
+                style="margin-top: 1rem;">Complete Profile</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -7,11 +7,11 @@
         <p>Upload an image of a legal notice, FIR, or contract for AI analysis.</p>
 
         <form id="ocrForm" class="upload-zone" enctype="multipart/form-data">
-            <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;">
+            <input type="file" id="fileInput" name="file" accept="image/*,.pdf" style="display: none;">
             <div class="upload-content" onclick="document.getElementById('fileInput').click()">
                 <i class="fas fa-file-upload gold-icon"></i>
                 <p id="fileName">Click to browse or drag and drop image</p>
-                <span class="subtitle">Supports JPG, PNG</span>
+                <span class="subtitle">Supports JPG, PNG, PDF</span>
             </div>
             <button type="submit" id="analyzeBtn" class="btn-primary w-100" style="margin-top: 2rem;" disabled>Analyze
                 Document</button>
@@ -22,14 +22,57 @@
             <p>Our legal AI is reading your document...</p>
         </div>
 
-        <div id="ocrResult" class="analysis-result" style="display: none;">
-            <h3 class="gold-text"><i class="fas fa-brain"></i> AI Analysis Report</h3>
-            <div id="analysisText" class="markdown-content"></div>
-            <div class="warning-box" style="margin-top: 2rem;">
+        <div id="ocrResult" class="analysis-dashboard" style="display: none;">
+            <!-- Hero Summary -->
+            <div class="result-hero animate-up">
+                <div class="hero-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <h2 class="gold-text">Simplified Summary</h2>
+                <p id="simplifiedSummary" class="hero-text"></p>
+            </div>
+
+            <div class="analysis-grid">
+                <!-- Pros & Cons -->
+                <div class="grid-card pros-card animate-up" style="animation-delay: 0.1s;">
+                    <h3><i class="fa-solid fa-circle-check gold-text"></i> Pros & Benefits</h3>
+                    <ul id="prosList" class="detail-list"></ul>
+                </div>
+
+                <div class="grid-card cons-card animate-up" style="animation-delay: 0.2s;">
+                    <h3><i class="fa-solid fa-circle-exclamation gold-text"></i> Risks & Cons</h3>
+                    <ul id="consList" class="detail-list"></ul>
+                </div>
+
+                <!-- Beneficiary Card -->
+                <div class="grid-card full-width beneficiary-card animate-up" style="animation-delay: 0.3s;">
+                    <div class="beneficiary-header">
+                        <div class="b-icon"><i class="fa-solid fa-balance-scale"></i></div>
+                        <div>
+                            <h3>Who benefits more?</h3>
+                            <h4 id="beneficiaryParty" class="gold-text"></h4>
+                        </div>
+                    </div>
+                    <p id="beneficiaryReason" class="b-reason"></p>
+                </div>
+
+                <!-- Key Clauses -->
+                <div class="grid-card full-width animate-up" style="animation-delay: 0.4s;">
+                    <h3>Important Clauses</h3>
+                    <div id="clausesContainer" class="clauses-grid"></div>
+                </div>
+            </div>
+
+            <!-- Recommendation -->
+            <div class="recommendation-box animate-up" style="animation-delay: 0.5s;">
+                <h3><i class="fa-solid fa-shield-halved"></i> AI Recommendation</h3>
+                <p id="recommendationText"></p>
+            </div>
+
+            <div class="warning-box animate-up" style="animation-delay: 0.6s;">
                 <i class="fas fa-exclamation-triangle"></i>
                 <p>This is an AI summary for informational purposes. Please verify with a registered advocate.</p>
             </div>
-            <button class="btn-secondary w-100" style="margin-top: 1rem;" onclick="resetOCR()">Analyze Another
+
+            <button class="btn-secondary w-100" style="margin-top: 2rem;" onclick="resetOCR()">Analyze Another
                 Document</button>
         </div>
     </div>
@@ -66,32 +109,151 @@
         margin-bottom: 1rem;
     }
 
-    .analysis-result {
+    .analysis-dashboard {
         text-align: left;
         margin-top: 3rem;
-        padding-top: 2rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        animation: fadeIn 0.5s ease-out;
+        animation: fadeIn 0.8s ease-out;
     }
 
-    .markdown-content {
-        line-height: 1.6;
-        color: var(--text-secondary);
-        white-space: pre-wrap;
+    .result-hero {
+        background: rgba(201, 168, 76, 0.05);
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        border-radius: 20px;
+        padding: 3rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
     }
 
-    .warning-box {
+    .hero-icon {
+        font-size: 2.5rem;
+        color: var(--accent-gold);
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-text {
+        font-size: 1.2rem;
+        line-height: 1.7;
+        color: #fff;
+    }
+
+    .analysis-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .grid-card {
+        background: #0D1117;
+        border: 1px solid #21262d;
+        border-radius: 16px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .grid-card:hover {
+        border-color: var(--accent-gold);
+        background: #161b22;
+    }
+
+    .full-width {
+        grid-column: span 2;
+    }
+
+    .grid-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
         display: flex;
-        gap: 1rem;
-        padding: 1rem;
-        background: rgba(255, 165, 0, 0.1);
-        border-radius: 8px;
-        border-left: 4px solid #ffa500;
-        font-size: 0.9rem;
+        align-items: center;
+        gap: 0.8rem;
     }
 
-    .w-100 {
-        width: 100%;
+    .detail-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .detail-list li {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+        position: relative;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .detail-list li::before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: var(--accent-gold);
+    }
+
+    .beneficiary-header {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .b-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(201, 168, 76, 0.1);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        color: var(--accent-gold);
+    }
+
+    .b-reason {
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    .clauses-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .clause-item {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .clause-item h5 {
+        color: var(--accent-gold);
+        margin-bottom: 0.5rem;
+    }
+
+    .recommendation-box {
+        background: linear-gradient(135deg, rgba(201, 168, 76, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+        border: 1px solid var(--accent-gold);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .recommendation-box h3 {
+        color: var(--accent-gold);
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+
+        .analysis-grid,
+        .clauses-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .full-width {
+            grid-column: span 1;
+        }
     }
 </style>
 {% endblock %}
@@ -132,8 +294,36 @@
 
             loading.style.display = 'none';
             if (data.analysis) {
+                const analysis = data.analysis;
                 resultArea.style.display = 'block';
-                analysisText.textContent = data.analysis;
+
+                // Populating Data
+                document.getElementById('simplifiedSummary').textContent = analysis.simplified_summary;
+
+                // Pros
+                const prosList = document.getElementById('prosList');
+                prosList.innerHTML = analysis.pros.map(p => `<li>${p}</li>`).join('');
+
+                // Cons
+                const consList = document.getElementById('consList');
+                consList.innerHTML = analysis.cons.map(c => `<li>${c}</li>`).join('');
+
+                // Beneficiary
+                document.getElementById('beneficiaryParty').textContent = analysis.beneficiary.party;
+                document.getElementById('beneficiaryReason').textContent = analysis.beneficiary.reason;
+
+                // Clauses
+                const clausesContainer = document.getElementById('clausesContainer');
+                clausesContainer.innerHTML = analysis.key_clauses.map(c => `
+                    <div class="clause-item">
+                        <h5>${c.clause}</h5>
+                        <p>${c.impact}</p>
+                    </div>
+                `).join('');
+
+                // Recommendation
+                document.getElementById('recommendationText').textContent = analysis.recommendation;
+
             } else {
                 alert(data.error || 'Failed to analyze');
                 resetOCR();

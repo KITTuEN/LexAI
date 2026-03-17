@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="new-case-workspace">
+    <div class="setup-container animate-up">
+        <div class="tool-label"><i class="fa-solid fa-brain"></i> AI Legal Engine</div>
+        <h1>Start Your Smart Analysis</h1>
+        <p class="subtitle">Describe your situation in simple words. Our AI will guide you through the law.</p>
+
+        <div class="glass-card setup-card">
+            <form action="{{ url_for('cases.create') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+                <div class="input-group">
+                    <label>What is this about? (Title)</label>
+                    <input type="text" name="title" required
+                        placeholder="e.g. Land dispute with neighbor, Office contract review">
+                </div>
+
+                <div class="input-group">
+                    <label>Describe the situation</label>
+                    <textarea name="situation_summary" rows="6" required
+                        placeholder="Tell us what happened..."></textarea>
+                </div>
+
+                <div class="info-note">
+                    <i class="fas fa-shield-halved"></i>
+                    Your data is protected by LexAI's secure legal neural bridge.
+                </div>
+
+                <button type="submit" class="btn-primary w-100">
+                    Begin Smart Analysis <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+
+        <a href="{{ url_for('dashboard.member_home') }}" class="back-link">
+            <i class="fas fa-chevron-left"></i> Return to Hub
+        </a>
+    </div>
+</div>
+
+<style>
+    .new-case-workspace {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .setup-container {
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .tool-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: var(--accent-gold);
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        margin-bottom: 1.5rem;
+    }
+
+    .setup-container h1 {
+        font-size: 3rem;
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 1rem;
+    }
+
+    .subtitle {
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        font-size: 1.1rem;
+    }
+
+    .setup-card {
+        padding: 3rem;
+        text-align: left;
+    }
+
+    .input-group {
+        margin-bottom: 2rem;
+    }
+
+    .input-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        margin-bottom: 0.8rem;
+    }
+
+    .input-group input,
+    .input-group textarea {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        color: white;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .input-group input:focus,
+    .input-group textarea:focus {
+        border-color: var(--accent-gold);
+        background: rgba(201, 168, 76, 0.05);
+        outline: none;
+    }
+
+    .info-note {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        background: rgba(201, 168, 76, 0.05);
+        padding: 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-bottom: 2.5rem;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 2.5rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s;
+    }
+
+    .back-link:hover {
+        color: var(--accent-gold);
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+</style>
+{% endblock %}

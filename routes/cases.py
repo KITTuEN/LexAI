@@ -5,6 +5,11 @@ from database import db, case_model
 
 cases_bp = Blueprint('cases', __name__)
 
+@cases_bp.route('/new')
+@jwt_required()
+def new_case_view():
+    return render_template('new_case.html')
+
 @cases_bp.route('/create', methods=['POST'])
 @jwt_required()
 def create():
@@ -23,4 +28,4 @@ def create():
 def delete(case_id):
     user_id = get_jwt_identity()
     case_model.collection.delete_one({"_id": ObjectId(case_id), "user_id": ObjectId(user_id)})
-    return redirect(url_for('dashboard.home'))
+    return redirect(url_for('dashboard.member_home'))

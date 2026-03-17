@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from models.user import UserModel
 from models.case import CaseModel
 from models.search import SearchModel
+from models.lawyer_chat import LawyerChatModel
 
 load_dotenv()
 
@@ -15,3 +16,4 @@ db = client.get_default_database()
 user_model = UserModel(db)
 case_model = CaseModel(db)
 search_model = SearchModel(db)
+lawyer_chat_model = LawyerChatModel(db)

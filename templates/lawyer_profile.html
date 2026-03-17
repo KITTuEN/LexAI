@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="card auth-card" style="max-width: 650px;">
+        <div class="auth-header">
+            <i class="fas fa-user-edit gold-icon large-icon"></i>
+            <h1>Professional Profile</h1>
+            <p>Update your legal experience and professional summary</p>
+        </div>
+
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+            <div class="form-group">
+                <label>Experience & Success Stories</label>
+                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">This information is
+                    visible to all citizens looking for legal help.</p>
+                <textarea name="experience_summary" rows="10" required
+                    placeholder="Describe your landmark cases, years of practice, and areas of expertise...">{{ user.experience_summary }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Verified License ID</label>
+                <input type="text" value="{{ user.lawyer_id_encrypted | decrypt_name }}" disabled
+                    style="background: rgba(255,b255,255,0.02); color: var(--text-secondary);">
+            </div>
+
+            <div style="display: flex; gap: 1.5rem; margin-top: 2rem;">
+                <a href="{{ url_for('dashboard.member_home') }}" class="btn-primary-outline"
+                    style="flex: 1; text-align: center;">Cancel</a>
+                <button type="submit" class="btn-primary" style="flex: 2;">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
