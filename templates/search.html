@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="search-container">
+    <div class="search-box card">
+        <h1>Search IPC/BNS Sections</h1>
+        <p>Type a section number (e.g., "IPC 420") or a topic (e.g., "Cheating")</p>
+        <div class="search-input-wrapper">
+            <input type="text" id="searchInput" placeholder="Search legal sections...">
+            <button id="searchBtn" class="btn-primary">Search</button>
+        </div>
+    </div>
+
+    <div id="searchLoading" class="loading-state" style="display: none;">
+        <div class="spinner"></div>
+        <p>LexAI is retrieving legal information...</p>
+    </div>
+
+    <div id="searchResult" class="search-result-area">
+        <!-- Results will be injected here -->
+    </div>
+</div>
+
+<style>
+    .search-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .search-box {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .search-input-wrapper {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .search-input-wrapper input {
+        flex: 1;
+        padding: 1rem;
+        background: #1D263B;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: white;
+        font-size: 1.1rem;
+    }
+
+    .loading-state {
+        text-align: center;
+        padding: 3rem;
+    }
+
+    .spinner {
+        border: 4px solid rgba(201, 168, 76, 0.1);
+        border-left: 4px solid var(--accent-gold);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .result-card {
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .result-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .gold-text {
+        color: var(--accent-gold);
+    }
+
+    .badge-row {
+        display: flex;
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+
+    .badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge.red {
+        background: rgba(255, 0, 0, 0.1);
+        color: #ff4d4d;
+    }
+
+    .badge.green {
+        background: rgba(0, 255, 0, 0.1);
+        color: #00ff00;
+    }
+
+    .badge.blue {
+        background: rgba(0, 191, 255, 0.1);
+        color: #00bfff;
+    }
+
+    .result-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .info-section h4 {
+        margin-bottom: 0.8rem;
+        color: var(--accent-gold);
+    }
+
+    .landmark-cases {
+        list-style: none;
+    }
+
+    .landmark-cases li {
+        margin-bottom: 0.5rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .landmark-cases li::before {
+        content: "•";
+        color: var(--accent-gold);
+        position: absolute;
+        left: 0;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const loading = document.getElementById('searchLoading');
+        const resultArea = document.getElementById('searchResult');
+
+        const performSearch = async () => {
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            resultArea.innerHTML = '';
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch('/search/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ query })
+                });
+                const data = await response.json();
+                loading.style.display = 'none';
+                renderResult(data);
+            } catch (error) {
+                console.error('Error:', error);
+                loading.style.display = 'none';
+            }
+        };
+
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        const renderResult = (data) => {
+            resultArea.innerHTML = `
+            <div class="card result-card">
+                <div class="result-header">
+                    <h2 class="gold-text">${data.section}</h2>
+                    <h1>${data.title}</h1>
+                    <p class="subtitle">${data.chapter}</p>
+                </div>
+                
+                <div class="badge-row">
+                    <span class="badge ${data.bailable ? 'green' : 'red'}">${data.bailable ? 'Bailable' : 'Non-Bailable'}</span>
+                    <span class="badge ${data.cognizable ? 'blue' : 'red'}">${data.cognizable ? 'Cognizable' : 'Non-Cognizable'}</span>
+                    <span class="badge blue">Triable by: ${data.triable_by}</span>
+                </div>
+
+                <div class="info-section">
+                    <h4>Description</h4>
+                    <p>${data.description}</p>
+                </div>
+
+                <div class="result-grid" style="margin-top: 2rem;">
+                    <div class="info-section">
+                        <h4>Punishment</h4>
+                        <p>${data.punishment}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Key Ingredients</h4>
+                        <ul class="landmark-cases">
+                            ${data.key_ingredients.map(i => `<li>${i}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-section" style="margin-top: 2rem;">
+                    <h4>Landmark Cases</h4>
+                    <ul class="landmark-cases">
+                        ${data.landmark_cases.map(c => `<li>${c}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+        `;
+        };
+    });
+</script>
+{% endblock %}

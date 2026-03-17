@@ -1,0 +1,11 @@
+LEXAI PROJECT ABSTRACT
+
+LexAI is an advanced AI-powered legal assistant designed to democratize access to legal information and streamline legal procedures for the general public. Built with a focus on ease of use and accessibility, the platform bridges the gap between complex legal jargons and citizen-centric services. 
+
+Core functionalities include:
+1. AI Chatbot: Provides instant, conversational legal consultations and answers to common queries.
+2. Automated Document Generation: Creates structured legal complaints and case drafts based on user input.
+3. OCR Integration: Digitizes and analyzes physical legal documents and notices for better information extraction.
+4. Rights Repository: Offers a simplified, searchable database of fundamental citizen rights and legal codes.
+
+By combining cutting-edge natural language processing (specifically utilizing Google Gemini) with a robust legal knowledge base, LexAI provides efficient, affordable, and accurate initial legal guidance. The system empowers users to navigate the legal landscape with confidence, effectively reducing the barriers to legal literacy and support.

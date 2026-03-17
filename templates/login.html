@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="card auth-card">
+        <div class="auth-header">
+            <i class="fas fa-balance-scale gold-icon large-icon"></i>
+            <h1>Welcome Back</h1>
+            <p>Login to your legal advisor</p>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('auth.login') }}">
+            <div class="form-group">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <label>Email Address</label>
+                <input type="email" name="email" required placeholder="name@example.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required placeholder="••••••••">
+            </div>
+            <div class="form-group remember-me">
+                <input type="checkbox" name="remember" id="remember">
+                <label for="remember">Remember Me</label>
+            </div>
+            <button type="submit" class="btn-primary w-100">Sign In</button>
+        </form>
+
+        <p class="auth-footer">Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign Up</a></p>
+    </div>
+</div>
+
+<style>
+    .auth-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 450px;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .large-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: var(--text-secondary);
+    }
+
+    .auth-footer a {
+        color: var(--accent-gold);
+        text-decoration: none;
+    }
+
+    .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .remember-me input {
+        width: auto;
+    }
+</style>
+{% endblock %}

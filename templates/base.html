@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexAI — Virtual Legal Advisor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=IBM+Plex+Sans:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="dark-theme">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <i class="fas fa-balance-scale gold-icon"></i> Lex<span>AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}">Home</a>
+                {% if current_user %}
+                <a href="{{ url_for('dashboard.home') }}">Dashboard</a>
+                <a href="{{ url_for('search.index') }}">Search Law</a>
+                <a href="{{ url_for('complaint.index') }}">Generate Complaint</a>
+                <a href="{{ url_for('rights.index') }}">Know Your Rights</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a href="{{ url_for('auth.signup') }}" class="btn-primary"
+                    style="padding: 0.5rem 1.2rem; margin-left: 1rem;">Get Started</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p class="disclaimer">{{ legal_disclaimer }}</p>
+            <p>&copy; 2024 LexAI. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

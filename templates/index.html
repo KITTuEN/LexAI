@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="landing-page">
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Your AI-Powered <span>Legal Sentinel</span></h1>
+            <p class="hero-subtitle">Navigating Indian Law with Precision. Get instant AI-driven analysis, identify
+                sections (IPC/BNS), and generate police complaints in minutes.</p>
+            <div class="hero-actions">
+                <a href="{{ url_for('auth.signup') }}" class="btn-primary btn-large">Protect Your Rights Now</a>
+                <a href="#how-it-works" class="btn-secondary">Learn How it Works</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+                alt="Legal Gavel" class="premium-shadow">
+        </div>
+    </section>
+
+    <section id="how-it-works" class="features">
+        <div class="section-header">
+            <h2>{{ 'Our Services' if current_user else 'Why Choose LexAI?' }}</h2>
+            <p>{{ 'Select a tool to begin your legal journey.' if current_user else 'Advanced AI technology tailored for
+                the Indian Legal System.' }}</p>
+        </div>
+        <div class="feature-grid">
+            <a href="{{ url_for('dashboard.home') if current_user else url_for('auth.login') }}" class="feature-card">
+                <i class="fas fa-balance-scale"></i>
+                <h3>AI Legal Advisor</h3>
+                <p>Discuss your situation with our AI and get detailed analysis of applicable sections under BNS 2023
+                    and IPC.</p>
+            </a>
+            <a href="{{ url_for('complaint.index') if current_user else url_for('auth.login') }}" class="feature-card">
+                <i class="fas fa-file-contract"></i>
+                <h3>Complaint Generator</h3>
+                <p>Create professional police complaints ready for filing with all necessary legal formatting and
+                    sections.</p>
+            </a>
+            <a href="{{ url_for('search.index') if current_user else url_for('auth.login') }}" class="feature-card">
+                <i class="fas fa-search"></i>
+                <h3>Search IPC/BNS Law</h3>
+                <p>Instantly search for specific legal sections and get AI summaries of their implications and
+                    punishments.</p>
+            </a>
+            <a href="{{ url_for('rights.index') if current_user else url_for('auth.login') }}" class="feature-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Know Your Rights</h3>
+                <p>Understand your fundamental rights and assess bail possibilities for various legal conditions.</p>
+            </a>
+            <a href="{{ url_for('ocr.index') if current_user else url_for('auth.login') }}" class="feature-card">
+                <i class="fas fa-file-upload"></i>
+                <h3>OCR Doc Analysis</h3>
+                <p>Upload legal notices or documents to extract key information and get immediate AI-based advice.</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="cta-banner">
+        <h2>Ready to seek legal clarity?</h2>
+        <p>Join thousands of citizens empowering themselves with LexAI.</p>
+        <a href="{{ url_for('auth.signup') }}" class="btn-primary">Create Your Free Account</a>
+    </section>
+</div>
+
+<style>
+    .landing-page {
+        padding-top: 2rem;
+    }
+
+    .hero {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+        min-height: 80vh;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        line-height: 1.1;
+        margin-bottom: 2rem;
+    }
+
+    .hero-title span {
+        color: var(--accent-gold);
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        max-width: 500px;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .btn-large {
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+    }
+
+    .btn-secondary {
+        border: 1px solid var(--accent-gold);
+        color: var(--accent-gold);
+        padding: 1rem 2.5rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background: rgba(201, 168, 76, 0.1);
+    }
+
+    .hero-image img {
+        width: 100%;
+        border-radius: 12px;
+        border: var(--border-gold);
+    }
+
+    .features {
+        padding: 8rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 5rem;
+    }
+
+    .section-header h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .feature-card {
+        background: var(--card-bg);
+        padding: 3rem;
+        border-radius: 16px;
+        border: var(--border-gold);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(201, 168, 76, 0.2);
+        border-color: var(--accent-gold);
+    }
+
+    .feature-card i {
+        font-size: 3rem;
+        color: var(--accent-gold);
+        margin-bottom: 2rem;
+    }
+
+    .feature-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+        color: var(--text-secondary);
+    }
+
+    .cta-banner {
+        text-align: center;
+        background: linear-gradient(rgba(20, 27, 45, 0.9), rgba(20, 27, 45, 0.9)),
+            url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        padding: 8rem 2rem;
+        margin-top: 4rem;
+        border-top: var(--border-gold);
+    }
+
+    .cta-banner h2 {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-banner p {
+        margin-bottom: 3rem;
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+    }
+
+    .premium-shadow {
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    }
+
+    @media (max-width: 968px) {
+        .hero {
+            grid-template-columns: 1fr;
+            text-align: center;
+            padding-top: 4rem;
+        }
+
+        .hero-subtitle {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-actions {
+            justify-content: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+        }
+    }
+</style>
+{% endblock %}

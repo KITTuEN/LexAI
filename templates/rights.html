@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="rights-container">
+    <div class="header-section text-center">
+        <h1>Know Your Rights</h1>
+        <p class="subtitle">Empowering you with legal knowledge under BNS 2023 and CrPC/BNSS.</p>
+    </div>
+
+    <div class="rights-grid">
+        <div class="guide-selection">
+            <div class="guide-card active" onclick="loadGuide('arrest')">
+                <i class="fas fa-handcuffs"></i>
+                <h3>Arrest Rights</h3>
+                <p>What to do if you are being arrested.</p>
+            </div>
+            <div class="guide-card" onclick="loadGuide('bail')">
+                <i class="fas fa-gavel"></i>
+                <h3>Bail & Bond</h3>
+                <p>Laws regarding your freedom.</p>
+            </div>
+            <div class="guide-card" onclick="loadGuide('fir')">
+                <i class="fas fa-file-invoice"></i>
+                <h3>FIR & First Steps</h3>
+                <p>The correct way to file a complaint.</p>
+            </div>
+        </div>
+
+        <div class="guide-display card" id="guideContent">
+            <div class="display-placeholder text-center">
+                <i class="fas fa-shield-alt gold-icon" style="font-size: 4rem; opacity: 0.2; margin-bottom: 1rem;"></i>
+                <p>Select a guide to view detailed legal rights and procedures.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rights-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .header-section {
+        margin-bottom: 4rem;
+    }
+
+    .rights-grid {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 3rem;
+    }
+
+    .guide-selection {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .guide-card {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .guide-card:hover {
+        border-color: var(--accent-gold);
+        background: rgba(201, 168, 76, 0.05);
+    }
+
+    .guide-card.active {
+        border-color: var(--accent-gold);
+        background: rgba(201, 168, 76, 0.1);
+        box-shadow: 0 0 20px rgba(201, 168, 76, 0.1);
+    }
+
+    .guide-card i {
+        font-size: 1.5rem;
+        color: var(--accent-gold);
+        margin-bottom: 1rem;
+    }
+
+    .guide-card h3 {
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .guide-card p {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .guide-display {
+        min-height: 500px;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .rights-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 2rem;
+    }
+
+    .rights-list li {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        color: var(--text-secondary);
+        display: flex;
+        gap: 1rem;
+    }
+
+    .rights-list li::before {
+        content: "\f058";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        color: var(--accent-gold);
+    }
+
+    .pro-tip {
+        margin-top: auto;
+        padding: 1.5rem;
+        background: rgba(201, 168, 76, 0.1);
+        border-radius: 8px;
+        border-left: 4px solid var(--accent-gold);
+    }
+
+    @media (max-width: 968px) {
+        .rights-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function loadGuide(topic) {
+        // Update UI selection
+        document.querySelectorAll('.guide-card').forEach(card => card.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        const display = document.getElementById('guideContent');
+        display.innerHTML = '<div class="text-center"><div class="spinner"></div><p>Loading rights guide...</p></div>';
+
+        try {
+            const response = await fetch(`/rights/guide/${topic}`);
+            const data = await response.json();
+
+            display.innerHTML = `
+                <h2 class="gold-text">${data.title}</h2>
+                <ul class="rights-list">
+                    ${data.points.map(p => `<li>${p}</li>`).join('')}
+                </ul>
+                <div class="pro-tip">
+                    <strong><i class="fas fa-lightbulb"></i> Pro-Tip:</strong> ${data.tips}
+                </div>
+            `;
+        } catch (error) {
+            display.innerHTML = '<p class="text-danger">Failed to load guide. Please try again.</p>';
+        }
+    }
+
+    // Auto load first guide
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('.guide-card').click();
+    });
+</script>
+{% endblock %}

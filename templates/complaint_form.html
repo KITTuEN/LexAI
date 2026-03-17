@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="complaint-container">
+    <div class="card">
+        <h1>Generate Police Complaint</h1>
+        <p>Follow the steps to generate a professional legal complaint.</p>
+
+        <form id="complaintForm" class="complaint-form">
+            <div class="form-group" style="display: flex; gap: 1rem; align-items: flex-end;">
+                <div style="flex-grow: 1;">
+                    <label>Select Case (Optional)</label>
+                    <select name="case_id" id="caseSelect">
+                        <option value="">-- New Manual Complaint --</option>
+                        {% for case in cases %}
+                        <option value="{{ case._id }}" {% if initial_case_id==case._id|string %}selected{% endif %}>{{
+                            case.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="button" id="newComplaintBtn" class="btn-primary-outline"
+                    style="height: 48px; border-style: dashed;">
+                    <i class="fas fa-plus"></i> Start New
+                </button>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Accused Name</label>
+                    <input type="text" name="accused_name" required>
+                </div>
+                <div class="form-group">
+                    <label>Incident Date</label>
+                    <input type="date" name="incident_date" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Incident Location</label>
+                <input type="text" name="location" required placeholder="e.g. MG Road, Bangalore">
+            </div>
+
+            <div class="form-group">
+                <label>Incident Description</label>
+                <textarea name="description" rows="5" required
+                    placeholder="Describe what happened in detail..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary">Generate Complaint Preview</button>
+        </form>
+    </div>
+
+    <div id="complaintPreview" class="card" style="display: none; margin-top: 2rem;">
+        <div class="card-header">
+            <h2>Complaint Preview</h2>
+            <div class="actions">
+                <button class="btn-primary-outline" onclick="window.print()">Print</button>
+                <button id="downloadPdfBtn" class="btn-primary-outline">Download PDF</button>
+            </div>
+        </div>
+        <div id="previewText" class="preview-text" contenteditable="true"></div>
+    </div>
+</div>
+
+<!-- Include html2pdf.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+    .complaint-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .complaint-form {
+        margin-top: 2rem;
+    }
+
+    .preview-text {
+        background: white;
+        color: black;
+        padding: 3rem;
+        border-radius: 4px;
+        font-family: 'Times New Roman', Times, serif;
+        white-space: pre-wrap;
+        line-height: 1.5;
+        margin-top: 2rem;
+        border: 2px dashed transparent;
+        transition: border 0.3s;
+        outline: none;
+    }
+
+    .preview-text:hover,
+    .preview-text:focus {
+        border: 2px dashed var(--accent-gold);
+    }
+
+    .preview-text:empty::before {
+        content: 'Your complaint will appear here...';
+        color: #999;
+    }
+
+    select {
+        width: 100%;
+        padding: 0.8rem;
+        background: #1D263B;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Unified Load Function
+    const loadCaseData = async (caseId) => {
+        if (!caseId) return;
+        try {
+            const response = await fetch(`/complaint/data/${caseId}`);
+            const data = await response.json();
+
+            if (data && !data.error) {
+                const form = document.getElementById('complaintForm');
+                const details = data.details || {};
+                form.elements['accused_name'].value = details.accused_name || '';
+                form.elements['incident_date'].value = details.incident_date || '';
+                form.elements['location'].value = details.location || '';
+                form.elements['description'].value = details.description || '';
+
+                const previewElement = document.getElementById('previewText');
+                if (data.final_text) {
+                    previewElement.innerText = data.final_text;
+                    document.getElementById('complaintPreview').style.display = 'block';
+                } else {
+                    previewElement.innerText = '';
+                    document.getElementById('complaintPreview').style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching complaint data:', error);
+        }
+    };
+
+    // Handle initial load from URL
+    const initialCaseId = document.getElementById('caseSelect').value;
+    if (initialCaseId) {
+        loadCaseData(initialCaseId);
+    }
+
+    // Handle case selection change
+    document.getElementById('caseSelect').onchange = (e) => loadCaseData(e.target.value);
+
+    // New Complaint / Reset Form
+    document.getElementById('newComplaintBtn').onclick = () => {
+        const form = document.getElementById('complaintForm');
+        form.reset();
+        document.getElementById('caseSelect').value = '';
+        document.getElementById('previewText').innerText = '';
+        document.getElementById('complaintPreview').style.display = 'none';
+        window.scrollTo(0, 0);
+    };
+
+    // Auto-save manual edits to the text
+    let saveTimeout;
+    document.getElementById('previewText').oninput = () => {
+        const caseId = document.getElementById('caseSelect').value;
+        if (!caseId) return;
+
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(async () => {
+            const text = document.getElementById('previewText').innerText;
+            await fetch('/complaint/save_text', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ case_id: caseId, complaint_text: text })
+            });
+            console.log('Saved...');
+        }, 1000); // Save after 1s of inactivity
+    };
+
+    document.getElementById('complaintForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        const response = await fetch('/complaint/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        const previewElement = document.getElementById('previewText');
+        previewElement.innerText = result.complaint_text;
+        document.getElementById('complaintPreview').style.display = 'block';
+        window.scrollTo(0, document.body.scrollHeight);
+
+        // PDF Download logic
+        document.getElementById('downloadPdfBtn').onclick = () => {
+            const element = document.createElement('div');
+            // Get the current text from the editable area (includes manual edits)
+            const currentText = document.getElementById('previewText').innerText.trim();
+            element.innerHTML = `<div style="padding: 0px 40px; font-family: 'Times New Roman', serif; white-space: pre-wrap; color: black; background: white; margin-top: 0;">${currentText}</div>`;
+
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: 'police_complaint.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, y: 0, scrollY: 0 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        };
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ocr-container">
+    <div class="card ocr-card">
+        <h1>Legal Document Analyst</h1>
+        <p>Upload an image of a legal notice, FIR, or contract for AI analysis.</p>
+
+        <form id="ocrForm" class="upload-zone" enctype="multipart/form-data">
+            <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;">
+            <div class="upload-content" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-file-upload gold-icon"></i>
+                <p id="fileName">Click to browse or drag and drop image</p>
+                <span class="subtitle">Supports JPG, PNG</span>
+            </div>
+            <button type="submit" id="analyzeBtn" class="btn-primary w-100" style="margin-top: 2rem;" disabled>Analyze
+                Document</button>
+        </form>
+
+        <div id="ocrLoading" class="loading-state" style="display: none;">
+            <div class="spinner"></div>
+            <p>Our legal AI is reading your document...</p>
+        </div>
+
+        <div id="ocrResult" class="analysis-result" style="display: none;">
+            <h3 class="gold-text"><i class="fas fa-brain"></i> AI Analysis Report</h3>
+            <div id="analysisText" class="markdown-content"></div>
+            <div class="warning-box" style="margin-top: 2rem;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>This is an AI summary for informational purposes. Please verify with a registered advocate.</p>
+            </div>
+            <button class="btn-secondary w-100" style="margin-top: 1rem;" onclick="resetOCR()">Analyze Another
+                Document</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ocr-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .ocr-card {
+        text-align: center;
+        padding: 3rem;
+    }
+
+    .upload-zone {
+        border: 2px dashed rgba(201, 168, 76, 0.3);
+        border-radius: 12px;
+        padding: 3rem;
+        margin-top: 2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .upload-zone:hover {
+        border-color: var(--accent-gold);
+        background: rgba(201, 168, 76, 0.05);
+    }
+
+    .upload-content i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .analysis-result {
+        text-align: left;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .markdown-content {
+        line-height: 1.6;
+        color: var(--text-secondary);
+        white-space: pre-wrap;
+    }
+
+    .warning-box {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(255, 165, 0, 0.1);
+        border-radius: 8px;
+        border-left: 4px solid #ffa500;
+        font-size: 0.9rem;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const ocrForm = document.getElementById('ocrForm');
+    const loading = document.getElementById('ocrLoading');
+    const resultArea = document.getElementById('ocrResult');
+    const analysisText = document.getElementById('analysisText');
+
+    fileInput.onchange = () => {
+        if (fileInput.files.length > 0) {
+            fileName.textContent = fileInput.files[0].name;
+            analyzeBtn.disabled = false;
+        }
+    };
+
+    ocrForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(ocrForm);
+
+        ocrForm.style.display = 'none';
+        loading.style.display = 'block';
+
+        try {
+            const response = await fetch('/ocr/analyze', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: formData
+            });
+            const data = await response.json();
+
+            loading.style.display = 'none';
+            if (data.analysis) {
+                resultArea.style.display = 'block';
+                analysisText.textContent = data.analysis;
+            } else {
+                alert(data.error || 'Failed to analyze');
+                resetOCR();
+            }
+        } catch (error) {
+            console.error(error);
+            loading.style.display = 'none';
+            alert('An error occurred');
+            resetOCR();
+        }
+    };
+
+    function resetOCR() {
+        ocrForm.reset();
+        fileName.textContent = 'Click to browse or drag and drop image';
+        analyzeBtn.disabled = true;
+        ocrForm.style.display = 'block';
+        resultArea.style.display = 'none';
+    }
+</script>
+{% endblock %}

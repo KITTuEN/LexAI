@@ -1,0 +1,14 @@
+flask
+flask-jwt-extended
+flask-limiter
+flask-cors
+pymongo
+bcrypt
+cryptography
+google-generativeai
+python-dotenv
+pdfkit
+bleach
+Pillow
+PyPDF2
+flask-wtf
