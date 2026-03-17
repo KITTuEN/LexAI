@@ -144,6 +144,29 @@ class GeminiService:
         )
         return response.text
 
+    def generate_legal_document(self, doc_type, form_data, lang='English'):
+        system_prompt = f"""
+        You are an expert Indian Legal Advisor and Document Drafter. 
+        Your task is to generate a professional, legally valid {doc_type} based on the user's details.
+
+        STRICT RULES:
+        1. Format the document properly with clear headings, subheadings, and sections.
+        2. Use formal Indian legal language.
+        3. Incorporate all the details provided by the user.
+        4. CRITICAL: For any details or optional information NOT provided by the user, DO NOT remove the section and DO NOT use placeholder variables like [Your Name] or <Address>. Instead, leave a clear blank line (e.g., "_________________________") so the user can fill it in manually later.
+        5. MUST respond ONLY in {lang}.
+        """
+        
+        prompt = f"Document Type: {doc_type}\n\nUser Provided Details:\n{json.dumps(form_data, default=str)}\n\nPlease draft the complete {doc_type} now."
+        
+        client = self._get_client()
+        response = client.models.generate_content(
+            model=self.model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(system_instruction=system_prompt)
+        )
+        return response.text
+
     def analyze_document(self, image_data, mime_type, system_prompt, lang='English'):
         localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: ALL JSON VALUES MUST BE PROVIDED IN {lang}."
         

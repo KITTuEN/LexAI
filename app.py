@@ -45,6 +45,7 @@ from routes.ocr import ocr_bp
 from routes.rights import rights_bp
 from routes.lawyer_chat import lawyer_chat_bp
 from routes.lawyer import lawyer_bp
+from routes.generator import generator_bp
 
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
@@ -56,6 +57,7 @@ app.register_blueprint(ocr_bp, url_prefix='/ocr')
 app.register_blueprint(rights_bp, url_prefix='/rights')
 app.register_blueprint(lawyer_chat_bp, url_prefix='/lawyer-chat')
 app.register_blueprint(lawyer_bp, url_prefix='/lawyer')
+app.register_blueprint(generator_bp, url_prefix='/generator')
 
 # Custom Filters
 @app.template_filter('decrypt_name')

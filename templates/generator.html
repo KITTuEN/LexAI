@@ -1,0 +1,576 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ocr-container professional-workspace">
+    <div class="workspace-header animate-up">
+        <div class="context-path">LexAI Workspace / Hub / <span class="active-node">Legal Document Generator</span>
+        </div>
+        <div class="user-greeting">
+            <h1>Legal Document Generator</h1>
+            <p class="subtitle">Generate professional, ready-to-file legal documents instantly</p>
+        </div>
+    </div>
+
+    <div class="ocr-layout animate-up" style="animation-delay: 0.1s;">
+        <!-- Left Panel: Form Input -->
+        <div class="ocr-panel input-panel">
+            <h3 class="panel-heading"><i class="fas fa-edit"></i> Document Details</h3>
+
+            <div class="form-group" style="display: flex; gap: 1rem; align-items: flex-end;">
+                <div style="flex-grow: 1;">
+                    <label for="savedDocSelect">Open Saved Document (Optional)</label>
+                    <select id="savedDocSelect" class="form-control"
+                        style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; width: 100%;">
+                        <option value="">-- Start New Document --</option>
+                        {% for doc in saved_docs %}
+                        <option value="{{ doc._id }}">{{ doc.doc_type }} ({{ doc.updated_at.strftime('%Y-%m-%d %H:%M')
+                            }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="docTypeSelect">Select Document Type</label>
+                <select id="docTypeSelect" class="form-control"
+                    style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; width: 100%;">
+                    <option value="" disabled selected>-- Select a Document Type --</option>
+                    <option value="FIR Complaint">FIR Complaint</option>
+                    <option value="Legal Notice">Legal Notice</option>
+                    <option value="Rental Agreement">Rental Agreement</option>
+                    <option value="Affidavit">Affidavit</option>
+                    <option value="Bail Application">Bail Application</option>
+                    <option value="Divorce Petition">Divorce Petition</option>
+                </select>
+            </div>
+
+            <div id="dynamicFormContainer" style="margin-top: 20px; display: none;">
+                <!-- Dynamic fields will be injected here -->
+            </div>
+
+            <button id="generateDocBtn" class="btn-primary-gold" style="width: 100%; margin-top: 20px; display: none;">
+                <i class="fas fa-magic"></i> Generate Legal Document
+            </button>
+
+            <!-- Loading overlay specific to generation -->
+            <div id="generationLoading" class="loading-overlay"
+                style="display: none; text-align: center; padding: 20px;">
+                <div class="spinner"></div>
+                <p>Generating professional document...</p>
+                <p style="font-size: 0.8em; color: var(--text-secondary);">This may take 15-30 seconds</p>
+            </div>
+        </div>
+
+        <!-- Right Panel: Document Output -->
+        <div class="ocr-panel results-panel">
+            <div class="panel-header-flex"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h3 class="panel-heading" style="margin-bottom: 0;"><i class="fas fa-file-alt"></i> Generated Document
+                </h3>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <span id="saveStatus"
+                        style="color: var(--text-secondary); font-size: 0.8em; display: none; margin-right: 10px;"><i
+                            class="fas fa-check-circle"></i> Saved</span>
+                    <button id="downloadPdfBtn" class="btn-primary-outline" style="display: none;">
+                        <i class="fas fa-file-pdf"></i> Download PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-content scrollable-content">
+                <div id="noResultState" class="empty-state">
+                    <i class="fas fa-file-signature"
+                        style="font-size: 3rem; color: rgba(255,255,255,0.1); margin-bottom: 1rem;"></i>
+                    <p>Select a document type and fill the details to generate, or load an existing document.</p>
+                </div>
+
+                <!-- contenteditable="true" makes it editable -->
+                <div id="generatedDocumentContainer" class="markdown-body" contenteditable="true"
+                    style="display: none; background: white; color: black; padding: 40px; border-radius: 8px; font-family: 'Times New Roman', Times, serif; font-size: 16px; line-height: 1.5; box-shadow: 0 4px 6px rgba(0,0,0,0.1); outline: none; border: 2px dashed transparent; transition: border 0.3s;">
+                    <!-- The generated text will go here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+    #generatedDocumentContainer:hover,
+    #generatedDocumentContainer:focus {
+        border: 2px dashed var(--accent-gold);
+    }
+
+    .professional-workspace {
+        padding: 3rem 5rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .workspace-header {
+        margin-bottom: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 2rem;
+    }
+
+    .context-path {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+    }
+
+    .active-node {
+        color: var(--accent-gold);
+        font-weight: 700;
+    }
+
+    .user-greeting h1 {
+        font-size: 2.5rem;
+        color: #fff;
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 0.5rem;
+    }
+
+    .user-greeting p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .ocr-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        min-height: 600px;
+    }
+
+    .ocr-panel {
+        background: rgba(13, 17, 23, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 2.5rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .panel-heading {
+        font-size: 1.2rem;
+        color: #fff;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .panel-heading i {
+        color: var(--accent-gold);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .form-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 1rem;
+        color: #fff;
+        font-family: inherit;
+        transition: var(--transition-smooth);
+    }
+
+    .form-input:focus {
+        border-color: var(--accent-gold);
+        outline: none;
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.2);
+    }
+
+    .btn-primary-gold {
+        background: var(--accent-gold);
+        color: #000;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.1em;
+    }
+
+    .btn-primary-gold:hover {
+        background: #dbc07b;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(219, 192, 123, 0.3);
+    }
+
+    .btn-primary-outline {
+        background: transparent;
+        color: var(--accent-gold);
+        border: 1px solid var(--accent-gold);
+        padding: 0.6rem 1.2rem;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .btn-primary-outline:hover {
+        background: rgba(201, 168, 76, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .empty-state {
+        text-align: center;
+        color: var(--text-secondary);
+        padding: 4rem 2rem;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(201, 168, 76, 0.2);
+        border-top-color: var(--accent-gold);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1.5rem auto;
+    }
+
+    @keyframes spin {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .animate-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 992px) {
+        .ocr-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .professional-workspace {
+            padding: 2rem;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const docTypeSelect = document.getElementById('docTypeSelect');
+        const savedDocSelect = document.getElementById('savedDocSelect');
+        const dynamicFormContainer = document.getElementById('dynamicFormContainer');
+        const generateDocBtn = document.getElementById('generateDocBtn');
+        const generationLoading = document.getElementById('generationLoading');
+        const noResultState = document.getElementById('noResultState');
+        const generatedDocumentContainer = document.getElementById('generatedDocumentContainer');
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        const saveStatus = document.getElementById('saveStatus');
+
+        let currentDocumentId = null;
+        let saveTimeout = null;
+
+        const documentFields = {
+            "FIR Complaint": [
+                { id: "complainantName", label: "Complainant Name (Optional)", type: "text" },
+                { id: "complainantAddress", label: "Complainant Address (Optional)", type: "text" },
+                { id: "incidentDate", label: "Date of Incident", type: "date" },
+                { id: "incidentLocation", label: "Location of Incident", type: "text" },
+                { id: "accusedDetails", label: "Accused Details (if known)", type: "text" },
+                { id: "incidentDescription", label: "Description of Incident", type: "textarea" }
+            ],
+            "Legal Notice": [
+                { id: "senderName", label: "Sender Name", type: "text" },
+                { id: "receiverName", label: "Receiver Name", type: "text" },
+                { id: "receiverAddress", label: "Receiver Address", type: "text" },
+                { id: "issueDescription", label: "Description of Grievance/Issue", type: "textarea" },
+                { id: "demands", label: "Demands/Relief Sought", type: "text" },
+                { id: "deadlineDays", label: "Deadline for Response (Days)", type: "number" }
+            ],
+            "Rental Agreement": [
+                { id: "landlordName", label: "Landlord Name", type: "text" },
+                { id: "tenantName", label: "Tenant Name", type: "text" },
+                { id: "propertyAddress", label: "Property Address", type: "text" },
+                { id: "rentAmount", label: "Monthly Rent Amount", type: "number" },
+                { id: "securityDeposit", label: "Security Deposit", type: "number" },
+                { id: "startDate", label: "Agreement Start Date", type: "date" },
+                { id: "durationMonths", label: "Duration (Months)", type: "number" }
+            ],
+            "Affidavit": [
+                { id: "deponentName", label: "Deponent (Your) Name", type: "text" },
+                { id: "fatherName", label: "Father's Name", type: "text" },
+                { id: "age", label: "Age", type: "number" },
+                { id: "address", label: "Address", type: "text" },
+                { id: "purpose", label: "Purpose of Affidavit", type: "text" },
+                { id: "statements", label: "Key Statements/Facts to Declare", type: "textarea" }
+            ],
+            "Bail Application": [
+                { id: "courtName", label: "Court Name", type: "text" },
+                { id: "applicantName", label: "Applicant (Accused) Name", type: "text" },
+                { id: "firNumber", label: "FIR Number", type: "text" },
+                { id: "policeStation", label: "Police Station", type: "text" },
+                { id: "sections", label: "Sections Charged Under", type: "text" },
+                { id: "groundsForBail", label: "Grounds for Bail", type: "textarea" }
+            ],
+            "Divorce Petition": [
+                { id: "courtName", label: "Family Court Name", type: "text" },
+                { id: "petitionerName", label: "Petitioner Name", type: "text" },
+                { id: "respondentName", label: "Respondent Name", type: "text" },
+                { id: "marriageDate", label: "Date of Marriage", type: "date" },
+                { id: "groundsForDivorce", label: "Grounds for Divorce (e.g., Cruelty, Mutual Consent)", type: "text" },
+                { id: "briefFacts", label: "Brief Facts/Issues", type: "textarea" }
+            ]
+        };
+
+        const renderFormFields = (selectedType) => {
+            const fields = documentFields[selectedType];
+
+            if (fields) {
+                dynamicFormContainer.innerHTML = '';
+                fields.forEach(field => {
+                    const group = document.createElement('div');
+                    group.className = 'form-group';
+
+                    const label = document.createElement('label');
+                    label.htmlFor = field.id;
+                    label.textContent = field.label;
+                    group.appendChild(label);
+
+                    let input;
+                    if (field.type === 'textarea') {
+                        input = document.createElement('textarea');
+                        input.rows = 4;
+                    } else {
+                        input = document.createElement('input');
+                        input.type = field.type;
+                    }
+
+                    input.id = field.id;
+                    input.className = 'form-input';
+                    input.placeholder = `Enter ${field.label.toLowerCase()}`;
+                    group.appendChild(input);
+
+                    dynamicFormContainer.appendChild(group);
+                });
+
+                dynamicFormContainer.style.display = 'block';
+                generateDocBtn.style.display = 'flex';
+            } else {
+                dynamicFormContainer.style.display = 'none';
+                generateDocBtn.style.display = 'none';
+            }
+        };
+
+        docTypeSelect.addEventListener('change', (e) => {
+            savedDocSelect.value = ""; // Reset saved selection
+            currentDocumentId = null;
+            renderFormFields(e.target.value);
+            noResultState.style.display = 'block';
+            generatedDocumentContainer.style.display = 'none';
+            downloadPdfBtn.style.display = 'none';
+        });
+
+        // Load an existing document
+        savedDocSelect.addEventListener('change', async (e) => {
+            const docId = e.target.value;
+            if (!docId) {
+                // User went back to "New Document"
+                currentDocumentId = null;
+                docTypeSelect.value = "";
+                dynamicFormContainer.style.display = 'none';
+                generateDocBtn.style.display = 'none';
+                noResultState.style.display = 'block';
+                generatedDocumentContainer.style.display = 'none';
+                downloadPdfBtn.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/generator/data/${docId}`, {
+                    headers: { 'X-CSRFToken': '{{ csrf_token() }}' }
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentDocumentId = docId;
+                    docTypeSelect.value = data.doc_type;
+                    renderFormFields(data.doc_type);
+
+                    // Populate form fields with saved data
+                    const fields = documentFields[data.doc_type];
+                    fields.forEach(field => {
+                        const val = data.form_data[field.label];
+                        if (val) {
+                            document.getElementById(field.id).value = val;
+                        }
+                    });
+
+                    // We preserve newlines by using textContent/innerText depending on HTML structure
+                    // If it was saved from gemini, it might be markdown. If edited, plain text.
+                    // For simplicity, handle it uniformly as multiline plain text editing mimicking markdown visual
+                    generatedDocumentContainer.innerText = data.document_text;
+
+                    noResultState.style.display = 'none';
+                    generatedDocumentContainer.style.display = 'block';
+                    downloadPdfBtn.style.display = 'inline-flex';
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Could not load the document.");
+            }
+        });
+
+        generateDocBtn.addEventListener('click', async () => {
+            const docType = docTypeSelect.value;
+            if (!docType) {
+                alert('Please select a document type.');
+                return;
+            }
+
+            const formData = {};
+            const fields = documentFields[docType];
+            fields.forEach(field => {
+                formData[field.label] = document.getElementById(field.id).value;
+            });
+
+            // UI feedback
+            generateDocBtn.disabled = true;
+            generateDocBtn.style.opacity = '0.5';
+            noResultState.style.display = 'none';
+            generatedDocumentContainer.style.display = 'none';
+            downloadPdfBtn.style.display = 'none';
+            generationLoading.style.display = 'block';
+            saveStatus.style.display = 'none';
+
+            try {
+                const response = await fetch('/generator/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        doc_type: docType,
+                        form_data: formData
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentDocumentId = data.document_id;
+                    generatedDocumentContainer.innerText = data.document_text; // Use innerText over marked so it's easily editable
+                    generatedDocumentContainer.style.display = 'block';
+                    downloadPdfBtn.style.display = 'inline-flex';
+
+                    // Add to dropdown list implicitly or prompt refresh
+                    const newOpt = document.createElement('option');
+                    newOpt.value = data.document_id;
+                    const d = new Date();
+                    newOpt.text = `${docType} (${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')})`;
+                    savedDocSelect.appendChild(newOpt);
+                    savedDocSelect.value = data.document_id;
+                } else {
+                    alert(data.error || 'Failed to generate document');
+                    noResultState.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while communicating with the server.');
+                noResultState.style.display = 'block';
+            } finally {
+                generationLoading.style.display = 'none';
+                generateDocBtn.disabled = false;
+                generateDocBtn.style.opacity = '1';
+            }
+        });
+
+        // Auto-save edited text
+        generatedDocumentContainer.addEventListener('input', () => {
+            if (!currentDocumentId) return;
+
+            saveStatus.style.display = 'none';
+            clearTimeout(saveTimeout);
+
+            saveTimeout = setTimeout(async () => {
+                const text = generatedDocumentContainer.innerText;
+                try {
+                    await fetch('/generator/save_text', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            document_id: currentDocumentId,
+                            document_text: text
+                        })
+                    });
+
+                    saveStatus.style.display = 'inline-block';
+                    setTimeout(() => { saveStatus.style.display = 'none'; }, 3000);
+                } catch (e) {
+                    console.error("Auto-save failed", e);
+                }
+            }, 1500); // 1.5 second debounce
+        });
+
+        // PDF Download logic
+        downloadPdfBtn.addEventListener('click', () => {
+            const currentText = generatedDocumentContainer.innerText.trim();
+            const element = document.createElement('div');
+            // Generate basic HTML wrapper for PDF rendering to preserve whitespace formatting
+            element.innerHTML = `<div style="padding: 20px 40px; font-family: 'Times New Roman', serif; white-space: pre-wrap; color: black; background: white; margin-top: 0; font-size: 14px; line-height: 1.5;">${currentText}</div>`;
+
+            const docType = docTypeSelect.value.replace(/\s+/g, '_').toLowerCase();
+
+            const opt = {
+                margin: 15,
+                filename: `${docType}_draft.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        });
+    });
+</script>
+{% endblock %}
