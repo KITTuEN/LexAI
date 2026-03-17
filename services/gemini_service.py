@@ -8,13 +8,26 @@ load_dotenv()
 
 class GeminiService:
     def __init__(self):
-        api_key = os.getenv('GEMINI_API_KEY')
-        if not api_key:
-            print("WARNING: GEMINI_API_KEY not found.")
-        self.client = genai.Client(api_key=api_key)
+        keys_str = os.getenv('GEMINI_API_KEY', '')
+        self.api_keys = [k.strip() for k in keys_str.split(',') if k.strip()]
+        
+        if not self.api_keys:
+            print("WARNING: GEMINI_API_KEY not found or empty.")
+            
+        self.clients = [genai.Client(api_key=k) for k in self.api_keys]
+        self.current_client_index = 0
+        
         # Using gemini-flash-latest as the standard reliable model
         self.model_name = 'gemini-flash-latest'
         self.spatial_cache = {} # Cache for nearby resources
+
+    def _get_client(self):
+        if not self.clients:
+            print("WARNING: No valid Gemini clients could be initialized.")
+            return None
+        client = self.clients[self.current_client_index]
+        self.current_client_index = (self.current_client_index + 1) % len(self.clients)
+        return client
 
     def get_chat_response(self, chat_history, system_prompt, lang='English'):
         localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: YOU MUST RESPOND ONLY IN {lang}."
@@ -26,8 +39,8 @@ class GeminiService:
             formatted_history.append(types.Content(role=role, parts=[types.Part(text=msg['content'])]))
         
         last_message = chat_history[-1]['content']
-        
-        chat = self.client.chats.create(
+        client = self._get_client()
+        chat = client.chats.create(
             model=self.model_name,
             config=types.GenerateContentConfig(system_instruction=localized_system_prompt),
             history=formatted_history
@@ -74,7 +87,8 @@ class GeminiService:
         }}
         """
         
-        response = self.client.models.generate_content(
+        client = self._get_client()
+        response = client.models.generate_content(
             model=self.model_name,
             contents=prompt,
             config=types.GenerateContentConfig(
@@ -92,7 +106,8 @@ class GeminiService:
         try:
             localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: ALL ANALYSIS AND DESCRIPTIONS WITHIN THE JSON MUST BE IN {lang}."
             prompt = f"Analyze legal query: {query}. Respond in STRICT JSON format."
-            response = self.client.models.generate_content(
+            client = self._get_client()
+            response = client.models.generate_content(
                 model=self.model_name,
                 contents=prompt,
                 config=types.GenerateContentConfig(
@@ -126,7 +141,8 @@ class GeminiService:
     def generate_complaint(self, details, system_prompt, lang='English'):
         localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: YOU MUST GENERATE THE COMPLAINT TEXT ONLY IN {lang}."
         prompt = f"Complaint Details: {json.dumps(details, default=str)}\n\nGenerate the formal complaint text."
-        response = self.client.models.generate_content(
+        client = self._get_client()
+        response = client.models.generate_content(
             model=self.model_name,
             contents=prompt,
             config=types.GenerateContentConfig(system_instruction=localized_system_prompt)
@@ -157,7 +173,8 @@ class GeminiService:
         }
         """
         
-        response = self.client.models.generate_content(
+        client = self._get_client()
+        response = client.models.generate_content(
             model=self.model_name,
             contents=[types.Part.from_bytes(data=image_data, mime_type=mime_type), prompt],
             config=types.GenerateContentConfig(
@@ -202,7 +219,8 @@ class GeminiService:
         """
         
         try:
-            response = self.client.models.generate_content(
+            client = self._get_client()
+            response = client.models.generate_content(
                 model=self.model_name,
                 contents=prompt,
                 config=types.GenerateContentConfig(
@@ -236,7 +254,8 @@ class GeminiService:
         }}
         """
         
-        response = self.client.models.generate_content(
+        client = self._get_client()
+        response = client.models.generate_content(
             model=self.model_name,
             contents=prompt,
             config=types.GenerateContentConfig(
@@ -263,7 +282,8 @@ class GeminiService:
         }}
         """
         
-        response = self.client.models.generate_content(
+        client = self._get_client()
+        response = client.models.generate_content(
             model=self.model_name,
             contents=prompt,
             config=types.GenerateContentConfig(response_mime_type="application/json")
