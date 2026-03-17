@@ -215,6 +215,36 @@
         font-size: 1.5rem;
         cursor: pointer;
     }
+
+    /* RESPONSIVE STYLES */
+    @media (max-width: 900px) {
+        .chat-page {
+            grid-template-columns: 1fr;
+            height: auto;
+            padding: 1rem;
+            margin: 1rem auto;
+        }
+
+        .chat-sidebar {
+            margin-bottom: 1rem;
+        }
+
+        .chat-main {
+            height: 65vh;
+            /* Ensure chat has scrolling height on mobile */
+        }
+
+        .analysis-grid {
+            grid-template-columns: 1fr !important;
+            /* Stack analysis cards */
+        }
+
+        .bubble {
+            max-width: 85%;
+            /* Make bubbles slightly wider on small screens */
+            padding: 0.8rem 1rem;
+        }
+    }
 </style>
 {% endblock %}
 

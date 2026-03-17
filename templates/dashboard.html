@@ -549,9 +549,15 @@
         }
     }
 
+    @media (max-width: 1024px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
     @media (max-width: 768px) {
         .dashboard-container {
-            padding: 2rem 1.5rem;
+            padding: 2rem 1rem;
         }
 
         .dashboard-header h1 {
@@ -559,12 +565,34 @@
         }
 
         .stats-row {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
+            /* Stack totally on mobile instead of squishing */
+            gap: 1rem;
+        }
+
+        .stat-card {
+            flex-direction: row;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            margin-bottom: 0.2rem;
         }
 
         .cases-table th:nth-child(2),
         .cases-table td:nth-child(2) {
             display: none;
+        }
+
+        .analysis-grid {
+            grid-template-columns: 1fr !important;
+            /* Fix inline style on mobile */
         }
     }
 </style>

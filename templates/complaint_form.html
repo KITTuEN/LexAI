@@ -114,6 +114,32 @@
         border-radius: 6px;
         color: white;
     }
+
+    /* RESPONSIVE STYLES */
+    @media (max-width: 768px) {
+        .complaint-container {
+            padding: 0 1rem;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .preview-text {
+            padding: 1.2rem;
+        }
+
+        /* Fix inline flex styling on the top select row */
+        .form-group[style*="flex"] {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 1rem;
+        }
+
+        #newComplaintBtn {
+            width: 100%;
+        }
+    }
 </style>
 {% endblock %}
 

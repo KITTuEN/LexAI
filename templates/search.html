@@ -139,6 +139,31 @@
         position: absolute;
         left: 0;
     }
+
+    /* RESPONSIVE STYLES */
+    @media (max-width: 768px) {
+        .search-container {
+            padding: 0 1rem;
+        }
+
+        .search-input-wrapper {
+            flex-direction: column;
+        }
+
+        .search-input-wrapper button {
+            width: 100%;
+            padding: 1rem;
+        }
+
+        .result-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .badge-row {
+            flex-wrap: wrap;
+        }
+    }
 </style>
 {% endblock %}
 

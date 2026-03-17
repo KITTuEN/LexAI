@@ -361,6 +361,34 @@
         .new-case-workspace {
             padding: 2rem 1.5rem;
         }
+
+        .past-cases-list {
+            max-height: 500px;
+            /* Don't stretch infinitely on mobile */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .new-case-workspace {
+            padding: 1.5rem 1rem;
+        }
+
+        h1 {
+            font-size: 2rem !important;
+        }
+
+        .past-case-card {
+            padding: 1rem;
+        }
+
+        .past-case-actions {
+            flex-direction: column;
+        }
+
+        .past-case-actions a {
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>
 {% endblock %}
