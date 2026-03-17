@@ -51,12 +51,14 @@ def dashboard_view():
     cases_analyzed = len([c for c in cases if c['status'] == 'Analyzed'])
     total_searches = len(searches)
     
+    lang = user.get('preferred_language', 'English')
+    
     # Legal tip
-    tip_prompt = "Generate a short, helpful legal tip of the day for an Indian citizen."
+    tip_prompt = f"Generate a short, helpful legal tip of the day for an Indian citizen. RESPOND ONLY IN {lang}."
     try:
         legal_tip = gemini_service.model.generate_content(tip_prompt).text
     except:
-        legal_tip = "Always consult a registered advocate before signing important documents."
+        legal_tip = "Always consult a registered advocate before signing important documents." if lang == 'English' else "महत्वपूर्ण दस्तावेजों पर हस्ताक्षर करने से पहले हमेशा एक पंजीकृत अधिवक्ता से परामर्श लें।"
 
     return render_template('dashboard.html', 
                             cases=cases, 
@@ -81,7 +83,8 @@ def profile_update():
     data = {
         'name': request.form.get('name'),
         'phone': request.form.get('phone'),
-        'location': request.form.get('location')
+        'location': request.form.get('location'),
+        'preferred_language': request.form.get('preferred_language', 'English')
     }
     user_model.update_user_profile(user_id, data)
     return redirect(url_for('dashboard.profile_view'))
@@ -89,12 +92,24 @@ def profile_update():
 @dashboard_bp.route('/api/nearby')
 @jwt_required()
 def nearby_help():
+    user_id = get_jwt_identity()
+    user = user_model.collection.find_one({"_id": ObjectId(user_id)})
+    lang = user.get('preferred_language', 'English')
+    
     lat = request.args.get('lat')
     lng = request.args.get('lng')
+    query = request.args.get('query')
     
+    # Handle manual location query if provided
+    if query:
+        geo_data = gemini_service.geocode_location(query)
+        if geo_data:
+            lat = geo_data['lat']
+            lng = geo_data['lng']
+
     if lat and lng:
-        # Use Gemini to find actual real-world legal landmarks based on coordinates
-        real_data = gemini_service.find_nearby_legal_resources(lat, lng)
+        # Use Gemini to find actual real-world legal landmarks based on coordinates strictly
+        real_data = gemini_service.find_nearby_legal_resources(lat, lng, lang=lang)
         if real_data:
             # Calculate precise distance for each landmark
             u_lat = float(lat)
@@ -103,7 +118,13 @@ def nearby_help():
                 if 'lat' in item and 'lng' in item:
                     dist = haversine(u_lat, u_lng, item['lat'], item['lng'])
                     item['distance'] = f"{dist:.2f} km"
-            return jsonify(real_data)
+            
+            return jsonify({
+                "results": real_data,
+                "lat": u_lat,
+                "lng": u_lng,
+                "display_name": query if query else f"{u_lat:.4f}, {u_lng:.4f}"
+            })
 
     # Fallback to simulated data if Gemini fails or coordinates are missing
     mock_data = [

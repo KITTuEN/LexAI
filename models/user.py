@@ -68,6 +68,8 @@ class UserModel:
             update_fields["phone_encrypted"] = encryption_service.encrypt(data['phone'])
         if 'location' in data:
             update_fields["location_encrypted"] = encryption_service.encrypt(data['location'])
+        if 'preferred_language' in data:
+            update_fields["preferred_language"] = data['preferred_language']
             
         if update_fields:
             return self.collection.update_one(

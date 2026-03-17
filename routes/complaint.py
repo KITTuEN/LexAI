@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from database import case_model
+from bson import ObjectId
+from database import case_model, user_model
 from services.gemini_service import gemini_service
 
 complaint_bp = Blueprint('complaint', __name__)
@@ -39,7 +40,12 @@ def generate():
         }
         case_model.save_complaint(case_id, complaint_details)
         
-    text = gemini_service.generate_complaint(data, COMPLAINT_SYSTEM_PROMPT)
+    # Get language
+    user_id = get_jwt_identity()
+    user = user_model.collection.find_one({"_id": ObjectId(user_id)})
+    lang = user.get('preferred_language', 'English')
+    
+    text = gemini_service.generate_complaint(data, COMPLAINT_SYSTEM_PROMPT, lang=lang)
     
     # Also save the generated text as the initial 'final' text
     if case_id:

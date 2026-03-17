@@ -738,3 +738,15 @@ h3,
     margin: 0 auto;
     padding: 4rem 2rem;
 }
+
+/* Global Select Options Styling */
+select {
+    background-color: var(--navy-deep);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+select option {
+    background-color: var(--navy-deep);
+    color: var(--text-primary);
+}

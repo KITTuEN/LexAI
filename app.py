@@ -11,6 +11,7 @@ from config import Config
 # Models
 from models.user import UserModel
 from models.case import CaseModel
+from services.translations import translate
 
 load_dotenv()
 
@@ -80,7 +81,8 @@ def inject_globals():
 
     return {
         "legal_disclaimer": "LexAI provides general legal information for educational purposes only. It does not constitute legal advice and does not create an attorney-client relationship. For matters requiring legal action, always consult a qualified advocate registered with the Bar Council of India.",
-        "current_user": current_user
+        "current_user": current_user,
+        "_t": lambda key: translate(key, current_user.get('preferred_language', 'English') if current_user else 'English')
     }
 
 @app.route('/')

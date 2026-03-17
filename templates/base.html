@@ -34,12 +34,12 @@
 
             <div class="nav-links" id="nav-links">
                 {% if current_user %}
-                <a href="{{ url_for('dashboard.member_home') }}">Home</a>
+                <a href="{{ url_for('dashboard.member_home') }}">{{ _t('home') }}</a>
                 {% if current_user.role == 'lawyer' %}
                 <a href="{{ url_for('lawyer_panel.messages') }}">Consultations</a>
                 <a href="{{ url_for('lawyer_panel.profile') }}">Professional Profile</a>
                 {% endif %}
-                <a href="{{ url_for('dashboard.dashboard_view') }}">Dashboard</a>
+                <a href="{{ url_for('dashboard.dashboard_view') }}">{{ _t('dashboard') }}</a>
 
                 <a href="{{ url_for('dashboard.profile_view') }}" class="nav-profile-link" title="My Profile">
                     <div class="nav-avatar">
@@ -47,12 +47,13 @@
                     </div>
                 </a>
 
-                <a href="{{ url_for('auth.logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> {{
+                    _t('logout') }}</a>
                 {% else %}
-                <a href="{{ url_for('index') }}">Home</a>
-                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a href="{{ url_for('index') }}">{{ _t('home') }}</a>
+                <a href="{{ url_for('auth.login') }}">{{ _t('login') }}</a>
                 <a href="{{ url_for('auth.signup') }}" class="btn-primary"
-                    style="padding: 0.5rem 1.2rem; margin-left: 1rem;">Get Started</a>
+                    style="padding: 0.5rem 1.2rem; margin-left: 1rem;">{{ _t('get_started') }}</a>
                 {% endif %}
             </div>
         </div>

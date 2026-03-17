@@ -40,6 +40,29 @@
                             placeholder="e.g. Mumbai, Maharashtra">
                         <small class="form-hint">Used for finding nearby legal support.</small>
                     </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-language"></i> Preferred Language</label>
+                        <select name="preferred_language">
+                            <option value="English" {% if user.preferred_language=='English' %}selected{% endif %}>
+                                English</option>
+                            <option value="Hindi" {% if user.preferred_language=='Hindi' %}selected{% endif %}>Hindi
+                                (हिन्दी)</option>
+                            <option value="Telugu" {% if user.preferred_language=='Telugu' %}selected{% endif %}>Telugu
+                                (తెలుగు)</option>
+                            <option value="Tamil" {% if user.preferred_language=='Tamil' %}selected{% endif %}>Tamil
+                                (தமிழ்)</option>
+                            <option value="Kannada" {% if user.preferred_language=='Kannada' %}selected{% endif %}>
+                                Kannada (ಕನ್ನಡ)</option>
+                            <option value="Marathi" {% if user.preferred_language=='Marathi' %}selected{% endif %}>
+                                Marathi (मराठी)</option>
+                            <option value="Bengali" {% if user.preferred_language=='Bengali' %}selected{% endif %}>
+                                Bengali (বাংলা)</option>
+                            <option value="Gujarati" {% if user.preferred_language=='Gujarati' %}selected{% endif %}>
+                                Gujarati (ગુજરાતી)</option>
+                        </select>
+                        <small class="form-hint">AI responses and UI will adapt to this choice.</small>
+                    </div>
                 </div>
 
                 <div class="profile-actions">

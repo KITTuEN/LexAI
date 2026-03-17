@@ -1,6 +1,8 @@
 import base64
 from flask import Blueprint, render_template, request, jsonify
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from bson import ObjectId
+from database import user_model
 from services.gemini_service import gemini_service
 
 ocr_bp = Blueprint('ocr', __name__)
@@ -33,7 +35,12 @@ def analyze():
         image_b64 = base64.b64encode(image_data).decode('utf-8')
         mime_type = file.mimetype
         
-        analysis = gemini_service.analyze_document(image_b64, mime_type, SYSTEM_OCR_PROMPT)
+        # Get language
+        user_id = get_jwt_identity()
+        user = user_model.collection.find_one({"_id": ObjectId(user_id)})
+        lang = user.get('preferred_language', 'English')
+        
+        analysis = gemini_service.analyze_document(image_b64, mime_type, SYSTEM_OCR_PROMPT, lang=lang)
         return jsonify({"analysis": analysis})
     except Exception as e:
         print(f"OCR Error: {e}")

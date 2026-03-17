@@ -28,10 +28,15 @@ def query():
         return jsonify(cached['result'])
         
     # If not cached, fetch from Gemini
-    result = gemini_service.search_section(q, SEARCH_SYSTEM_PROMPT)
+    user_id = get_jwt_identity()
+    from database import user_model
+    from bson import ObjectId
+    user = user_model.collection.find_one({"_id": ObjectId(user_id)})
+    lang = user.get('preferred_language', 'English')
+    
+    result = gemini_service.search_section(q, SEARCH_SYSTEM_PROMPT, lang=lang)
     
     # Save search to database for future caching
-    user_id = get_jwt_identity()
     search_model.create_search(user_id, q, result)
     
     return jsonify(result)

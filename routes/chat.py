@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from bson import ObjectId
-from database import db, case_model
+from database import db, case_model, user_model
 from services.gemini_service import gemini_service
 
 chat_bp = Blueprint('chat', __name__)
@@ -42,11 +42,13 @@ def send_message(case_id):
     updated_case = case_model.get_case(case_id)
     chat_history = updated_case['chat_history']
     
-    # Inject situation summary into prompt
-    custom_prompt = SYSTEM_CHAT_PROMPT.format(situation_summary=case['situation_summary'])
+    # Get language
+    user_data = user_model.collection.find_one({"_id": ObjectId(user_id)})
+    lang = user_data.get('preferred_language', 'English')
     
     try:
-        ai_response = gemini_service.get_chat_response(chat_history, custom_prompt)
+        custom_prompt = SYSTEM_CHAT_PROMPT.format(situation_summary=case['situation_summary'])
+        ai_response = gemini_service.get_chat_response(chat_history, custom_prompt, lang=lang)
         case_model.add_message(case_id, 'ai', ai_response)
         case_model.update_status(case_id, 'In Progress')
         return jsonify({"response": ai_response})
@@ -62,13 +64,17 @@ def analyze(case_id):
     if not case or str(case['user_id']) != user_id:
         return jsonify({"error": "Access Denied"}), 403
 
+    # Get language
+    user_data = user_model.collection.find_one({"_id": ObjectId(user_id)})
+    lang = user_data.get('preferred_language', 'English')
+    
     analysis_prompt = """
     Analyze the case fully based on Indian Law. 
     Use BNS 2023 as primary with IPC references.
     Provide result in the requested JSON format.
     """
     
-    analysis = gemini_service.analyze_case(case['situation_summary'], case['chat_history'], analysis_prompt)
+    analysis = gemini_service.analyze_case(case['situation_summary'], case['chat_history'], analysis_prompt, lang=lang)
     case_model.save_analysis(case_id, analysis)
     
     return jsonify(analysis)

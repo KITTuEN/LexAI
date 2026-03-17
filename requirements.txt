@@ -5,7 +5,7 @@ flask-cors
 pymongo
 bcrypt
 cryptography
-google-generativeai
+google-genai
 python-dotenv
 pdfkit
 bleach

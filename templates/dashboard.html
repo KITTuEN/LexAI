@@ -3,8 +3,9 @@
 {% block content %}
 <div class="dashboard-container">
     <header class="dashboard-header">
-        <h1>Welcome back, {{ current_user.name_encrypted | decrypt_name if current_user else 'User' }}</h1>
-        <p>Your legal assistant is ready to help.</p>
+        <h1>{{ _t('welcome_back_user') }}, {{ current_user.name_encrypted | decrypt_name if current_user else 'User' }}
+        </h1>
+        <p>{{ _t('dashboard_hint') }}</p>
     </header>
 
     <div class="stats-row">
@@ -12,28 +13,28 @@
             <i class="fas fa-folder-open gold-icon"></i>
             <div class="stat-info">
                 <h3>{{ total_cases }}</h3>
-                <p>Total Cases</p>
+                <p>{{ _t('total_cases_label') }}</p>
             </div>
         </div>
         <div class="stat-card">
             <i class="fas fa-spinner gold-icon"></i>
             <div class="stat-info">
                 <h3>{{ cases_in_progress }}</h3>
-                <p>In Progress</p>
+                <p>{{ _t('in_progress') }}</p>
             </div>
         </div>
         <div class="stat-card">
             <i class="fas fa-check-circle gold-icon"></i>
             <div class="stat-info">
                 <h3>{{ cases_analyzed }}</h3>
-                <p>Analyzed</p>
+                <p>{{ _t('analyzed') }}</p>
             </div>
         </div>
         <div class="stat-card">
             <i class="fas fa-search gold-icon"></i>
             <div class="stat-info">
                 <h3>{{ total_searches }}</h3>
-                <p>Searches Made</p>
+                <p>{{ _t('searches_made') }}</p>
             </div>
         </div>
     </div>
@@ -42,19 +43,19 @@
         <div class="main-content">
             <div class="recent-cases card">
                 <div class="card-header">
-                    <h2 class="premium-title" style="font-size: 2rem;">My Legal Cases</h2>
+                    <h2 class="premium-title" style="font-size: 2rem;">{{ _t('my_legal_cases') }}</h2>
                     <a href="#" class="btn-primary" id="newCaseBtn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">+
-                        New Case</a>
+                        {{ _t('new_case') }}</a>
                 </div>
 
                 <div class="responsive-table-container">
                     <table class="cases-table">
                         <thead>
                             <tr>
-                                <th>Case Title</th>
-                                <th>Created</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>{{ _t('case_title') }}</th>
+                                <th>{{ _t('created') }}</th>
+                                <th>{{ _t('status') }}</th>
+                                <th>{{ _t('actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -104,7 +105,7 @@
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="4" class="no-data">No cases found. Start by creating a new case.</td>
+                                <td colspan="4" class="no-data">{{ _t('no_cases_found') }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -114,16 +115,16 @@
 
             <div class="search-history card" style="margin-top: 2.5rem;">
                 <div class="card-header">
-                    <h2 class="premium-title" style="font-size: 1.8rem;">Recent Law Searches</h2>
-                    <a href="{{ url_for('search.index') }}" class="btn-primary-outline">New Search</a>
+                    <h2 class="premium-title" style="font-size: 1.8rem;">{{ _t('recent_law_searches') }}</h2>
+                    <a href="{{ url_for('search.index') }}" class="btn-primary-outline">{{ _t('new_search') }}</a>
                 </div>
                 <div class="responsive-table-container">
                     <table class="cases-table">
                         <thead>
                             <tr>
-                                <th>Query</th>
-                                <th>Summary</th>
-                                <th>Date</th>
+                                <th>{{ _t('query') }}</th>
+                                <th>{{ _t('summary') }}</th>
+                                <th>{{ _t('date') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -137,7 +138,7 @@
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="3" class="no-data">No search history found.</td>
+                                <td colspan="3" class="no-data">{{ _t('no_search_history') }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -149,28 +150,28 @@
         <div class="side-panel">
             <div class="legal-tip card glass-accent">
                 <h3 class="premium-title" style="font-size: 1.4rem; margin-bottom: 1rem;"><i
-                        class="fas fa-lightbulb"></i> Daily Tip</h3>
+                        class="fas fa-lightbulb"></i> {{ _t('daily_tip') }}</h3>
                 <p style="font-size: 0.95rem; line-height: 1.7;">{{ legal_tip }}</p>
             </div>
 
             <div class="find-lawyer-card card glass-accent" style="margin-top: 2rem; border-color: var(--accent-gold);">
                 <h3 class="premium-title" style="font-size: 1.4rem; margin-bottom: 1rem;"><i class="fas fa-gavel"></i>
-                    Need Legal Help?</h3>
-                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Connect with verified
-                    legal professionals to discuss your case details privately.</p>
-                <a href="{{ url_for('list_lawyers') }}" class="btn-primary w-100" style="padding: 0.8rem;">Find a
-                    Lawyer</a>
+                    {{ _t('need_legal_help') }}</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">{{
+                    _t('legal_help_hint') }}</p>
+                <a href="{{ url_for('list_lawyers') }}" class="btn-primary w-100" style="padding: 0.8rem;">{{
+                    _t('find_a_lawyer') }}</a>
             </div>
 
             <div class="quick-facts card" style="margin-top: 2rem;">
-                <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem;">System Overview</h3>
+                <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem;">{{ _t('system_overview') }}</h3>
                 <div class="fact-list">
                     <div class="fact-item">
-                        <span class="label">BNS 2023 Compliance</span>
+                        <span class="label">{{ _t('compliance') }}</span>
                         <span class="value green-text">Active</span>
                     </div>
                     <div class="fact-item">
-                        <span class="label">AI Model</span>
+                        <span class="label">{{ _t('ai_model') }}</span>
                         <span class="value gold-text">Gemini Pro 1.5</span>
                     </div>
                 </div>
@@ -183,20 +184,20 @@
 <div id="newCaseModal" class="modal">
     <div class="modal-content card" style="max-width: 500px;">
         <span class="close-modal" id="closeNewCase">&times;</span>
-        <h2>Create New Case</h2>
+        <h2>{{ _t('create_new_case') }}</h2>
         <form action="{{ url_for('cases.create') }}" method="POST" style="margin-top: 1.5rem;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <div class="form-group">
-                <label>Case Title</label>
+                <label>{{ _t('case_title_label') }}</label>
                 <input type="text" name="title" required placeholder="e.g. Property Dispute with Neighbor">
             </div>
             <div class="form-group">
-                <label>Initial Situation Summary</label>
+                <label>{{ _t('situation_summary_label') }}</label>
                 <textarea name="situation_summary" rows="4" required
                     style="width: 100%; background: #1D263B; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white; padding: 0.8rem; outline: none;"
                     placeholder="Describe your situation briefly..."></textarea>
             </div>
-            <button type="submit" class="btn-primary w-100">Create & Start Chat</button>
+            <button type="submit" class="btn-primary w-100">{{ _t('create_start_chat') }}</button>
         </form>
     </div>
 </div>
@@ -601,14 +602,14 @@
 
         const showAnalysis = (data) => {
             analysisResult.innerHTML = `
-                <h1 class="gold-text">Legal Analysis Result</h1>
+                <h1 class="gold-text">{{ _t('legal_analysis_result') }}</h1>
                 <div class="analysis-section">
-                    <h3>Case Summary</h3>
+                    <h3>{{ _t('summary_label') }}</h3>
                     <p>${data.case_summary}</p>
                 </div>
                 
                 <div class="analysis-section next-steps-box">
-                    <h3 class="step-title"><i class="fas fa-list-ol"></i> Recommended Next Steps</h3>
+                    <h3 class="step-title"><i class="fas fa-list-ol"></i> {{ _t('recommended_next_steps') }}</h3>
                     <div class="steps-list">
                         ${data.immediate_steps.map((step, index) => `
                             <div class="step-card">
@@ -621,20 +622,20 @@
 
                 <div class="analysis-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
                     <div class="card">
-                        <h4><i class="fas fa-gavel"></i> Applicable Sections</h4>
+                        <h4><i class="fas fa-gavel"></i> {{ _t('applicable_sections') }}</h4>
                         ${data.applicable_sections.map(s => `
                             <div class="section-item" style="margin-bottom: 1.5rem;">
                                 <h5>${s.section}: ${s.title}</h5>
                                 <p style="font-size: 0.9rem; color: var(--text-secondary);">${s.description}</p>
                                 <div class="details-row">
-                                    <span class="badge ${s.bailable ? 'green' : 'red'}">${s.bailable ? 'Bailable' : 'Non-Bailable'}</span>
+                                    <span class="badge ${s.bailable ? 'green' : 'red'}">${s.bailable ? '{{ _t("bailable") }}' : '{{ _t("non_bailable") }}'}</span>
                                     <span class="badge blue">${s.punishment}</span>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
                     <div class="card">
-                        <h4><i class="fas fa-shield-alt"></i> Defense Strategies</h4>
+                        <h4><i class="fas fa-shield-alt"></i> {{ _t('defense_strategies') }}</h4>
                         ${data.defense_strategies.map(s => `
                             <div class="strategy-item" style="margin-bottom: 1.5rem;">
                                 <strong>${s.strategy} (${s.strength})</strong>
@@ -645,7 +646,7 @@
                 </div>
 
                 <div class="analysis-section evidence-box" style="margin-top: 2rem;">
-                    <h3><i class="fas fa-folder-open"></i> Evidence to Gather</h3>
+                    <h3><i class="fas fa-folder-open"></i> {{ _t('evidence_to_gather') }}</h3>
                     <ul class="evidence-list">
                         ${data.evidence_to_gather.map(item => `<li>${item}</li>`).join('')}
                     </ul>

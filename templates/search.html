@@ -3,17 +3,17 @@
 {% block content %}
 <div class="search-container">
     <div class="search-box card">
-        <h1>Search IPC/BNS Sections</h1>
-        <p>Type a section number (e.g., "IPC 420") or a topic (e.g., "Cheating")</p>
+        <h1>{{ _t('search_ipc_bns') }}</h1>
+        <p>{{ _t('search_hint') }}</p>
         <div class="search-input-wrapper">
             <input type="text" id="searchInput" placeholder="Search legal sections...">
-            <button id="searchBtn" class="btn-primary">Search</button>
+            <button id="searchBtn" class="btn-primary">{{ _t('search') }}</button>
         </div>
     </div>
 
     <div id="searchLoading" class="loading-state" style="display: none;">
         <div class="spinner"></div>
-        <p>LexAI is retrieving legal information...</p>
+        <p>{{ _t('search_loading') }}</p>
     </div>
 
     <div id="searchResult" class="search-result-area">
@@ -190,23 +190,23 @@
                 </div>
                 
                 <div class="badge-row">
-                    <span class="badge ${data.bailable ? 'green' : 'red'}">${data.bailable ? 'Bailable' : 'Non-Bailable'}</span>
-                    <span class="badge ${data.cognizable ? 'blue' : 'red'}">${data.cognizable ? 'Cognizable' : 'Non-Cognizable'}</span>
-                    <span class="badge blue">Triable by: ${data.triable_by}</span>
+                    <span class="badge ${data.bailable ? 'green' : 'red'}">${data.bailable ? '{{ _t("bailable") }}' : '{{ _t("non_bailable") }}'}</span>
+                    <span class="badge ${data.cognizable ? 'blue' : 'red'}">${data.cognizable ? '{{ _t("cognizable") }}' : '{{ _t("non_cognizable") }}'}</span>
+                    <span class="badge blue">{{ _t("triable_by") }}: ${data.triable_by}</span>
                 </div>
 
                 <div class="info-section">
-                    <h4>Description</h4>
+                    <h4>{{ _t('description') }}</h4>
                     <p>${data.description}</p>
                 </div>
 
                 <div class="result-grid" style="margin-top: 2rem;">
                     <div class="info-section">
-                        <h4>Punishment</h4>
+                        <h4>{{ _t('punishment') }}</h4>
                         <p>${data.punishment}</p>
                     </div>
                     <div class="info-section">
-                        <h4>Key Ingredients</h4>
+                        <h4>{{ _t('key_ingredients') }}</h4>
                         <ul class="landmark-cases">
                             ${data.key_ingredients.map(i => `<li>${i}</li>`).join('')}
                         </ul>
@@ -214,7 +214,7 @@
                 </div>
 
                 <div class="info-section" style="margin-top: 2rem;">
-                    <h4>Landmark Cases</h4>
+                    <h4>{{ _t('landmark_cases') }}</h4>
                     <ul class="landmark-cases">
                         ${data.landmark_cases.map(c => `<li>${c}</li>`).join('')}
                     </ul>

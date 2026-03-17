@@ -1,6 +1,7 @@
 import os
 import json
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,34 +11,33 @@ class GeminiService:
         api_key = os.getenv('GEMINI_API_KEY')
         if not api_key:
             print("WARNING: GEMINI_API_KEY not found.")
-        genai.configure(api_key=api_key)
-        # Using gemini-flash-latest as it is the most stable alias in this environment
+        self.client = genai.Client(api_key=api_key)
+        # Using gemini-flash-latest as the standard reliable model
         self.model_name = 'gemini-flash-latest'
+        self.spatial_cache = {} # Cache for nearby resources
 
-    def get_chat_response(self, chat_history, system_prompt):
-        model = genai.GenerativeModel(
-            model_name=self.model_name,
-            system_instruction=system_prompt
-        )
+    def get_chat_response(self, chat_history, system_prompt, lang='English'):
+        localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: YOU MUST RESPOND ONLY IN {lang}."
         
-        # Format history for Gemini (excluding the last user message)
+        # Format history for new SDK
         formatted_history = []
         for msg in chat_history[:-1]:
             role = "user" if msg['role'] == 'user' else "model"
-            formatted_history.append({"role": role, "parts": [msg['content']]})
+            formatted_history.append(types.Content(role=role, parts=[types.Part(text=msg['content'])]))
         
         last_message = chat_history[-1]['content']
         
-        chat = model.start_chat(history=formatted_history)
-        response = chat.send_message(last_message)
+        chat = self.client.chats.create(
+            model=self.model_name,
+            config=types.GenerateContentConfig(system_instruction=localized_system_prompt),
+            history=formatted_history
+        )
+        response = chat.send_message(message=last_message)
         return response.text
 
-    def analyze_case(self, situation, chat_history, system_prompt):
-        model = genai.GenerativeModel(
-            model_name=self.model_name,
-            system_instruction=system_prompt
-        )
-        # Convert chat history to a JSON-serializable format (handling datetime objects)
+    def analyze_case(self, situation, chat_history, system_prompt, lang='English'):
+        localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: THE JSON VALUES (descriptions, steps, strategies, etc.) MUST BE IN {lang}."
+        
         serializable_history = []
         for msg in chat_history:
             m = msg.copy()
@@ -74,9 +74,11 @@ class GeminiService:
         }}
         """
         
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.GenerationConfig(
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                system_instruction=localized_system_prompt,
                 response_mime_type="application/json",
             )
         )
@@ -86,22 +88,20 @@ class GeminiService:
             print(f"Error parsing Gemini response: {e}")
             return {"error": "Failed to generate structured analysis", "raw_text": response.text}
 
-    def search_section(self, query, system_prompt):
+    def search_section(self, query, system_prompt, lang='English'):
         try:
-            model = genai.GenerativeModel(
-                model_name=self.model_name,
-                system_instruction=system_prompt
-            )
+            localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: ALL ANALYSIS AND DESCRIPTIONS WITHIN THE JSON MUST BE IN {lang}."
             prompt = f"Analyze legal query: {query}. Respond in STRICT JSON format."
-            response = model.generate_content(
-                prompt,
-                generation_config=genai.GenerationConfig(
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=localized_system_prompt,
                     response_mime_type="application/json",
-                    temperature=0.1 # Lower temperature for more consistent JSON
+                    temperature=0.1
                 )
             )
             
-            # Use regex to find JSON if model adds extra text (safety measure)
             import re
             text = response.text
             match = re.search(r'\{.*\}', text, re.DOTALL)
@@ -123,21 +123,18 @@ class GeminiService:
                 "landmark_cases": ["Retry Required"]
             }
 
-    def generate_complaint(self, details, system_prompt):
-        model = genai.GenerativeModel(
-            model_name=self.model_name,
-            system_instruction=system_prompt
-        )
-        # Ensure details are JSON serializable
+    def generate_complaint(self, details, system_prompt, lang='English'):
+        localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: YOU MUST GENERATE THE COMPLAINT TEXT ONLY IN {lang}."
         prompt = f"Complaint Details: {json.dumps(details, default=str)}\n\nGenerate the formal complaint text."
-        response = model.generate_content(prompt)
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(system_instruction=localized_system_prompt)
+        )
         return response.text
 
-    def analyze_document(self, image_data, mime_type, system_prompt):
-        model = genai.GenerativeModel(
-            model_name=self.model_name,
-            system_instruction=system_prompt
-        )
+    def analyze_document(self, image_data, mime_type, system_prompt, lang='English'):
+        localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: ALL JSON VALUES MUST BE PROVIDED IN {lang}."
         
         prompt = """
         Analyze this legal document (Contract, Policy, or Notice) and provide a professional breakdown in Indian Legal context.
@@ -160,9 +157,11 @@ class GeminiService:
         }
         """
         
-        response = model.generate_content(
-            [{"mime_type": mime_type, "data": image_data}, prompt],
-            generation_config=genai.GenerationConfig(
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=[types.Part.from_bytes(data=image_data, mime_type=mime_type), prompt],
+            config=types.GenerateContentConfig(
+                system_instruction=localized_system_prompt,
                 response_mime_type="application/json",
             )
         )
@@ -177,46 +176,102 @@ class GeminiService:
                 "raw_text": response.text
             }
 
-    def find_nearby_legal_resources(self, lat, lng):
-        model = genai.GenerativeModel(
-            model_name=self.model_name
-        )
-        
-        # User prompt to find actual landmarks based on coordinates
+    def find_nearby_legal_resources(self, lat, lng, lang='English'):
+        # Cache key based on rounded coordinates (2 decimal places ~1km accuracy)
+        cache_key = f"{round(float(lat), 2)}_{round(float(lng), 2)}_{lang}"
+        if cache_key in self.spatial_cache:
+            print(f"Returning cached spatial results for {cache_key}")
+            return self.spatial_cache[cache_key]
+
+        # Area context is now simplified to strictly rely on India
         prompt = f"""
-        Find real-world legal and security landmarks near coordinates: Lat {lat}, Lng {lng}.
-        Search for: 
-        1. Nearest Police Station
-        2. District or Session Court
-        3. Legal Aid Center or Government Office
-        4. Noted Law Firm or Advocate Office nearby
+        Identify 4 real-world legal landmarks (Police, Courts, Legal Aid) near Lat {lat}, Lng {lng} in {lang}. 
+        The location is in India.
         
-        Provide the actual names and approximate distances from these coordinates.
-        Note: Use your knowledge base of physical geography and infrastructure.
-        
-        Return exactly 4 items in this JSON format:
+        You MUST return valid JSON in this exact structure:
         [
             {{
-                "name": "Actual Landmark Name",
+                "name": "Official Landmark Name",
                 "type": "Police Station | Court | Legal Aid | Lawyer",
-                "lat": 16.82,
-                "lng": 81.53,
-                "status": "e.g. Open 24/7 | Closes 5 PM",
+                "lat": (exact float), 
+                "lng": (exact float),
+                "status": "Localized status (e.g. Open 24/7)", 
                 "icon": "fa-shield-alt | fa-gavel | fa-hand-holding-heart | fa-user-tie"
             }}
         ]
         """
         
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.GenerationConfig(
+        try:
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    temperature=0.1
+                )
+            )
+            result = json.loads(response.text)
+            self.spatial_cache[cache_key] = result
+            return result
+        except Exception as e:
+            error_msg = str(e)
+            if "429" in error_msg or "ResourceExhausted" in error_msg:
+                print("Gemini API Quota Exceeded.")
+                return []
+            
+            print(f"Error in find_nearby_legal_resources: {e}")
+            return []
+
+    def geocode_location(self, query):
+        prompt = f"""
+        Convert this location name or pincode into Latitude and Longitude coordinates.
+        Location: {query}
+        Assume India if country is not specified.
+        
+        Return ONLY a JSON object:
+        {{
+            "lat": float,
+            "lng": float,
+            "display_name": "Full official name of the location"
+        }}
+        """
+        
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(
                 response_mime_type="application/json",
+                temperature=0.0
             )
         )
         try:
             return json.loads(response.text)
         except Exception as e:
-            print(f"Error parsing spatial response: {e}")
-            return []
+            print(f"Geocoding Error: {e}")
+            return None
+
+    def generate_rights_guide(self, topic, lang='English'):
+        prompt = f"""
+        Provide a detailed legal guide on the topic: '{topic}' in the context of Indian Law (BNS 2023 / BNSS / BSA / Constitution of India).
+        The response MUST be in {lang}.
+        
+        Provide the response in STRICT JSON format:
+        {{
+            "title": "A clear, localized title for the guide",
+            "points": ["Short, impactful point 1", "Short, impactful point 2", "Point 3", "Point 4"],
+            "tips": "A helpful, localized summary tip for the user"
+        }}
+        """
+        
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(response_mime_type="application/json")
+        )
+        try:
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Error parsing rights guide: {e}")
+            return {"title": "Error", "points": ["Service unavailable"], "tips": "Please try again later."}
 
 gemini_service = GeminiService()

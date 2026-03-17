@@ -6,8 +6,8 @@
         <div class="context-path">LexAI Workspace / <span class="active-node">Hub</span></div>
         <div class="user-greeting">
             <span class="hub-label">PRO ACCESS</span>
-            <h1>Member Portal: {{ user.name_encrypted | decrypt_name }}</h1>
-            <p>Advanced Legal Intelligence Suite — Version 2.4.1</p>
+            <h1>{{ _t('welcome_back') }}, {{ user.name_encrypted | decrypt_name }}</h1>
+            <p class="subtitle">{{ _t('your_legal_hub') }}</p>
         </div>
     </div>
 
@@ -23,6 +23,10 @@
                             <div class="hub-logo-badge">
                                 <i class="fa-solid fa-brain"></i>
                             </div>
+                        </div>
+                        <div class="header-text">
+                            <h3>{{ _t('ai_legal_analyst') }}</h3>
+                            <p>Statutory Prediction</p>
                         </div>
                         <div class="card-body">
                             <h3>Smart Case Helper</h3>
@@ -83,6 +87,10 @@
                                 <i class="fa-solid fa-magnifying-glass"></i>
                             </div>
                         </div>
+                        <div class="header-text">
+                            <h3>{{ _t('smart_paper_reader') }}</h3>
+                            <p>AI Document Analysis</p>
+                        </div>
                         <div class="card-body">
                             <h3>Smart Paper Reader</h3>
                             <p>Upload photos of legal notices or reports to understand them instantly.</p>
@@ -98,6 +106,10 @@
                             <div class="hub-logo-badge">
                                 <i class="fa-solid fa-user-tie"></i>
                             </div>
+                        </div>
+                        <div class="header-text">
+                            <h3>{{ _t('legal_consultation') }}</h3>
+                            <p>Expert Advocates</p>
                         </div>
                         <div class="card-body">
                             <h3>Client Consultations</h3>
@@ -127,22 +139,28 @@
             <!-- Nearby Legal Help Finder -->
             <section class="nearby-legal-section animate-up" style="animation-delay: 0.6s;">
                 <div class="section-header">
-                    <h2 class="section-heading">📍 Nearby Legal Help Finder</h2>
-                    <p class="section-subtext">Real-time spatial intelligence powered by Gemini AI.</p>
-                </div>
-
-                <div class="nearby-grid" id="nearby-results">
-                    <div class="location-empty-state">
-                        <i class="fas fa-location-dot"></i>
-                        <p>Allow access to see legal resources near your current position.</p>
-                        <button id="btn-grant-access" class="btn-primary-gold"><i class="fas fa-crosshairs"></i> Allow
-                            Location Access</button>
+                    <h3><i class="fas fa-map-marked-alt" style="color: var(--accent-gold);"></i> Nearby Legal Help
+                        Finder</h3>
+                    <div id="location-status-container">
+                        <!-- Automatic localized status will appear here -->
                     </div>
                 </div>
+                <p class="section-desc">Real-time spatial intelligence powered by Gemini AI.</p>
 
-                <div class="location-status" id="location-status-container">
-                    <span class="location-hint"><i class="fas fa-info-circle"></i> Click the button above to discover
-                        real-time nearby support.</span>
+                <!-- Manual Location Search Bar -->
+                <div class="manual-location-search" style="margin: 1.5rem 0; display: flex; gap: 0.5rem;">
+                    <input type="text" id="manual-loc-input" placeholder="Enter City or Pincode (e.g., Mumbai, 400001)"
+                        style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.8rem; color: #fff; font-family: inherit;">
+                    <button id="btn-manual-search" class="btn-primary-gold" style="padding: 0 1.5rem;"><i
+                            class="fas fa-search"></i> Search</button>
+                </div>
+
+                <div id="nearby-results" class="nearby-grid">
+                    <!-- Cards will be populated dynamically -->
+                    <div class="location-empty-state" style="grid-column: 1 / -1; margin-top: 1rem;">
+                        <i class="fas fa-search-location"></i>
+                        <p>Enter a city or pincode above to discover nearby legal resources.</p>
+                    </div>
                 </div>
             </section>
         </div>
@@ -530,7 +548,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         const resultsContainer = document.getElementById('nearby-results');
         const statusContainer = document.getElementById('location-status-container');
-        const grantBtn = document.getElementById('btn-grant-access');
 
         const updateStatus = (type, text) => {
             if (type === 'live') {
@@ -542,25 +559,48 @@
             }
         };
 
-        const fetchNearby = async (lat, long) => {
+        const fetchNearby = async (lat, long, query = null) => {
             try {
+                const statusText = query ? `Search initiated for "${query}"...` : `GPS Signal Received: ${lat.toFixed(4)}, ${long.toFixed(4)}. Analysis in progress...`;
+                console.log(`LexAI Discovery: Using ${query ? 'Manual Query' : 'Browser GPS'} ->`, { lat, long, query });
+                updateStatus('waiting', `<i class="fas fa-satellite"></i> ${statusText}`);
+
                 resultsContainer.innerHTML = `
                     <div class="location-loading">
-                        <i class="fas fa-satellite-dish fa-spin"></i>
-                        <p>Pinpointing real-time landmarks via AI...</p>
+                        <i class="fas fa-satellite-dish fa-spin" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--accent-gold);"></i>
+                        <p style="color: var(--text-secondary);">Querying regional legal intelligence...</p>
                     </div>`;
 
-                const url = lat && long ? `/dashboard/api/nearby?lat=${lat}&lng=${long}` : '/dashboard/api/nearby';
-                const response = await fetch(url);
+                let url = '/dashboard/api/nearby';
+                const params = new URLSearchParams();
+                if (query) params.append('query', query);
+                if (lat !== null && long !== null) {
+                    params.append('lat', lat);
+                    params.append('lng', long);
+                }
+                url += `?${params.toString()}`;
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // Increased to 30s for stability
+
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
                 const data = await response.json();
 
                 resultsContainer.innerHTML = '';
-                if (!data || data.length === 0) {
+
+                // Extract results from new object structure
+                const landmarks = Array.isArray(data) ? data : (data.results || []);
+                const resolvedLat = data.lat || lat;
+                const resolvedLng = data.lng || long;
+                const displayName = data.display_name || (query || `${resolvedLat.toFixed(4)}, ${resolvedLng.toFixed(4)}`);
+
+                if (!landmarks || landmarks.length === 0) {
                     resultsContainer.innerHTML = '<p class="error-msg">No nearby legal resources found for this area.</p>';
                     return;
                 }
 
-                data.forEach((item, index) => {
+                landmarks.forEach((item, index) => {
                     const card = document.createElement('div');
                     card.className = 'nearby-card animate-up';
                     card.style.animationDelay = `${0.2 + (index * 0.1)}s`;
@@ -578,44 +618,30 @@
                     resultsContainer.appendChild(card);
                 });
 
-                if (lat && long) {
-                    updateStatus('live', 'Current Real-Time GPS Location Active');
-                }
+                updateStatus('live', `${query ? 'Search Complete' : 'Live GPS Explorer Active'} [v1.2] — Near ${displayName}`);
             } catch (err) {
-                resultsContainer.innerHTML = '<p class="error-msg">Failed to connect to Discovery Service.</p>';
-                updateStatus('error', 'Discovery Service Unavailable');
+                resultsContainer.innerHTML = '<p class="error-msg">Discovery Service is currently at full capacity or unavailable. Please try again soon.</p>';
+                updateStatus('error', 'Service Limit Reached');
             }
         };
 
-        const handleGrantAccess = () => {
-            if (!("geolocation" in navigator)) {
-                updateStatus('error', 'Geolocation not supported by browser');
-                return;
-            }
+        const manualBtn = document.getElementById('btn-manual-search');
+        const manualInput = document.getElementById('manual-loc-input');
 
-            updateStatus('waiting', 'Please check your browser permission prompt...');
+        // Initial State: Waiting for manual search
+        updateStatus('waiting', 'Waiting for search query...');
 
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    fetchNearby(position.coords.latitude, position.coords.longitude);
-                },
-                (error) => {
-                    let msg = "Location Access Denied";
-                    if (error.code === error.TIMEOUT) msg = "Location Request Timed Out";
-                    updateStatus('error', msg);
-                    resultsContainer.innerHTML = `
-                        <div class="location-empty-state">
-                            <i class="fas fa-map-location-dot"></i>
-                            <p>${msg}. Please enable GPS in your browser settings.</p>
-                            <button id="btn-retry" class="btn-primary-gold" onclick="location.reload()"><i class="fas fa-redo"></i> Retry Access</button>
-                        </div>`;
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-        };
+        if (manualBtn) {
+            manualBtn.addEventListener('click', () => {
+                const query = manualInput.value.trim();
+                if (query) {
+                    fetchNearby(null, null, query);
+                }
+            });
 
-        if (grantBtn) {
-            grantBtn.addEventListener('click', handleGrantAccess);
+            manualInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') manualBtn.click();
+            });
         }
     });
 </script>

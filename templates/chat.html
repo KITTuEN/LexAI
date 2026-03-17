@@ -4,20 +4,21 @@
 <div class="chat-page">
     <div class="chat-sidebar">
         <div class="card case-details">
-            <h2>Case Details</h2>
+            <h2>{{ _t('case_details') }}</h2>
             <div class="detail-item">
-                <label>Title</label>
+                <label>{{ _t('title') }}</label>
                 <p>{{ case.title }}</p>
             </div>
             <div class="detail-item">
-                <label>Summary</label>
+                <label>{{ _t('summary_label') }}</label>
                 <p>{{ case.situation_summary }}</p>
             </div>
             <div class="detail-item">
-                <label>Status</label>
+                <label>{{ _t('status') }}</label>
                 <span class="status-badge {{ case.status.lower() }}">{{ case.status }}</span>
             </div>
-            <button id="analyzeBtn" class="btn-primary w-100" style="margin-top: 2rem;">Analyze My Case</button>
+            <button id="analyzeBtn" class="btn-primary w-100" style="margin-top: 2rem;">{{ _t('analyze_my_case')
+                }}</button>
         </div>
     </div>
 
@@ -42,7 +43,7 @@
                 <span></span><span></span><span></span>
             </div>
             <div class="input-wrapper">
-                <textarea id="userInput" placeholder="Type your response here..." rows="1"></textarea>
+                <textarea id="userInput" placeholder="{{ _t('type_response_hint') }}" rows="1"></textarea>
                 <button id="sendBtn" class="send-btn"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
@@ -218,5 +219,62 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+    const analysisResult = document.getElementById('analysisResult');
+    const showAnalysis = (data) => {
+        analysisResult.innerHTML = `
+            <h1 class="gold-text">{{ _t('legal_analysis_result') }}</h1>
+            <div class="analysis-section">
+                <h3>{{ _t('summary_label') }}</h3>
+                <p>${data.case_summary}</p>
+            </div>
+            
+            <div class="analysis-section next-steps-box">
+                <h3 class="step-title"><i class="fas fa-list-ol"></i> {{ _t('recommended_next_steps') }}</h3>
+                <div class="steps-list">
+                    ${data.immediate_steps.map((step, index) => `
+                        <div class="step-card">
+                            <span class="step-num">${index + 1}</span>
+                            <p>${step}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="analysis-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="card">
+                    <h4><i class="fas fa-gavel"></i> {{ _t('applicable_sections') }}</h4>
+                    ${data.applicable_sections.map(s => `
+                        <div class="section-item" style="margin-bottom: 1.5rem;">
+                            <h5>${s.section}: ${s.title}</h5>
+                            <p>${s.description}</p>
+                            <div class="details-row">
+                                <span class="badge ${s.bailable ? 'green' : 'red'}">${s.bailable ? '{{ _t("bailable") }}' : '{{ _t("non_bailable") }}'}</span>
+                                <span class="badge blue">${s.punishment}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="card">
+                    <h4><i class="fas fa-shield-alt"></i> {{ _t('defense_strategies') }}</h4>
+                    ${data.defense_strategies.map(s => `
+                        <div class="strategy-item" style="margin-bottom: 1.5rem;">
+                            <strong>${s.strategy} (${s.strength})</strong>
+                            <p>${s.details}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="analysis-section evidence-box" style="margin-top: 2rem;">
+                <h3><i class="fas fa-folder-open"></i> {{ _t('evidence_to_gather') }}</h3>
+                <ul class="evidence-list">
+                    ${data.evidence_to_gather.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+        document.getElementById('analysisModal').style.display = 'block';
+    };
+</script>
 <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
 {% endblock %}

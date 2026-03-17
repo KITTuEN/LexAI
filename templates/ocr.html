@@ -3,42 +3,42 @@
 {% block content %}
 <div class="ocr-container">
     <div class="card ocr-card">
-        <h1>Legal Document Analyst</h1>
+        <h1>{{ _t('document_analyst') }}</h1>
         <p>Upload an image of a legal notice, FIR, or contract for AI analysis.</p>
 
         <form id="ocrForm" class="upload-zone" enctype="multipart/form-data">
             <input type="file" id="fileInput" name="file" accept="image/*,.pdf" style="display: none;">
             <div class="upload-content" onclick="document.getElementById('fileInput').click()">
                 <i class="fas fa-file-upload gold-icon"></i>
-                <p id="fileName">Click to browse or drag and drop image</p>
+                <p id="fileName">{{ _t('ocr_upload_hint') }}</p>
                 <span class="subtitle">Supports JPG, PNG, PDF</span>
             </div>
-            <button type="submit" id="analyzeBtn" class="btn-primary w-100" style="margin-top: 2rem;" disabled>Analyze
-                Document</button>
+            <button type="submit" id="analyzeBtn" class="btn-primary w-100" style="margin-top: 2rem;" disabled>{{
+                _t('analyze_doc') }}</button>
         </form>
 
         <div id="ocrLoading" class="loading-state" style="display: none;">
             <div class="spinner"></div>
-            <p>Our legal AI is reading your document...</p>
+            <p>{{ _t('ocr_loading') }}</p>
         </div>
 
         <div id="ocrResult" class="analysis-dashboard" style="display: none;">
             <!-- Hero Summary -->
             <div class="result-hero animate-up">
                 <div class="hero-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                <h2 class="gold-text">Simplified Summary</h2>
+                <h2 class="gold-text">{{ _t('simplified_summary') }}</h2>
                 <p id="simplifiedSummary" class="hero-text"></p>
             </div>
 
             <div class="analysis-grid">
                 <!-- Pros & Cons -->
                 <div class="grid-card pros-card animate-up" style="animation-delay: 0.1s;">
-                    <h3><i class="fa-solid fa-circle-check gold-text"></i> Pros & Benefits</h3>
+                    <h3><i class="fa-solid fa-circle-check gold-text"></i> {{ _t('pros_benefits') }}</h3>
                     <ul id="prosList" class="detail-list"></ul>
                 </div>
 
                 <div class="grid-card cons-card animate-up" style="animation-delay: 0.2s;">
-                    <h3><i class="fa-solid fa-circle-exclamation gold-text"></i> Risks & Cons</h3>
+                    <h3><i class="fa-solid fa-circle-exclamation gold-text"></i> {{ _t('risks_cons') }}</h3>
                     <ul id="consList" class="detail-list"></ul>
                 </div>
 
@@ -47,7 +47,7 @@
                     <div class="beneficiary-header">
                         <div class="b-icon"><i class="fa-solid fa-balance-scale"></i></div>
                         <div>
-                            <h3>Who benefits more?</h3>
+                            <h3>{{ _t('who_benefits_more') }}</h3>
                             <h4 id="beneficiaryParty" class="gold-text"></h4>
                         </div>
                     </div>
@@ -56,24 +56,24 @@
 
                 <!-- Key Clauses -->
                 <div class="grid-card full-width animate-up" style="animation-delay: 0.4s;">
-                    <h3>Important Clauses</h3>
+                    <h3>{{ _t('important_clauses') }}</h3>
                     <div id="clausesContainer" class="clauses-grid"></div>
                 </div>
             </div>
 
             <!-- Recommendation -->
             <div class="recommendation-box animate-up" style="animation-delay: 0.5s;">
-                <h3><i class="fa-solid fa-shield-alt"></i> AI Recommendation</h3>
+                <h3><i class="fa-solid fa-shield-alt"></i> {{ _t('ai_recommendation') }}</h3>
                 <p id="recommendationText"></p>
             </div>
 
             <div class="warning-box animate-up" style="animation-delay: 0.6s;">
                 <i class="fas fa-exclamation-triangle"></i>
-                <p>This is an AI summary for informational purposes. Please verify with a registered advocate.</p>
+                <p>{{ _t('legal_disclaimer_short') }}</p>
             </div>
 
-            <button class="btn-secondary w-100" style="margin-top: 2rem;" onclick="resetOCR()">Analyze Another
-                Document</button>
+            <button class="btn-secondary w-100" style="margin-top: 2rem;" onclick="resetOCR()">{{ _t('analyze_doc')
+                }}</button>
         </div>
     </div>
 </div>
