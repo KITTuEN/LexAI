@@ -8,7 +8,9 @@ cases_bp = Blueprint('cases', __name__)
 @cases_bp.route('/new')
 @jwt_required()
 def new_case_view():
-    return render_template('new_case.html')
+    user_id = get_jwt_identity()
+    cases = case_model.get_user_cases(user_id) # Fetches all, sorted by date
+    return render_template('new_case.html', cases=cases)
 
 @cases_bp.route('/create', methods=['POST'])
 @jwt_required()
