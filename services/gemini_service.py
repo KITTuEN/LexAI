@@ -117,12 +117,7 @@ class GeminiService:
                 )
             )
             
-            import re
-            text = response.text
-            match = re.search(r'\{.*\}', text, re.DOTALL)
-            if match:
-                return json.loads(match.group())
-            return json.loads(text)
+            return json.loads(response.text)
         except Exception as e:
             print(f"Search Error: {e}")
             return {

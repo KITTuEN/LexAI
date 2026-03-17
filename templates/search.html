@@ -180,9 +180,17 @@
             if (e.key === 'Enter') performSearch();
         });
 
-        const renderResult = (data) => {
-            resultArea.innerHTML = `
-            <div class="card result-card">
+        const renderResult = (dataList) => {
+            if (!Array.isArray(dataList)) {
+                dataList = [dataList];
+            }
+            if (dataList.length === 0) {
+                resultArea.innerHTML = '<p>No results found.</p>';
+                return;
+            }
+
+            resultArea.innerHTML = dataList.map(data => `
+            <div class="card result-card" style="margin-bottom: 2rem;">
                 <div class="result-header">
                     <h2 class="gold-text">${data.section}</h2>
                     <h1>${data.title}</h1>
@@ -190,8 +198,8 @@
                 </div>
                 
                 <div class="badge-row">
-                    <span class="badge ${data.bailable ? 'green' : 'red'}">${data.bailable ? '{{ _t("bailable") }}' : '{{ _t("non_bailable") }}'}</span>
-                    <span class="badge ${data.cognizable ? 'blue' : 'red'}">${data.cognizable ? '{{ _t("cognizable") }}' : '{{ _t("non_cognizable") }}'}</span>
+                    <span class="badge ${(data.bailable && data.bailable.toLowerCase().includes('yes')) || data.bailable === true ? 'green' : 'red'}">${(data.bailable && data.bailable.toLowerCase().includes('yes')) || data.bailable === true ? '{{ _t("bailable") }}' : '{{ _t("non_bailable") }}'}</span>
+                    <span class="badge ${(data.cognizable && data.cognizable.toLowerCase().includes('yes')) || data.cognizable === true ? 'blue' : 'red'}">${(data.cognizable && data.cognizable.toLowerCase().includes('yes')) || data.cognizable === true ? '{{ _t("cognizable") }}' : '{{ _t("non_cognizable") }}'}</span>
                     <span class="badge blue">{{ _t("triable_by") }}: ${data.triable_by}</span>
                 </div>
 
@@ -208,7 +216,7 @@
                     <div class="info-section">
                         <h4>{{ _t('key_ingredients') }}</h4>
                         <ul class="landmark-cases">
-                            ${data.key_ingredients.map(i => `<li>${i}</li>`).join('')}
+                            ${Array.isArray(data.key_ingredients) ? data.key_ingredients.map(i => `<li>${i}</li>`).join('') : `<li>${data.key_ingredients}</li>`}
                         </ul>
                     </div>
                 </div>
@@ -216,11 +224,11 @@
                 <div class="info-section" style="margin-top: 2rem;">
                     <h4>{{ _t('landmark_cases') }}</h4>
                     <ul class="landmark-cases">
-                        ${data.landmark_cases.map(c => `<li>${c}</li>`).join('')}
+                        ${Array.isArray(data.landmark_cases) ? data.landmark_cases.map(c => `<li>${c}</li>`).join('') : `<li>${data.landmark_cases}</li>`}
                     </ul>
                 </div>
             </div>
-        `;
+            `).join('');
         };
     });
 </script>

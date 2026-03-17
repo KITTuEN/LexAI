@@ -111,26 +111,18 @@ def nearby_help():
         # Use Gemini to find actual real-world legal landmarks based on coordinates strictly
         real_data = gemini_service.find_nearby_legal_resources(lat, lng, lang=lang)
         if real_data:
-            # Calculate precise distance for each landmark
-            u_lat = float(lat)
-            u_lng = float(lng)
-            for item in real_data:
-                if 'lat' in item and 'lng' in item:
-                    dist = haversine(u_lat, u_lng, item['lat'], item['lng'])
-                    item['distance'] = f"{dist:.2f} km"
-            
             return jsonify({
                 "results": real_data,
-                "lat": u_lat,
-                "lng": u_lng,
-                "display_name": query if query else f"{u_lat:.4f}, {u_lng:.4f}"
+                "lat": float(lat),
+                "lng": float(lng),
+                "display_name": query if query else f"{float(lat):.4f}, {float(lng):.4f}"
             })
 
     # Fallback to simulated data if Gemini fails or coordinates are missing
     mock_data = [
-        {"name": "City Core Police Station", "type": "Police Station", "distance": "1.2 km", "status": "Open 24/7", "icon": "fa-shield-alt"},
-        {"name": "District High Court", "type": "Court", "distance": "2.5 km", "status": "Closes at 5 PM", "icon": "fa-gavel"},
-        {"name": "Central Legal Aid Center", "type": "Legal Aid", "distance": "0.8 km", "status": "Free Support", "icon": "fa-hand-holding-heart"},
-        {"name": "Adv. Rajesh Kumar (Expert)", "type": "Verified Lawyer", "distance": "1.5 km", "status": "Available Now", "icon": "fa-user-tie"}
+        {"name": "City Core Police Station", "type": "Police Station", "status": "Open 24/7", "icon": "fa-shield-alt"},
+        {"name": "District High Court", "type": "Court", "status": "Closes at 5 PM", "icon": "fa-gavel"},
+        {"name": "Central Legal Aid Center", "type": "Legal Aid", "status": "Free Support", "icon": "fa-hand-holding-heart"},
+        {"name": "Adv. Rajesh Kumar (Expert)", "type": "Verified Lawyer", "status": "Available Now", "icon": "fa-user-tie"}
     ]
     return jsonify(mock_data)
