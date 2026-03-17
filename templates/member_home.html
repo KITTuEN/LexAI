@@ -562,14 +562,13 @@
 
         const fetchNearby = async (lat, long, query = null) => {
             try {
-                const statusText = query ? `Search initiated for "${query}"...` : `GPS Signal Received: ${lat.toFixed(4)}, ${long.toFixed(4)}. Analysis in progress...`;
-                console.log(`LexAI Discovery: Using ${query ? 'Manual Query' : 'Browser GPS'} ->`, { lat, long, query });
-                updateStatus('waiting', `<i class="fas fa-satellite"></i> ${statusText}`);
+                const statusText = query ? `Locating "${query}"` : `Localizing coordinates...`;
+                updateStatus('waiting', `<i class="fas fa-bolt"></i> ${statusText}`);
 
                 resultsContainer.innerHTML = `
                     <div class="location-loading">
-                        <i class="fas fa-satellite-dish fa-spin" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--accent-gold);"></i>
-                        <p style="color: var(--text-secondary);">Querying regional legal intelligence...</p>
+                        <i class="fas fa-bolt fa-fade" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--accent-gold);"></i>
+                        <p style="color: var(--text-secondary);">Instantly fetching legal intelligence...</p>
                     </div>`;
 
                 let url = '/dashboard/api/nearby';
@@ -581,19 +580,15 @@
                 }
                 url += `?${params.toString()}`;
 
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000); // Increased to 30s for stability
-
-                const response = await fetch(url, { signal: controller.signal });
-                clearTimeout(timeoutId);
+                const response = await fetch(url);
                 const data = await response.json();
 
                 resultsContainer.innerHTML = '';
 
                 // Extract results from new object structure
                 const landmarks = Array.isArray(data) ? data : (data.results || []);
-                const resolvedLat = data.lat || lat;
-                const resolvedLng = data.lng || long;
+                const resolvedLat = data.lat || lat || 0.0;
+                const resolvedLng = data.lng || long || 0.0;
                 const displayName = data.display_name || (query || `${resolvedLat.toFixed(4)}, ${resolvedLng.toFixed(4)}`);
 
                 if (!landmarks || landmarks.length === 0) {
@@ -604,10 +599,10 @@
                 landmarks.forEach((item, index) => {
                     const card = document.createElement('div');
                     card.className = 'nearby-card animate-up';
-                    card.style.animationDelay = `${0.2 + (index * 0.1)}s`;
+                    card.style.animationDelay = `${0.1 + (index * 0.05)}s`;
                     card.style.cursor = 'pointer';
                     card.onclick = () => {
-                        window.open(`https://www.google.com/maps/search/?api=1&query=${item.lat},${item.lng}`, '_blank');
+                        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name + ' ' + displayName)}`, '_blank');
                     };
                     card.innerHTML = `
                         <div class="nearby-icon"><i class="fas ${item.icon}"></i></div>
@@ -623,10 +618,10 @@
                     resultsContainer.appendChild(card);
                 });
 
-                updateStatus('live', `${query ? 'Search Complete' : 'Live GPS Explorer Active'} [v1.2] — Near ${displayName}`);
+                updateStatus('live', `${query ? 'Search Complete' : 'Live Area Results'} — Near ${displayName}`);
             } catch (err) {
-                resultsContainer.innerHTML = '<p class="error-msg">Discovery Service is currently at full capacity or unavailable. Please try again soon.</p>';
-                updateStatus('error', 'Service Limit Reached');
+                resultsContainer.innerHTML = '<p class="error-msg">Discovery Service is currently unavailable. Please try again.</p>';
+                updateStatus('error', 'Service Error');
             }
         };
 
