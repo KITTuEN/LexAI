@@ -123,6 +123,28 @@
                     {% endif %}
                 </div>
             </section>
+
+            <!-- Nearby Legal Help Finder -->
+            <section class="nearby-legal-section animate-up" style="animation-delay: 0.6s;">
+                <div class="section-header">
+                    <h2 class="section-heading">📍 Nearby Legal Help Finder</h2>
+                    <p class="section-subtext">Real-time spatial intelligence powered by Gemini AI.</p>
+                </div>
+
+                <div class="nearby-grid" id="nearby-results">
+                    <div class="location-empty-state">
+                        <i class="fas fa-location-dot"></i>
+                        <p>Allow access to see legal resources near your current position.</p>
+                        <button id="btn-grant-access" class="btn-primary-gold"><i class="fas fa-crosshairs"></i> Allow
+                            Location Access</button>
+                    </div>
+                </div>
+
+                <div class="location-status" id="location-status-container">
+                    <span class="location-hint"><i class="fas fa-info-circle"></i> Click the button above to discover
+                        real-time nearby support.</span>
+                </div>
+            </section>
         </div>
     </div>
 </div>
@@ -319,5 +341,282 @@
             transform: translateY(0);
         }
     }
+
+    /* Nearby Legal Help Styles */
+    .nearby-legal-section {
+        margin-top: 5rem;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        margin-bottom: 5rem;
+    }
+
+    .section-header {
+        margin-bottom: 3.5rem;
+    }
+
+    .section-subtext {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        margin-top: 0.5rem;
+        opacity: 0.7;
+    }
+
+    .nearby-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .location-loading {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem;
+        color: var(--accent-gold);
+        background: rgba(201, 168, 76, 0.03);
+        border-radius: 16px;
+        border: 1px dashed rgba(201, 168, 76, 0.2);
+    }
+
+    .location-loading i {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .nearby-card {
+        background: rgba(13, 17, 23, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 1.8rem;
+        transition: var(--transition-smooth);
+        display: flex;
+        align-items: flex-start;
+        gap: 1.2rem;
+    }
+
+    .nearby-card:hover {
+        background: rgba(201, 168, 76, 0.05);
+        border-color: rgba(201, 168, 76, 0.3);
+        transform: translateY(-3px);
+    }
+
+    .nearby-icon {
+        width: 50px;
+        height: 50px;
+        background: rgba(201, 168, 76, 0.1);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--accent-gold);
+        flex-shrink: 0;
+    }
+
+    .nearby-info h4 {
+        color: #fff;
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .nearby-type {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--accent-gold);
+        letter-spacing: 0.1em;
+        margin-bottom: 0.8rem;
+        display: block;
+    }
+
+    .nearby-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .distance-tag {
+        color: #00ff88;
+        font-weight: 700;
+    }
+
+    .status-tag {
+        font-size: 0.8rem;
+    }
+
+    .location-empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px dashed rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+    }
+
+    .location-empty-state i {
+        font-size: 2.5rem;
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    .location-empty-state p {
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+    }
+
+    .btn-primary-gold {
+        background: var(--accent-gold);
+        color: #000;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.1em;
+    }
+
+    .btn-primary-gold:hover {
+        background: #dbc07b;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(219, 192, 123, 0.3);
+    }
+
+    .live-gps {
+        background: rgba(0, 255, 136, 0.1) !important;
+        border: 1px solid rgba(0, 255, 136, 0.3);
+        color: #00ff88 !important;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .btn-refresh-loc {
+        background: none;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-secondary);
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        margin-left: 1rem;
+    }
+
+    .btn-refresh-loc:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .nearby-legal-section {
+            padding: 1.5rem;
+            margin-top: 3rem;
+        }
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const resultsContainer = document.getElementById('nearby-results');
+        const statusContainer = document.getElementById('location-status-container');
+        const grantBtn = document.getElementById('btn-grant-access');
+
+        const updateStatus = (type, text) => {
+            if (type === 'live') {
+                statusContainer.innerHTML = `<span class="saved-location-badge live-gps"><i class="fas fa-satellite"></i> 🛰️ ${text}</span> <button class="btn-refresh-loc" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Refresh</button>`;
+            } else if (type === 'waiting') {
+                statusContainer.innerHTML = `<span class="location-badge-loading"><i class="fas fa-search-location fa-spin"></i> ${text}</span>`;
+            } else if (type === 'error') {
+                statusContainer.innerHTML = `<span class="no-location-badge"><i class="fas fa-exclamation-triangle"></i> ${text}</span>`;
+            }
+        };
+
+        const fetchNearby = async (lat, long) => {
+            try {
+                resultsContainer.innerHTML = `
+                    <div class="location-loading">
+                        <i class="fas fa-satellite-dish fa-spin"></i>
+                        <p>Pinpointing real-time landmarks via AI...</p>
+                    </div>`;
+
+                const url = lat && long ? `/dashboard/api/nearby?lat=${lat}&lng=${long}` : '/dashboard/api/nearby';
+                const response = await fetch(url);
+                const data = await response.json();
+
+                resultsContainer.innerHTML = '';
+                if (!data || data.length === 0) {
+                    resultsContainer.innerHTML = '<p class="error-msg">No nearby legal resources found for this area.</p>';
+                    return;
+                }
+
+                data.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'nearby-card animate-up';
+                    card.style.animationDelay = `${0.2 + (index * 0.1)}s`;
+                    card.innerHTML = `
+                        <div class="nearby-icon"><i class="fas ${item.icon}"></i></div>
+                        <div class="nearby-info">
+                            <span class="nearby-type">${item.type}</span>
+                            <h4>${item.name}</h4>
+                            <div class="nearby-meta">
+                                <span class="distance-tag"><i class="fas fa-location-arrow"></i> ${item.distance} away</span>
+                                <span class="status-tag"><i class="far fa-clock"></i> ${item.status}</span>
+                            </div>
+                        </div>
+                    `;
+                    resultsContainer.appendChild(card);
+                });
+
+                if (lat && long) {
+                    updateStatus('live', 'Current Real-Time GPS Location Active');
+                }
+            } catch (err) {
+                resultsContainer.innerHTML = '<p class="error-msg">Failed to connect to Discovery Service.</p>';
+                updateStatus('error', 'Discovery Service Unavailable');
+            }
+        };
+
+        const handleGrantAccess = () => {
+            if (!("geolocation" in navigator)) {
+                updateStatus('error', 'Geolocation not supported by browser');
+                return;
+            }
+
+            updateStatus('waiting', 'Please check your browser permission prompt...');
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    fetchNearby(position.coords.latitude, position.coords.longitude);
+                },
+                (error) => {
+                    let msg = "Location Access Denied";
+                    if (error.code === error.TIMEOUT) msg = "Location Request Timed Out";
+                    updateStatus('error', msg);
+                    resultsContainer.innerHTML = `
+                        <div class="location-empty-state">
+                            <i class="fas fa-map-location-dot"></i>
+                            <p>${msg}. Please enable GPS in your browser settings.</p>
+                            <button id="btn-retry" class="btn-primary-gold" onclick="location.reload()"><i class="fas fa-redo"></i> Retry Access</button>
+                        </div>`;
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        };
+
+        if (grantBtn) {
+            grantBtn.addEventListener('click', handleGrantAccess);
+        }
+    });
+</script>
 {% endblock %}

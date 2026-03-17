@@ -1,5 +1,6 @@
 from datetime import datetime
 import bcrypt
+from bson import ObjectId
 from services.encryption import encryption_service
 
 class UserModel:
@@ -18,6 +19,7 @@ class UserModel:
             "role": role,
             "created_at": datetime.utcnow(),
             "last_login": datetime.utcnow(),
+            "location_encrypted": None,
             "cases": []
         }
 
@@ -55,3 +57,21 @@ class UserModel:
             {"_id": ObjectId(user_id)},
             {"$set": {"experience_summary": experience_summary}}
         )
+
+    def update_user_profile(self, user_id, data):
+        """Update encrypted profile data for a user."""
+        update_fields = {}
+        
+        if 'name' in data:
+            update_fields["name_encrypted"] = encryption_service.encrypt(data['name'])
+        if 'phone' in data:
+            update_fields["phone_encrypted"] = encryption_service.encrypt(data['phone'])
+        if 'location' in data:
+            update_fields["location_encrypted"] = encryption_service.encrypt(data['location'])
+            
+        if update_fields:
+            return self.collection.update_one(
+                {"_id": ObjectId(user_id)},
+                {"$set": update_fields}
+            )
+        return None

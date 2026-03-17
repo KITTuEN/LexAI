@@ -87,18 +87,41 @@ class GeminiService:
             return {"error": "Failed to generate structured analysis", "raw_text": response.text}
 
     def search_section(self, query, system_prompt):
-        model = genai.GenerativeModel(
-            model_name=self.model_name,
-            system_instruction=system_prompt
-        )
-        prompt = f"Find details for: {query}\n\nReturn analysis in JSON format."
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.GenerationConfig(
-                response_mime_type="application/json",
+        try:
+            model = genai.GenerativeModel(
+                model_name=self.model_name,
+                system_instruction=system_prompt
             )
-        )
-        return json.loads(response.text)
+            prompt = f"Analyze legal query: {query}. Respond in STRICT JSON format."
+            response = model.generate_content(
+                prompt,
+                generation_config=genai.GenerationConfig(
+                    response_mime_type="application/json",
+                    temperature=0.1 # Lower temperature for more consistent JSON
+                )
+            )
+            
+            # Use regex to find JSON if model adds extra text (safety measure)
+            import re
+            text = response.text
+            match = re.search(r'\{.*\}', text, re.DOTALL)
+            if match:
+                return json.loads(match.group())
+            return json.loads(text)
+        except Exception as e:
+            print(f"Search Error: {e}")
+            return {
+                "section": "Error",
+                "title": "Search Failed",
+                "chapter": "System Issue",
+                "description": "The legal intelligence service is currently experiencing heavy load. Please try again in a moment.",
+                "bailable": False,
+                "cognizable": False,
+                "triable_by": "N/A",
+                "punishment": "N/A",
+                "key_ingredients": ["System Timeout", "Network Congestion"],
+                "landmark_cases": ["Retry Required"]
+            }
 
     def generate_complaint(self, details, system_prompt):
         model = genai.GenerativeModel(
@@ -153,5 +176,47 @@ class GeminiService:
                 "key_clauses": [], "recommendation": "Error in AI generation.",
                 "raw_text": response.text
             }
+
+    def find_nearby_legal_resources(self, lat, lng):
+        model = genai.GenerativeModel(
+            model_name=self.model_name
+        )
+        
+        # User prompt to find actual landmarks based on coordinates
+        prompt = f"""
+        Find real-world legal and security landmarks near coordinates: Lat {lat}, Lng {lng}.
+        Search for: 
+        1. Nearest Police Station
+        2. District or Session Court
+        3. Legal Aid Center or Government Office
+        4. Noted Law Firm or Advocate Office nearby
+        
+        Provide the actual names and approximate distances from these coordinates.
+        Note: Use your knowledge base of physical geography and infrastructure.
+        
+        Return exactly 4 items in this JSON format:
+        [
+            {{
+                "name": "Actual Landmark Name",
+                "type": "Police Station | Court | Legal Aid | Lawyer",
+                "lat": 16.82,
+                "lng": 81.53,
+                "status": "e.g. Open 24/7 | Closes 5 PM",
+                "icon": "fa-shield-alt | fa-gavel | fa-hand-holding-heart | fa-user-tie"
+            }}
+        ]
+        """
+        
+        response = model.generate_content(
+            prompt,
+            generation_config=genai.GenerationConfig(
+                response_mime_type="application/json",
+            )
+        )
+        try:
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Error parsing spatial response: {e}")
+            return []
 
 gemini_service = GeminiService()

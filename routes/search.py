@@ -18,13 +18,19 @@ def index():
 @search_bp.route('/query', methods=['POST'])
 @jwt_required()
 def query():
-    q = request.json.get('query')
+    q = request.json.get('query', '').lower().strip()
     if not q:
         return jsonify({"error": "Query is required"}), 400
+    
+    # Check cache first
+    cached = search_model.find_cached_result(q)
+    if cached and 'result' in cached:
+        return jsonify(cached['result'])
         
+    # If not cached, fetch from Gemini
     result = gemini_service.search_section(q, SEARCH_SYSTEM_PROMPT)
     
-    # Save search to database
+    # Save search to database for future caching
     user_id = get_jwt_identity()
     search_model.create_search(user_id, q, result)
     

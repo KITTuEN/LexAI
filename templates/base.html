@@ -40,6 +40,13 @@
                 <a href="{{ url_for('lawyer_panel.profile') }}">Professional Profile</a>
                 {% endif %}
                 <a href="{{ url_for('dashboard.dashboard_view') }}">Dashboard</a>
+
+                <a href="{{ url_for('dashboard.profile_view') }}" class="nav-profile-link" title="My Profile">
+                    <div class="nav-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </a>
+
                 <a href="{{ url_for('auth.logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 {% else %}
                 <a href="{{ url_for('index') }}">Home</a>
