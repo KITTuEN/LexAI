@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 rights_bp = Blueprint('rights', __name__)
 
@@ -15,7 +15,7 @@ def get_guide(topic):
     from database import user_model
     from bson import ObjectId
     user = user_model.collection.find_one({"_id": ObjectId(user_id)})
-    lang = user.get('preferred_language', 'English')
+    lang = user.get('preferred_language', 'English') if user else 'English'
     
     from services.gemini_service import gemini_service
     guide = gemini_service.generate_rights_guide(topic, lang=lang)
