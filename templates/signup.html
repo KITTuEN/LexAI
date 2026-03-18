@@ -49,25 +49,25 @@
             <!-- Lawyer Specific Fields -->
             <div id="lawyerFields" style="display: none;">
                 <div class="form-group">
-                    <label>Father's Name</label>
-                    <input type="text" name="father_name" placeholder="Father's Full Name">
+                    <label>{{ _t('fathers_name') }}</label>
+                    <input type="text" name="father_name" placeholder="{{ _t('fathers_name_placeholder') }}">
                 </div>
                 <div class="form-group">
-                    <label>Mother's Name</label>
-                    <input type="text" name="mother_name" placeholder="Mother's Full Name">
+                    <label>{{ _t('mothers_name') }}</label>
+                    <input type="text" name="mother_name" placeholder="{{ _t('mothers_name_placeholder') }}">
                 </div>
                 <div class="form-group">
-                    <label>Aadhar Number</label>
-                    <input type="text" name="aadhar" placeholder="12-digit Aadhar Number">
+                    <label>{{ _t('aadhar_number') }}</label>
+                    <input type="text" name="aadhar" placeholder="{{ _t('aadhar_placeholder') }}">
                 </div>
                 <div class="form-group">
-                    <label>Lawyer ID Card / Bar Council Number</label>
-                    <input type="text" name="lawyer_id" placeholder="e.g. BC/123/2024">
+                    <label>{{ _t('lawyer_id_label') }}</label>
+                    <input type="text" name="lawyer_id" placeholder="{{ _t('lawyer_id_placeholder') }}">
                 </div>
                 <div class="form-group">
-                    <label>Cases Won & Professional Experience</label>
+                    <label>{{ _t('experience_summary_label') }}</label>
                     <textarea name="experience_summary" rows="4" style="width: 100%;"
-                        placeholder="Describe your successful cases and years of practice..."></textarea>
+                        placeholder="{{ _t('experience_placeholder') }}"></textarea>
                 </div>
             </div>
 

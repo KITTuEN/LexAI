@@ -4,14 +4,14 @@
 <div class="ocr-container">
     <div class="card ocr-card">
         <h1>{{ _t('document_analyst') }}</h1>
-        <p>Upload an image of a legal notice, FIR, or contract for AI analysis.</p>
+        <p>{{ _t('upload_ocr_subtitle') }}</p>
 
         <form id="ocrForm" class="upload-zone" enctype="multipart/form-data">
             <input type="file" id="fileInput" name="file" accept="image/*,.pdf" style="display: none;">
             <div class="upload-content" onclick="document.getElementById('fileInput').click()">
                 <i class="fas fa-file-upload gold-icon"></i>
                 <p id="fileName">{{ _t('ocr_upload_hint') }}</p>
-                <span class="subtitle">Supports JPG, PNG, PDF</span>
+                <span class="subtitle">{{ _t('file_types_hint') }}</span>
             </div>
             <button type="submit" id="analyzeBtn" class="btn-primary w-100" style="margin-top: 2rem;" disabled>{{
                 _t('analyze_doc') }}</button>
@@ -338,7 +338,7 @@
 
     function resetOCR() {
         ocrForm.reset();
-        fileName.textContent = 'Click to browse or drag and drop image';
+        fileName.textContent = '{{ _t("ocr_upload_hint") }}';
         analyzeBtn.disabled = true;
         ocrForm.style.display = 'block';
         resultArea.style.display = 'none';

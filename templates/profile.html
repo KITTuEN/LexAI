@@ -7,8 +7,8 @@
             <div class="avatar-large">
                 <i class="fas fa-user-circle"></i>
             </div>
-            <h1>Your Legal Account</h1>
-            <p>Manage your secure identity and location settings</p>
+            <h1>{{ _t('your_legal_account') }}</h1>
+            <p>{{ _t('manage_identity') }}</p>
         </div>
 
         <div class="glass-card profile-card">
@@ -17,32 +17,32 @@
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label><i class="fas fa-user"></i> Full Name</label>
+                        <label><i class="fas fa-user"></i> {{ _t('full_name') }}</label>
                         <input type="text" name="name" value="{{ user.name_encrypted | decrypt_name }}" required>
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-envelope"></i> Email Address</label>
+                        <label><i class="fas fa-envelope"></i> {{ _t('email_address') }}</label>
                         <input type="email" value="{{ user.email_encrypted | decrypt_name }}" disabled
                             title="Email cannot be changed">
-                        <small class="form-hint">Contact support to update your secure email.</small>
+                        <small class="form-hint">{{ _t('email_change_hint') }}</small>
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-phone"></i> Phone Number</label>
+                        <label><i class="fas fa-phone"></i> {{ _t('phone_number') }}</label>
                         <input type="tel" name="phone" value="{{ user.phone_encrypted | decrypt_name }}" required>
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-map-marker-alt"></i> Your Location</label>
+                        <label><i class="fas fa-map-marker-alt"></i> {{ _t('your_location') }}</label>
                         <input type="text" name="location"
                             value="{{ user.location_encrypted | decrypt_name if user.location_encrypted else '' }}"
-                            placeholder="e.g. Mumbai, Maharashtra">
-                        <small class="form-hint">Used for finding nearby legal support.</small>
+                            placeholder="{{ _t('location_placeholder') }}">
+                        <small class="form-hint">{{ _t('location_hint') }}</small>
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-language"></i> Preferred Language</label>
+                        <label><i class="fas fa-language"></i> {{ _t('preferred_language_label') }}</label>
                         <select name="preferred_language">
                             <option value="English" {% if user.preferred_language=='English' %}selected{% endif %}>
                                 English</option>
@@ -61,13 +61,14 @@
                             <option value="Gujarati" {% if user.preferred_language=='Gujarati' %}selected{% endif %}>
                                 Gujarati (ગુજરાતી)</option>
                         </select>
-                        <small class="form-hint">AI responses and UI will adapt to this choice.</small>
+                        <small class="form-hint">{{ _t('language_hint') }}</small>
                     </div>
                 </div>
 
                 <div class="profile-actions">
-                    <button type="submit" class="btn-primary">Save Changes <i class="fas fa-check"></i></button>
-                    <a href="{{ url_for('dashboard.member_home') }}" class="btn-primary-outline">Cancel</a>
+                    <button type="submit" class="btn-primary">{{ _t('save_changes') }} <i
+                            class="fas fa-check"></i></button>
+                    <a href="{{ url_for('dashboard.member_home') }}" class="btn-primary-outline">{{ _t('cancel') }}</a>
                 </div>
             </form>
         </div>

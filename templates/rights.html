@@ -3,33 +3,33 @@
 {% block content %}
 <div class="rights-container">
     <div class="header-section text-center">
-        <h1>Know Your Rights</h1>
-        <p class="subtitle">Empowering you with legal knowledge under BNS 2023 and CrPC/BNSS.</p>
+        <h1>{{ _t('know_your_rights') }}</h1>
+        <p class="subtitle">{{ _t('rights_subtitle') }}</p>
     </div>
 
     <div class="rights-grid">
         <div class="guide-selection">
             <div class="guide-card active" onclick="loadGuide('arrest')">
                 <i class="fas fa-handcuffs"></i>
-                <h3>Arrest Rights</h3>
-                <p>What to do if you are being arrested.</p>
+                <h3>{{ _t('arrest_rights') }}</h3>
+                <p>{{ _t('arrest_rights_desc') }}</p>
             </div>
             <div class="guide-card" onclick="loadGuide('bail')">
                 <i class="fas fa-gavel"></i>
-                <h3>Bail & Bond</h3>
-                <p>Laws regarding your freedom.</p>
+                <h3>{{ _t('bail_bond') }}</h3>
+                <p>{{ _t('bail_bond_desc') }}</p>
             </div>
             <div class="guide-card" onclick="loadGuide('fir')">
                 <i class="fas fa-file-invoice"></i>
-                <h3>FIR & First Steps</h3>
-                <p>The correct way to file a complaint.</p>
+                <h3>{{ _t('fir_first_steps') }}</h3>
+                <p>{{ _t('fir_first_steps_desc') }}</p>
             </div>
         </div>
 
         <div class="guide-display card" id="guideContent">
             <div class="display-placeholder text-center">
                 <i class="fas fa-shield-alt gold-icon" style="font-size: 4rem; opacity: 0.2; margin-bottom: 1rem;"></i>
-                <p>Select a guide to view detailed legal rights and procedures.</p>
+                <p>{{ _t('select_guide_hint') }}</p>
             </div>
         </div>
     </div>
@@ -146,7 +146,7 @@
         event.currentTarget.classList.add('active');
 
         const display = document.getElementById('guideContent');
-        display.innerHTML = '<div class="text-center"><div class="spinner"></div><p>Loading rights guide...</p></div>';
+        display.innerHTML = `<div class="text-center"><div class="spinner"></div><p>{{ _t("loading_rights") }}</p></div>`;
 
         try {
             const response = await fetch(`/rights/guide/${topic}`);
@@ -158,7 +158,7 @@
                     ${data.points.map(p => `<li>${p}</li>`).join('')}
                 </ul>
                 <div class="pro-tip">
-                    <strong><i class="fas fa-lightbulb"></i> Pro-Tip:</strong> ${data.tips}
+                    <strong><i class="fas fa-lightbulb"></i> {{ _t('pro_tip') }}:</strong> ${data.tips}
                 </div>
             `;
         } catch (error) {

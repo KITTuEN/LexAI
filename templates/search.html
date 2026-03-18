@@ -6,7 +6,7 @@
         <h1>{{ _t('search_ipc_bns') }}</h1>
         <p>{{ _t('search_hint') }}</p>
         <div class="search-input-wrapper">
-            <input type="text" id="searchInput" placeholder="Search legal sections...">
+            <input type="text" id="searchInput" placeholder="{{ _t('search_placeholder') }}">
             <button id="searchBtn" class="btn-primary">{{ _t('search') }}</button>
         </div>
     </div>
@@ -210,7 +210,7 @@
                 dataList = [dataList];
             }
             if (dataList.length === 0) {
-                resultArea.innerHTML = '<p>No results found.</p>';
+                resultArea.innerHTML = '<p>{{ _t("no_results_found") }}</p>';
                 return;
             }
 

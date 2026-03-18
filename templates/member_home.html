@@ -90,7 +90,7 @@
                         </div>
                         <div class="header-text">
                             <h3>{{ _t('smart_paper_reader') }}</h3>
-                            <p>AI Document Analysis</p>
+                            <p>{{ _t('ai_doc_analysis_label') }}</p>
                         </div>
                         <div class="card-body">
                             <h3>{{ _t('smart_paper_reader') }}</h3>
@@ -147,11 +147,11 @@
                         <!-- Automatic localized status will appear here -->
                     </div>
                 </div>
-                <p class="section-desc">Real-time spatial intelligence powered by Gemini AI.</p>
+                <p class="section-desc">{{ _t('nearby_legal_subtitle') }}</p>
 
                 <!-- Manual Location Search Bar -->
                 <div class="manual-location-search" style="margin: 1.5rem 0; display: flex; gap: 0.5rem;">
-                    <input type="text" id="manual-loc-input" placeholder="Enter City or Pincode (e.g., Mumbai, 400001)"
+                    <input type="text" id="manual-loc-input" placeholder="{{ _t('manual_loc_placeholder') }}"
                         style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.8rem; color: #fff; font-family: inherit;">
                     <button id="btn-manual-search" class="btn-primary-gold" style="padding: 0 1.5rem;"><i
                             class="fas fa-search"></i> {{ _t('search') }}</button>
@@ -161,7 +161,7 @@
                     <!-- Cards will be populated dynamically -->
                     <div class="location-empty-state" style="grid-column: 1 / -1; margin-top: 1rem;">
                         <i class="fas fa-search-location"></i>
-                        <p>Enter a city or pincode above to discover nearby legal resources.</p>
+                        <p>{{ _t('nearby_empty_state') }}</p>
                     </div>
                 </div>
             </section>
@@ -577,7 +577,7 @@
 
         const updateStatus = (type, text) => {
             if (type === 'live') {
-                statusContainer.innerHTML = `<span class="saved-location-badge live-gps"><i class="fas fa-satellite"></i> 🛰️ ${text}</span> <button class="btn-refresh-loc" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Refresh</button>`;
+                statusContainer.innerHTML = `<span class="saved-location-badge live-gps"><i class="fas fa-satellite"></i> 🛰️ ${text}</span> <button class="btn-refresh-loc" onclick="location.reload()"><i class="fas fa-sync-alt"></i> {{ _t('refresh') }}</button>`;
             } else if (type === 'waiting') {
                 statusContainer.innerHTML = `<span class="location-badge-loading"><i class="fas fa-search-location fa-spin"></i> ${text}</span>`;
             } else if (type === 'error') {
@@ -587,13 +587,13 @@
 
         const fetchNearby = async (lat, long, query = null) => {
             try {
-                const statusText = query ? `Locating "${query}"` : `Localizing coordinates...`;
+                const statusText = query ? `{{ _t('locating') }} "${query}"` : `{{ _t('localizing_coords') }}...`;
                 updateStatus('waiting', `<i class="fas fa-bolt"></i> ${statusText}`);
 
                 resultsContainer.innerHTML = `
                     <div class="location-loading">
                         <i class="fas fa-bolt fa-fade" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--accent-gold);"></i>
-                        <p style="color: var(--text-secondary);">Instantly fetching legal intelligence...</p>
+                        <p style="color: var(--text-secondary);">{{ _t('location_searching') }}</p>
                     </div>`;
 
                 let url = '/dashboard/api/nearby';
@@ -617,7 +617,7 @@
                 const displayName = data.display_name || (query || `${resolvedLat.toFixed(4)}, ${resolvedLng.toFixed(4)}`);
 
                 if (!landmarks || landmarks.length === 0) {
-                    resultsContainer.innerHTML = '<p class="error-msg">No nearby legal resources found for this area.</p>';
+                    resultsContainer.innerHTML = '<p class="error-msg">{{ _t("no_nearby_found") }}</p>';
                     return;
                 }
 
@@ -636,17 +636,17 @@
                             <h4>${item.name}</h4>
                             <div class="nearby-meta">
                                 <span class="status-tag"><i class="far fa-clock"></i> ${item.status}</span>
-                                <span class="distance-tag" style="margin-left: 10px; opacity: 0.7;"><i class="fas fa-external-link-alt"></i> View on Map</span>
+                                <span class="distance-tag" style="margin-left: 10px; opacity: 0.7;"><i class="fas fa-external-link-alt"></i> {{ _t('view_on_map') }}</span>
                             </div>
                         </div>
                     `;
                     resultsContainer.appendChild(card);
                 });
 
-                updateStatus('live', `${query ? 'Search Complete' : 'Live Area Results'} — Near ${displayName}`);
+                updateStatus('live', `${query ? '{{ _t("search_complete") }}' : '{{ _t("live_area_results") }}'} — {{ _t("near") }} ${displayName}`);
             } catch (err) {
-                resultsContainer.innerHTML = '<p class="error-msg">Discovery Service is currently unavailable. Please try again.</p>';
-                updateStatus('error', 'Service Error');
+                resultsContainer.innerHTML = '<p class="error-msg">{{ _t("discovery_service_unavailable") }}</p>';
+                updateStatus('error', '{{ _t("service_error") }}');
             }
         };
 
@@ -654,7 +654,7 @@
         const manualInput = document.getElementById('manual-loc-input');
 
         // Initial State: Waiting for manual search
-        updateStatus('waiting', 'Waiting for search query...');
+        updateStatus('waiting', '{{ _t("waiting_for_search") }}');
 
         if (manualBtn) {
             manualBtn.addEventListener('click', () => {

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexAI — Virtual Legal Advisor</title>
+    <title>{{ _t('app_title') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -12,6 +12,48 @@
         rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .mic-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mic-btn:hover {
+            background: rgba(201, 168, 76, 0.1);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        .mic-btn.listening {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: #ff4d4d;
+            color: #ff4d4d;
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 77, 77, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 77, 77, 0);
+            }
+        }
+    </style>
 </head>
 
 <body class="dark-theme">
@@ -63,7 +105,7 @@
     <footer class="footer">
         <div class="footer-container">
             <p class="disclaimer">{{ legal_disclaimer }}</p>
-            <p>&copy; 2026 LexAI. All Rights Reserved.</p>
+            <p>&copy; 2026 LexAI. {{ _t('all_rights_reserved') }}</p>
         </div>
     </footer>
 
@@ -105,6 +147,65 @@
                 }
             });
         });
+
+        // Global Voice Input Logic
+        function toggleVoiceInput(targetId, langName) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("{{ _t('voice_support_error') }}");
+                return;
+            }
+
+            const languageMap = {
+                'English': 'en-IN',
+                'Hindi': 'hi-IN',
+                'Telugu': 'te-IN',
+                'Tamil': 'ta-IN',
+                'Kannada': 'kn-IN',
+                'Marathi': 'mr-IN',
+                'Bengali': 'bn-IN',
+                'Gujarati': 'gu-IN'
+            };
+
+            const recognition = new SpeechRecognition();
+            const target = document.getElementById(targetId) || document.getElementsByName(targetId)[0];
+            const micBtn = document.querySelector(`[data-mic-for="${targetId}"]`);
+
+            recognition.lang = languageMap[langName] || 'en-IN';
+            recognition.interimResults = false;
+            recognition.continuous = false;
+
+            recognition.onstart = () => {
+                micBtn.classList.add('listening');
+                micBtn.innerHTML = '<i class="fas fa-stop"></i>';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
+                    const cursorPos = target.selectionStart;
+                    const textBefore = target.value.substring(0, cursorPos);
+                    const textAfter = target.value.substring(target.selectionEnd);
+                    target.value = textBefore + (textBefore && !textBefore.endsWith(' ') ? ' ' : '') + transcript + textAfter;
+                    target.focus();
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error("Speech recognition error:", event.error);
+                micBtn.classList.remove('listening');
+                micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+            };
+
+            recognition.onend = () => {
+                micBtn.classList.remove('listening');
+                micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+            };
+
+            // If already listening, stop it. Otherwise start.
+            // Simplified: always start and let it handle single utterance.
+            recognition.start();
+        }
     </script>
     {% block scripts %}{% endblock %}
 </body>

@@ -82,7 +82,7 @@ def inject_globals():
         pass
 
     return {
-        "legal_disclaimer": "LexAI provides general legal information for educational purposes only. It does not constitute legal advice and does not create an attorney-client relationship. For matters requiring legal action, always consult a qualified advocate registered with the Bar Council of India.",
+        "legal_disclaimer": translate('legal_disclaimer_text', current_user.get('preferred_language', 'English') if current_user else 'English'),
         "current_user": current_user,
         "_t": lambda key: translate(key, current_user.get('preferred_language', 'English') if current_user else 'English')
     }

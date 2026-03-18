@@ -1,0 +1,26 @@
+LEXAI: PROJECT OVERVIEW
+
+1. ABSTRACT
+LexAI is an advanced AI-powered legal assistant designed to democratize access to legal information and streamline legal procedures for the general public. It uses Google Gemini Pro to provide real-time consultations, automated document generation, and OCR analysis.
+
+2. PROBLEM STATEMENT
+India's legal system is complex and often inaccessible due to:
+- Complicated legal jargon that confuses the layperson.
+- High costs for initial legal advice.
+- Language barriers for non-English/Hindi speakers.
+- Massive documentation burdens and slow manual drafting.
+- Lack of awareness regarding fundamental rights and applicable statutes.
+
+3. SOLUTIONS
+- Smart Case Helper: AI-driven analysis to predict applicable laws (IPC/BNS) and defense strategies.
+- Full Multi-language Support: Dynamic translation into regional languages like Telugu and Hindi.
+- Voice-enabled Interaction: Voice-to-text input supporting regional accents and languages.
+- Automated Document Generation: Instant drafting of FIRs, notices, and agreements.
+- OCR Digitization: Analyzing physical notices for immediate legal summaries.
+
+4. OBJECTIVES
+- To provide 24/7 affordable legal guidance to every citizen.
+- To bridge the language gap in legal services via AI translation.
+- To empower citizens with rights awareness and statutory knowledge.
+- To streamline legal documentation for faster resolution.
+- To assist users in preparing structured case summaries for professional legal consultation.

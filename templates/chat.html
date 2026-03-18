@@ -15,7 +15,9 @@
             </div>
             <div class="detail-item">
                 <label>{{ _t('status') }}</label>
-                <span class="status-badge {{ case.status.lower() }}">{{ case.status }}</span>
+                {% set status_key = case.status.lower().replace(' ', '_') if case.status else 'new' %}
+                {% if status_key == 'in_progress' %}{% set status_key = 'ongoing' %}{% endif %}
+                <span class="status-badge {{ status_key }}">{{ _t(status_key) }}</span>
             </div>
             <button id="analyzeBtn" class="btn-primary w-100" style="margin-top: 2rem;">{{ _t('analyze_my_case')
                 }}</button>
@@ -44,6 +46,11 @@
             </div>
             <div class="input-wrapper">
                 <textarea id="userInput" placeholder="{{ _t('type_response_hint') }}" rows="1"></textarea>
+                {% set user_lang = current_user.preferred_language if current_user else 'English' %}
+                <button type="button" class="mic-btn" data-mic-for="userInput"
+                    onclick="toggleVoiceInput('userInput', '{{ user_lang }}')" title="Voice Input">
+                    <i class="fas fa-microphone"></i>
+                </button>
                 <button id="sendBtn" class="send-btn"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>

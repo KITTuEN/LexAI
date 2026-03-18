@@ -6,22 +6,22 @@
         <div class="context-path">LexAI Workspace / Hub / <span class="active-node">Legal Document Generator</span>
         </div>
         <div class="user-greeting">
-            <h1>Legal Document Generator</h1>
-            <p class="subtitle">Generate professional, ready-to-file legal documents instantly</p>
+            <h1>{{ _t('legal_doc_generator') }}</h1>
+            <p class="subtitle">{{ _t('generator_subtitle') }}</p>
         </div>
     </div>
 
     <div class="ocr-layout animate-up" style="animation-delay: 0.1s;">
         <!-- Left Panel: Form Input -->
         <div class="ocr-panel input-panel">
-            <h3 class="panel-heading"><i class="fas fa-edit"></i> Document Details</h3>
+            <h3 class="panel-heading"><i class="fas fa-edit"></i> {{ _t('doc_details') }}</h3>
 
             <div class="form-group" style="display: flex; gap: 1rem; align-items: flex-end;">
                 <div style="flex-grow: 1;">
-                    <label for="savedDocSelect">Open Saved Document (Optional)</label>
+                    <label for="savedDocSelect">{{ _t('open_saved_doc') }}</label>
                     <select id="savedDocSelect" class="form-control"
                         style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; width: 100%;">
-                        <option value="">-- Start New Document --</option>
+                        <option value="">{{ _t('start_new_doc') }}</option>
                         {% for doc in saved_docs %}
                         <option value="{{ doc._id }}">{{ doc.doc_type }} ({{ doc.updated_at.strftime('%Y-%m-%d %H:%M')
                             }})</option>
@@ -31,10 +31,10 @@
             </div>
 
             <div class="form-group">
-                <label for="docTypeSelect">Select Document Type</label>
+                <label for="docTypeSelect">{{ _t('select_doc_type') }}</label>
                 <select id="docTypeSelect" class="form-control"
                     style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; width: 100%;">
-                    <option value="" disabled selected>-- Select a Document Type --</option>
+                    <option value="" disabled selected>{{ _t('doc_type_select_hint') }}</option>
                     <option value="FIR Complaint">FIR Complaint</option>
                     <option value="Legal Notice">Legal Notice</option>
                     <option value="Rental Agreement">Rental Agreement</option>
@@ -49,15 +49,15 @@
             </div>
 
             <button id="generateDocBtn" class="btn-primary-gold" style="width: 100%; margin-top: 20px; display: none;">
-                <i class="fas fa-magic"></i> Generate Legal Document
+                <i class="fas fa-magic"></i> {{ _t('generate_legal_doc') }}
             </button>
 
             <!-- Loading overlay specific to generation -->
             <div id="generationLoading" class="loading-overlay"
                 style="display: none; text-align: center; padding: 20px;">
                 <div class="spinner"></div>
-                <p>Generating professional document...</p>
-                <p style="font-size: 0.8em; color: var(--text-secondary);">This may take 15-30 seconds</p>
+                <p>{{ _t('generating_doc_loading') }}</p>
+                <p style="font-size: 0.8em; color: var(--text-secondary);">{{ _t('generation_time_hint') }}</p>
             </div>
         </div>
 
@@ -65,14 +65,15 @@
         <div class="ocr-panel results-panel">
             <div class="panel-header-flex"
                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                <h3 class="panel-heading" style="margin-bottom: 0;"><i class="fas fa-file-alt"></i> Generated Document
+                <h3 class="panel-heading" style="margin-bottom: 0;"><i class="fas fa-file-alt"></i> {{
+                    _t('generated_document') }}
                 </h3>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <span id="saveStatus"
                         style="color: var(--text-secondary); font-size: 0.8em; display: none; margin-right: 10px;"><i
                             class="fas fa-check-circle"></i> Saved</span>
                     <button id="downloadPdfBtn" class="btn-primary-outline" style="display: none;">
-                        <i class="fas fa-file-pdf"></i> Download PDF
+                        <i class="fas fa-file-pdf"></i> {{ _t('download_pdf') }}
                     </button>
                 </div>
             </div>
@@ -81,7 +82,7 @@
                 <div id="noResultState" class="empty-state">
                     <i class="fas fa-file-signature"
                         style="font-size: 3rem; color: rgba(255,255,255,0.1); margin-bottom: 1rem;"></i>
-                    <p>Select a document type and fill the details to generate, or load an existing document.</p>
+                    <p>{{ _t('generator_empty_state') }}</p>
                 </div>
 
                 <!-- contenteditable="true" makes it editable -->

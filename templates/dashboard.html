@@ -62,7 +62,8 @@
                             {% for case in cases %}
                             <tr>
                                 <td class="case-title-cell">
-                                    <a href="/case/{{ case._id }}/chat" class="case-link">{{ case.title }}</a>
+                                    <a href="{{ url_for('chat.view', case_id=case._id|string) }}" class="case-link">{{
+                                        case.title }}</a>
                                 </td>
                                 <td class="date-cell">{{ case.created_at.strftime('%d %b, %Y') }}</td>
                                 <td>
@@ -79,8 +80,8 @@
                                 </td>
                                 <td>
                                     <div class="case-actions">
-                                        <a href="/case/{{ case._id|string }}/chat" class="btn-action-round gold"
-                                            title="Open Chat">
+                                        <a href="{{ url_for('chat.view', case_id=case._id|string) }}"
+                                            class="btn-action-round gold" title="Open Chat">
                                             <i class="fas fa-comment"></i>
                                         </a>
                                         {% if case.status == 'Analyzed' %}
@@ -88,8 +89,8 @@
                                             data-analysis='{{ case.analysis_result | tojson }}'>
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <a href="/complaint/?case_id={{ case._id|string }}"
-                                            class="btn-action-round gold" title="Generate/Edit Complaint">
+                                        <a href="{{ url_for('complaint.index', case_id=case._id|string) }}"
+                                            class="btn-action-round gold" title="{{ _t('generate_complaint') }}">
                                             <i class="fas fa-file-invoice"></i>
                                         </a>
                                         {% endif %}
@@ -163,19 +164,6 @@
                     _t('find_a_lawyer') }}</a>
             </div>
 
-            <div class="quick-facts card" style="margin-top: 2rem;">
-                <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem;">{{ _t('system_overview') }}</h3>
-                <div class="fact-list">
-                    <div class="fact-item">
-                        <span class="label">{{ _t('compliance') }}</span>
-                        <span class="value green-text">Active</span>
-                    </div>
-                    <div class="fact-item">
-                        <span class="label">{{ _t('ai_model') }}</span>
-                        <span class="value gold-text">Gemini Pro 1.5</span>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -185,6 +173,7 @@
     <div class="modal-content card" style="max-width: 500px;">
         <span class="close-modal" id="closeNewCase">&times;</span>
         <h2>{{ _t('create_new_case') }}</h2>
+        {% set user_lang = current_user.preferred_language or 'English' %}
         <form action="{{ url_for('cases.create') }}" method="POST" style="margin-top: 1.5rem;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <div class="form-group">
@@ -192,8 +181,14 @@
                 <input type="text" name="title" required placeholder="e.g. Property Dispute with Neighbor">
             </div>
             <div class="form-group">
-                <label>{{ _t('situation_summary_label') }}</label>
-                <textarea name="situation_summary" rows="4" required
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <label style="margin-bottom: 0;">{{ _t('situation_summary_label') }}</label>
+                    <button type="button" class="mic-btn" data-mic-for="situation_summary_modal"
+                        onclick="toggleVoiceInput('situation_summary_modal', '{{ user_lang }}')" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+                <textarea name="situation_summary" id="situation_summary_modal" rows="4" required
                     style="width: 100%; background: #1D263B; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white; padding: 0.8rem; outline: none;"
                     placeholder="Describe your situation briefly..."></textarea>
             </div>
