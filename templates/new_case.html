@@ -86,7 +86,7 @@
                                                 <i class="fas fa-file-invoice"></i> {{ _t('generate_complaint') }}
                                             </a>
                                             {% if case.status == 'Analyzed' %}
-                                            <button class="btn-secondary show-result-btn"
+                                            <button type="button" class="btn-secondary show-result-btn"
                                                 data-analysis='{{ case.analysis_result | tojson }}'>
                                                 <i class="fas fa-eye"></i> {{ _t('view_result') }}
                                             </button>
