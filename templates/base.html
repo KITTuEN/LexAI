@@ -35,17 +35,15 @@
                 {% if current_user %}
                 <a href="{{ url_for('dashboard.member_home') }}">{{ _t('home') }}</a>
                 {% if current_user.role == 'lawyer' %}
-                <a href="{{ url_for('lawyer_panel.messages') }}">Consultations</a>
-                <a href="{{ url_for('lawyer_panel.profile') }}">Professional Profile</a>
+                <a href="{{ url_for('lawyer_panel.messages') }}">{{ _t('legal_consultation') }}</a>
+                <a href="{{ url_for('lawyer_panel.profile') }}">{{ _t('profile') }}</a>
                 {% endif %}
                 <a href="{{ url_for('dashboard.dashboard_view') }}">{{ _t('dashboard') }}</a>
-
-                <a href="{{ url_for('dashboard.profile_view') }}" class="nav-profile-link" title="My Profile">
+                <a href="{{ url_for('dashboard.profile_view') }}" class="nav-profile-link" title="{{ _t('profile') }}">
                     <div class="nav-avatar">
                         <i class="fas fa-user"></i>
                     </div>
                 </a>
-
                 <a href="{{ url_for('auth.logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> {{
                     _t('logout') }}</a>
                 {% else %}

@@ -1,0 +1,131 @@
+--- Slide 1: Title Slide ---
+LexAI: Your Virtual Legal Assistant
+
+[Note: This slide follows the Hack2Skill Guidelines]
+Project: LexAI
+Cloud Deployment & AI: Deployed on Cloud with Google Gemini AI Integration.
+"Democratizing legal access and streamlining legal procedures for the general public."
+
+--- Slide 2: Team Details ---
+Team name: [Enter Team Name]
+Team leader name: [Enter Leader Name]
+Problem Statement: 
+Legal procedures and jargons are complex and expensive for common citizens. People struggle to understand their rights, draft simple police complaints, or access basic legal help without costly lawyer fees.
+
+--- Slide 3: Brief about your solution ---
+LexAI is an advanced AI-powered platform designed to provide accessible initial legal guidance. It acts as a bridge between complex legal language and everyday citizen needs. By using Google Gemini AI, it answers common legal queries, automatically drafts legal complaints, and extracts text from physical legal documents using OCR.
+
+--- Slide 4: Opportunities ---
+How different is it from existing ideas?
+Traditional platforms only list lawyers. LexAI instantly answers legal questions and drafts actual usable legal documents autonomously.
+
+How will it be able to solve the problem?
+By giving users a 24/7 AI legal chatbot, ordinary people can understand their rights immediately without paying upfront consultation fees.
+
+USP of the proposed solution:
+- Google Gemini powered natural language comprehension for law.
+- Instant, automated Document Generation (Complaints/Case drafts).
+- OCR Integration to seamlessly digitize and explain physical legal notices.
+
+--- Slide 5: List of features offered by the solution ---
+1. AI Chatbot: Instant conversational legal consultations.
+2. Automated Document Generation: Creates structured police complaints and case drafts.
+3. OCR Integration: Digitizes, reads, and analyzes physical legal documents.
+4. Rights Repository: Searchable database of fundamental citizen rights.
+5. Lawyer Connect: Connect directly with domain-expert human lawyers (Criminal, Family, Cyber, etc.).
+
+--- Slide 6: Process flow diagram or Use-case diagram ---
+```mermaid
+graph TD
+    A[Citizen User] -->|Login/Register| B{Dashboard}
+    B -->|Query / Story| C[AI Legal Chatbot]
+    B -->|Upload Document| D[OCR Document Reader]
+    B -->|Fill Details| E[Complaint Generator]
+    
+    C -->|Natural Language Processing| F[Gemini AI Engine]
+    D -->|Text Extraction| F
+    E -->|Template Filling| F
+    
+    F -->|Legal Advice / PDF Draft| G[User Output]
+    G -->|Optional| H[Connect with Human Lawyer]
+```
+Use-case Flow:
+1. User Registration/Login (JWT Auth based) -> 
+2. User selects action (Chat, OCR, Complaint Builder) -> 
+3. User talks to Gemini AI / Uploads Document -> 
+4. Backend (Flask) processes via AI -> 
+5. Output: Simplified Legal Advice / Generated PDF Complaint / Extracted Text.
+6. Optional: User reaches out to registered human lawyer for advanced help.
+
+--- Slide 7: Wireframes/Mock diagrams of the proposed solution ---
+[Refer to generated image: lexai_dashboard_mockup.png]
+- Show the Dashboard view.
+- Show the Chat Interface with Gemini AI.
+- Show the OCR upload page and output text.
+
+--- Slide 8: Architecture diagram of the proposed solution ---
+```mermaid
+graph LR
+    subgraph Frontend
+        A[HTML5/CSS3/JS]
+    end
+    
+    subgraph Backend_Flask
+        B[Flask App]
+        C[JWT Auth]
+        D[Blueprint Routes]
+    end
+    
+    subgraph AI_Layer
+        E[Google Gemini AI]
+    end
+    
+    subgraph Database
+        F[(MongoDB Atlas)]
+    end
+    
+    A <-->|REST API| B
+    B --- C
+    B --- D
+    D <-->|API Calls| E
+    D <-->|Queries| F
+```
+- Frontend: HTML/CSS/JS (Mobile-friendly web app).
+- Backend: Python Flask with Flask-JWT-Extended for security.
+- AI Layer: Google Gemini API for NLP and Document Drafting.
+- Database: MongoDB Atlas (storing Users, Cases, and Chat Histories).
+- Other Services: OCR engine.
+
+--- Slide 9: Technologies to be used in the solution ---
+- Backend Framework: Python, Flask
+- Database: MongoDB
+- AI/ML Services: Google Gemini AI
+- Tools & Libraries: Flask-JWT-Extended (Auth), PyMongo, OCR APIs
+- Frontend: HTML5, CSS3, Vanilla JS
+- Deployment: Cloud Hosting Platform
+
+--- Slide 10: Estimated implementation cost ---
+[Optional] 
+- Server hosting / Database Cloud: ~$10-20/month (Free tiers initially)
+- Google Gemini API: Pay-as-you-go based on token usage.
+- Domain & SSL: ~$15/year.
+Total MVP Cost: Extremely low due to cloud free-tiers and efficient AI API usage.
+
+--- Slide 11: Snapshots of the MVP ---
+[Insert Working MVP Screenshots Here]
+- Snap 1: LexAI Landing Page
+- Snap 2: Chatting with the AI Legal Bot
+- Snap 3: AI-Generated Legal Draft Output
+
+--- Slide 12: Additional Details/Future Development ---
+Future Plans:
+- Multilingual Support: Expanding language accessibility for remote regions.
+- Regional Court APIs: Integrating live case status checks.
+- Direct Court E-Filing: Bridging the gap from AI draft to actual court submission.
+- Advanced Voice Mode: Allowing voice-based queries for the illiterate.
+
+--- Slide 13: Links ---
+GitHub Public Repository: [Insert Link]
+Demo Video Link (3 Minutes): [Insert Link]
+MVP Link: [Insert Link]
+Working Prototype Link: [Insert Link]

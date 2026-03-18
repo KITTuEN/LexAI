@@ -11,17 +11,16 @@
             <div class="hero-text animate-up">
                 <div class="premium-badge">
                     <span class="badge-dot"></span>
-                    Powered by Gemini Pro Intelligence
+                    {{ _t('hero_badge') }}
                 </div>
-                <h1 class="hero-title">Next-Gen <br><span>Justice Engine</span></h1>
-                <p class="hero-subtitle">The definitive AI sentinel for the Indian Legal System. Navigate statutes,
-                    automate documentation, and assess rights with absolute neural precision.</p>
+                <h1 class="hero-title">{{ _t('hero_title') | safe }}</h1>
+                <p class="hero-subtitle">{{ _t('hero_subtitle') }}</p>
                 <div class="hero-actions">
                     <a href="{{ url_for('auth.signup') }}" class="btn-primary main-cta">
-                        Deploy LexAI Now <i class="fas fa-bolt"></i>
+                        {{ _t('deploy_lexai') }} <i class="fas fa-bolt"></i>
                     </a>
                     <a href="#how-it-works" class="btn-glass">
-                        System Overview
+                        {{ _t('system_overview_btn') }}
                     </a>
                 </div>
             </div>
@@ -58,7 +57,7 @@
     <!-- Trust Bar - High End Framework Carousel -->
     <div class="framework-trust">
         <div class="trust-container">
-            <p class="trust-label">Architecture Verified For</p>
+            <p class="trust-label">{{ _t('trust_label') }}</p>
             <div class="framework-carousel">
                 <div class="framework-item">
                     <img src="{{ url_for('static', filename='ipc_logo.png') }}" alt="IPC">
@@ -83,8 +82,8 @@
     <!-- Capabilities Section -->
     <section id="how-it-works" class="capabilities">
         <div class="section-header center animate-up">
-            <h2 class="premium-title">Next-Gen <br>Legal Architect</h2>
-            <p class="section-subtitle">A decentralized intelligence suite for the Indian Legal Framework.</p>
+            <h2 class="premium-title">{{ _t('legal_architect') | safe }}</h2>
+            <p class="section-subtitle">{{ _t('architect_subtitle') }}</p>
         </div>
 
         <div class="capabilities-grid">
@@ -94,16 +93,15 @@
                         <i class="fas fa-brain"></i>
                     </div>
                     <div class="header-text">
-                        <h3>AI Legal Analyst</h3>
-                        <p>Statutory Prediction Engine</p>
+                        <h3>{{ _t('ai_legal_analyst') }}</h3>
+                        <p>{{ _t('statutory_pred_label') }}</p>
                     </div>
                 </div>
                 <div class="cap-body">
-                    <p>Harness Gemini Pro to predict criminal sections and case outcomes with high-confidence
-                        probability mapping across BNS and IPC.</p>
+                    <p>{{ _t('statutory_pred_desc') }}</p>
                     <ul class="cap-list">
-                        <li><i class="fas fa-check"></i> Deep Statute Mapping</li>
-                        <li><i class="fas fa-check"></i> Case Precedent Briefs</li>
+                        <li><i class="fas fa-check"></i> {{ _t('key_ingredients') }}</li>
+                        <li><i class="fas fa-check"></i> {{ _t('landmark_cases') }}</li>
                     </ul>
                 </div>
             </div>
@@ -114,16 +112,15 @@
                         <i class="fas fa-scroll"></i>
                     </div>
                     <div class="header-text">
-                        <h3>Document Architect</h3>
-                        <p>Standardized FIR Drafter</p>
+                        <h3>{{ _t('document_architect') }}</h3>
+                        <p>{{ _t('fir_drafter_label') }}</p>
                     </div>
                 </div>
                 <div class="cap-body">
-                    <p>Generate professionally formatted police complaints and FIR drafts ready for filing, adhering to
-                        latest legal standards.</p>
+                    <p>{{ _t('fir_drafter_desc') }}</p>
                     <ul class="cap-list">
-                        <li><i class="fas fa-check"></i> Multi-Section Inclusion</li>
-                        <li><i class="fas fa-check"></i> Instant PDF Export</li>
+                        <li><i class="fas fa-check"></i> {{ _t('total_cases_label') }}</li>
+                        <li><i class="fas fa-check"></i> {{ _t('analyze_doc') }}</li>
                     </ul>
                 </div>
             </div>
@@ -134,16 +131,15 @@
                         <i class="fas fa-shield-alt"></i>
                     </div>
                     <div class="header-text">
-                        <h3>Rights Sentinel</h3>
-                        <p>Procedural Liberty Guard</p>
+                        <h3>{{ _t('rights_sentinel') }}</h3>
+                        <p>{{ _t('liberty_guard_label') }}</p>
                     </div>
                 </div>
                 <div class="cap-body">
-                    <p>Real-time assessment of fundamental rights, procedural bail eligibility, and citizen protections
-                        under constitutional law.</p>
+                    <p>{{ _t('liberty_guard_desc') }}</p>
                     <ul class="cap-list">
-                        <li><i class="fas fa-check"></i> Bail Assessment Engine</li>
-                        <li><i class="fas fa-check"></i> Rights Protection Audit</li>
+                        <li><i class="fas fa-check"></i> {{ _t('bailable') }}</li>
+                        <li><i class="fas fa-check"></i> {{ _t('important_clauses') }}</li>
                     </ul>
                 </div>
             </div>
@@ -155,15 +151,15 @@
         <div class="stats-grid animate-up">
             <div class="stat-item glass-panel">
                 <span class="stat-num">1.5M+</span>
-                <span class="stat-label">Statutory Nodes</span>
+                <span class="stat-label">{{ _t('statutory_nodes') }}</span>
             </div>
             <div class="stat-item glass-panel gold-glow">
                 <span class="stat-num">0.2s</span>
-                <span class="stat-label">AI Latency</span>
+                <span class="stat-label">{{ _t('ai_model') }}</span>
             </div>
             <div class="stat-item glass-panel">
                 <span class="stat-num">100%</span>
-                <span class="stat-label">Zero-Log Privacy</span>
+                <span class="stat-label">{{ _t('zero_log_privacy') }}</span>
             </div>
         </div>
     </section>
@@ -171,11 +167,11 @@
     <!-- Final CTA -->
     <section class="final-cta">
         <div class="cta-inner card glass-dark">
-            <h2 class="premium-title">Ready for Legal Clarity?</h2>
-            <p>Join the thousands of citizens and advocates empowering themselves with LexAI intelligence.</p>
+            <h2 class="premium-title">{{ _t('ready_clarity') }}</h2>
+            <p>{{ _t('join_thousands') }}</p>
             <div class="cta-btns">
-                <a href="{{ url_for('auth.signup') }}" class="btn-primary">Create Your Free Account</a>
-                <p class="sub-text">No credit card required • GDPR Compliant</p>
+                <a href="{{ url_for('auth.signup') }}" class="btn-primary">{{ _t('create_free_acc') }}</a>
+                <p class="sub-text">{{ _t('no_cc_required') }}</p>
             </div>
         </div>
     </section>

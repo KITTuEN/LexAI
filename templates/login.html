@@ -5,8 +5,8 @@
     <div class="card auth-card">
         <div class="auth-header">
             <i class="fas fa-balance-scale gold-icon large-icon"></i>
-            <h1>Welcome Back</h1>
-            <p>Login to your legal advisor</p>
+            <h1>{{ _t('welcome_back_title') }}</h1>
+            <p>{{ _t('login_desc') }}</p>
         </div>
 
         {% if error %}
@@ -16,21 +16,21 @@
         <form method="POST" action="{{ url_for('auth.login') }}">
             <div class="form-group">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <label>Email Address</label>
+                <label>{{ _t('email_addr_label') }}</label>
                 <input type="email" name="email" required placeholder="name@example.com">
             </div>
             <div class="form-group">
-                <label>Password</label>
+                <label>{{ _t('password_label') }}</label>
                 <input type="password" name="password" required placeholder="••••••••">
             </div>
             <div class="form-group remember-me">
                 <input type="checkbox" name="remember" id="remember">
-                <label for="remember">Remember Me</label>
+                <label for="remember">{{ _t('remember_me') }}</label>
             </div>
-            <button type="submit" class="btn-primary w-100">Sign In</button>
+            <button type="submit" class="btn-primary w-100">{{ _t('login_btn') }}</button>
         </form>
 
-        <p class="auth-footer">Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign Up</a></p>
+        <p class="auth-footer">{{ _t('no_acc') }} <a href="{{ url_for('auth.signup') }}">{{ _t('signup') }}</a></p>
     </div>
 </div>
 {% endblock %}

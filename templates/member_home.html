@@ -15,7 +15,7 @@
         <div class="workspace-main">
             <!-- Quick Launch Services -->
             <section class="service-hub animate-up">
-                <h2 class="section-heading">Core Intelligence Services</h2>
+                <h2 class="section-heading">{{ _t('core_intelligence_services') }}</h2>
                 <div class="hub-grid">
                     <a href="{{ url_for('cases.new_case_view') }}" class="service-card animate-up">
                         <div class="card-indicator"></div>
@@ -29,10 +29,10 @@
                             <p>Statutory Prediction</p>
                         </div>
                         <div class="card-body">
-                            <h3>Smart Case Helper</h3>
-                            <p>Get instant legal advice and see exactly which laws apply to your situation, or access
-                                tools for your previous cases.</p>
-                            <span class="card-link">Start Analysis <i class="fas fa-chevron-right"></i></span>
+                            <h3>{{ _t('smart_case_helper') }}</h3>
+                            <p>{{ _t('smart_case_helper_desc') }}</p>
+                            <span class="card-link">{{ _t('start_analysis') }} <i
+                                    class="fas fa-chevron-right"></i></span>
                         </div>
                     </a>
 
@@ -45,9 +45,9 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <h3>Document Generator</h3>
-                            <p>Instantly generate standard legal notices, affidavits, and rental agreements.</p>
-                            <span class="card-link">Generate Doc <i class="fas fa-chevron-right"></i></span>
+                            <h3>{{ _t('document_generator') }}</h3>
+                            <p>{{ _t('document_generator_desc') }}</p>
+                            <span class="card-link">{{ _t('generate_doc') }} <i class="fas fa-chevron-right"></i></span>
                         </div>
                     </a>
 
@@ -60,9 +60,9 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <h3>Easy Law Finder</h3>
-                            <p>Search and understand Indian laws and sections in simple language.</p>
-                            <span class="card-link">Find Law <i class="fas fa-chevron-right"></i></span>
+                            <h3>{{ _t('easy_law_finder') }}</h3>
+                            <p>{{ _t('easy_law_finder_desc') }}</p>
+                            <span class="card-link">{{ _t('find_law') }} <i class="fas fa-chevron-right"></i></span>
                         </div>
                     </a>
 
@@ -75,9 +75,9 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <h3>Bail & Rights Checker</h3>
-                            <p>Check your fundamental rights and see if you are eligible for bail.</p>
-                            <span class="card-link">Check Rights <i class="fas fa-chevron-right"></i></span>
+                            <h3>{{ _t('bail_rights_checker') }}</h3>
+                            <p>{{ _t('bail_rights_checker_desc') }}</p>
+                            <span class="card-link">{{ _t('check_rights') }} <i class="fas fa-chevron-right"></i></span>
                         </div>
                     </a>
 
@@ -93,9 +93,9 @@
                             <p>AI Document Analysis</p>
                         </div>
                         <div class="card-body">
-                            <h3>Smart Paper Reader</h3>
-                            <p>Upload photos of legal notices or reports to understand them instantly.</p>
-                            <span class="card-link">Read Paper <i class="fas fa-chevron-right"></i></span>
+                            <h3>{{ _t('smart_paper_reader') }}</h3>
+                            <p>{{ _t('smart_paper_reader_desc') }}</p>
+                            <span class="card-link">{{ _t('read_paper') }} <i class="fas fa-chevron-right"></i></span>
                         </div>
                     </a>
 
@@ -113,9 +113,10 @@
                             <p>Expert Advocates</p>
                         </div>
                         <div class="card-body">
-                            <h3>Client Consultations</h3>
-                            <p>Manage your private chats and consultations with citizens.</p>
-                            <span class="card-link white">Open Inbox <i class="fas fa-chevron-right"></i></span>
+                            <h3>{{ _t('client_consultations') }}</h3>
+                            <p>{{ _t('client_consultations_desc') }}</p>
+                            <span class="card-link white">{{ _t('open_inbox') }} <i
+                                    class="fas fa-chevron-right"></i></span>
                         </div>
                     </a>
                     {% else %}
@@ -128,9 +129,9 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <h3>Talk to a Lawyer</h3>
-                            <p>Find and connect with expert lawyers to guide you personally.</p>
-                            <span class="card-link">Find Help <i class="fas fa-chevron-right"></i></span>
+                            <h3>{{ _t('talk_to_lawyer') }}</h3>
+                            <p>{{ _t('talk_to_lawyer_desc') }}</p>
+                            <span class="card-link">{{ _t('find_help') }} <i class="fas fa-chevron-right"></i></span>
                         </div>
                     </a>
                     {% endif %}
@@ -140,8 +141,8 @@
             <!-- Nearby Legal Help Finder -->
             <section class="nearby-legal-section animate-up" style="animation-delay: 0.6s;">
                 <div class="section-header">
-                    <h3><i class="fas fa-map-marked-alt" style="color: var(--accent-gold);"></i> Nearby Legal Help
-                        Finder</h3>
+                    <h3><i class="fas fa-map-marked-alt" style="color: var(--accent-gold);"></i> {{
+                        _t('nearby_legal_finder') }}</h3>
                     <div id="location-status-container">
                         <!-- Automatic localized status will appear here -->
                     </div>
@@ -153,7 +154,7 @@
                     <input type="text" id="manual-loc-input" placeholder="Enter City or Pincode (e.g., Mumbai, 400001)"
                         style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.8rem; color: #fff; font-family: inherit;">
                     <button id="btn-manual-search" class="btn-primary-gold" style="padding: 0 1.5rem;"><i
-                            class="fas fa-search"></i> Search</button>
+                            class="fas fa-search"></i> {{ _t('search') }}</button>
                 </div>
 
                 <div id="nearby-results" class="nearby-grid">

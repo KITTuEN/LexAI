@@ -5,8 +5,8 @@
     <div class="card auth-card">
         <div class="auth-header">
             <i class="fas fa-user-plus gold-icon large-icon"></i>
-            <h1>Create Account</h1>
-            <p>Join LexAI legal advisor</p>
+            <h1>{{ _t('create_account_title') }}</h1>
+            <p>{{ _t('join_lexai_desc') }}</p>
         </div>
 
         {% if error %}
@@ -21,28 +21,28 @@
                     <input type="radio" name="role" value="user" checked>
                     <div class="role-card">
                         <i class="fas fa-user"></i>
-                        <span>Citizen</span>
+                        <span>{{ _t('citizen_role') }}</span>
                     </div>
                 </label>
                 <label class="role-option">
                     <input type="radio" name="role" value="lawyer">
                     <div class="role-card">
                         <i class="fas fa-gavel"></i>
-                        <span>Legal Professional</span>
+                        <span>{{ _t('legal_pro_role') }}</span>
                     </div>
                 </label>
             </div>
 
             <div class="form-group">
-                <label>Full Name</label>
+                <label>{{ _t('full_name_label') }}</label>
                 <input type="text" name="name" required placeholder="John Doe">
             </div>
             <div class="form-group">
-                <label>Email Address</label>
+                <label>{{ _t('email_addr_label') }}</label>
                 <input type="email" name="email" required placeholder="name@example.com">
             </div>
             <div class="form-group">
-                <label>Phone Number</label>
+                <label>{{ _t('phone_num_label') }}</label>
                 <input type="tel" name="phone" required placeholder="+91 98765-43210">
             </div>
 
@@ -72,17 +72,17 @@
             </div>
 
             <div class="form-group">
-                <label>Password</label>
+                <label>{{ _t('password_label') }}</label>
                 <input type="password" name="password" required placeholder="••••••••">
             </div>
             <div class="form-group">
-                <label>Confirm Password</label>
+                <label>{{ _t('confirm_pass_label') }}</label>
                 <input type="password" name="confirm_password" required placeholder="••••••••">
             </div>
-            <button type="submit" class="btn-primary w-100">Create Account</button>
+            <button type="submit" class="btn-primary w-100">{{ _t('create_acc_btn') }}</button>
         </form>
 
-        <p class="auth-footer">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+        <p class="auth-footer">{{ _t('already_acc') }} <a href="{{ url_for('auth.login') }}">{{ _t('login') }}</a></p>
     </div>
 </div>
 
