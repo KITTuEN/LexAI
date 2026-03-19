@@ -87,6 +87,12 @@ def inject_globals():
         "_t": lambda key: translate(key, current_user.get('preferred_language', 'English') if current_user else 'English')
     }
 
+@app.route('/lawyers')
+@jwt_required()
+def list_lawyers():
+    lawyers = user_model.get_lawyers()
+    return render_template('lawyers.html', lawyers=lawyers)
+
 @app.route('/')
 def index():
     from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
