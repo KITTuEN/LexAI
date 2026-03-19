@@ -10,8 +10,31 @@ generator_bp = Blueprint('generator', __name__)
 @jwt_required()
 def index():
     user_id = get_jwt_identity()
+    from database import case_model
     saved_docs = document_model.get_user_documents(user_id)
-    return render_template('generator.html', saved_docs=saved_docs)
+    cases = case_model.get_user_cases(user_id)
+    return render_template('generator.html', saved_docs=saved_docs, cases=cases)
+
+@generator_bp.route('/case_data/<case_id>')
+@jwt_required()
+def get_case_data(case_id):
+    user_id = get_jwt_identity()
+    from database import case_model
+    case = case_model.get_case(case_id)
+    if not case or str(case['user_id']) != user_id:
+        return jsonify({"error": "Access Denied"}), 403
+    
+    # Smart description extraction
+    description = ""
+    if case.get('analysis_result') and case['analysis_result'].get('case_summary'):
+        description = case['analysis_result']['case_summary']
+    else:
+        description = case.get('situation_summary', "")
+        
+    return jsonify({
+        "title": case.get('title', ""),
+        "description": description
+    })
 
 @generator_bp.route('/generate', methods=['POST'])
 @jwt_required()

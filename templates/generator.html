@@ -18,6 +18,19 @@
 
             <div class="form-group" style="display: flex; gap: 1rem; align-items: flex-end;">
                 <div style="flex-grow: 1;">
+                    <label for="caseSelect">{{ _t('select_case_optional') }}</label>
+                    <select id="caseSelect" class="form-control"
+                        style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; width: 100%;">
+                        <option value="">-- No Linked Case --</option>
+                        {% for case in cases %}
+                        <option value="{{ case._id }}">{{ case.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" style="display: flex; gap: 1rem; align-items: flex-end;">
+                <div style="flex-grow: 1;">
                     <label for="savedDocSelect">{{ _t('open_saved_doc') }}</label>
                     <select id="savedDocSelect" class="form-control"
                         style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; width: 100%;">
@@ -48,7 +61,7 @@
                 <!-- Dynamic fields will be injected here -->
             </div>
 
-            <button id="generateDocBtn" class="btn-primary-gold" style="width: 100%; margin-top: 20px; display: none;">
+            <button id="generateDocBtn" class="btn-primary-gold" style="display: none;">
                 <i class="fas fa-magic"></i> {{ _t('generate_legal_doc') }}
             </button>
 
@@ -296,6 +309,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const docTypeSelect = document.getElementById('docTypeSelect');
+        const caseSelect = document.getElementById('caseSelect');
         const savedDocSelect = document.getElementById('savedDocSelect');
         const dynamicFormContainer = document.getElementById('dynamicFormContainer');
         const generateDocBtn = document.getElementById('generateDocBtn');
@@ -374,6 +388,9 @@
                     label.textContent = field.label;
                     group.appendChild(label);
 
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'mic-input-wrapper';
+
                     let input;
                     if (field.type === 'textarea') {
                         input = document.createElement('textarea');
@@ -386,8 +403,21 @@
                     input.id = field.id;
                     input.className = 'form-input';
                     input.placeholder = `Enter ${field.label.toLowerCase()}`;
-                    group.appendChild(input);
+                    wrapper.appendChild(input);
 
+                    if (field.type === 'text' || field.type === 'textarea') {
+                        const micBtn = document.createElement('button');
+                        micBtn.type = 'button';
+                        micBtn.className = 'mic-btn';
+                        micBtn.dataset.micFor = field.id;
+                        const userLang = "{{ current_user.preferred_language if current_user else 'English' }}";
+                        micBtn.onclick = () => toggleVoiceInput(field.id, userLang);
+                        micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                        micBtn.title = 'Voice Input';
+                        wrapper.appendChild(micBtn);
+                    }
+
+                    group.appendChild(wrapper);
                     dynamicFormContainer.appendChild(group);
                 });
 
@@ -406,7 +436,49 @@
             noResultState.style.display = 'block';
             generatedDocumentContainer.style.display = 'none';
             downloadPdfBtn.style.display = 'none';
+
+            // Re-apply case summary if a case is already selected
+            if (caseSelect.value) {
+                applyCaseData();
+            }
         });
+
+        // Case selection change
+        caseSelect.addEventListener('change', () => applyCaseData());
+
+        async function applyCaseData() {
+            const caseId = caseSelect.value;
+            if (!caseId) return;
+
+            try {
+                const response = await fetch(`/generator/case_data/${caseId}`);
+                const data = await response.json();
+
+                if (data && data.description) {
+                    // Look for common description/summary field IDs
+                    const targetKeywords = ['Description', 'Summary', 'details', 'statements', 'purpose', 'Demands'];
+                    const currentDocType = docTypeSelect.value;
+                    const fields = documentFields[currentDocType] || [];
+
+                    fields.forEach(field => {
+                        const labelLower = field.label.toLowerCase();
+                        const idLower = field.id.toLowerCase();
+                        const isMatch = targetKeywords.some(key =>
+                            labelLower.includes(key.toLowerCase()) || idLower.includes(key.toLowerCase())
+                        );
+
+                        if (isMatch) {
+                            const element = document.getElementById(field.id);
+                            if (element && !element.value) { // Only fill if empty
+                                element.value = data.description;
+                            }
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("Error applying case data:", err);
+            }
+        }
 
         // Load an existing document
         savedDocSelect.addEventListener('change', async (e) => {

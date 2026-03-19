@@ -26,8 +26,15 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Accused Name</label>
-                    <input type="text" name="accused_name" required>
+                    <label>{{ _t('accused_name') }}</label>
+                    <div class="mic-input-wrapper">
+                        <input type="text" id="accused_name" name="accused_name" required>
+                        {% set user_lang = current_user.preferred_language if current_user else 'English' %}
+                        <button type="button" class="mic-btn" data-mic-for="accused_name"
+                            onclick="toggleVoiceInput('accused_name', '{{ user_lang }}')" title="Voice Input">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Incident Date</label>
@@ -36,14 +43,28 @@
             </div>
 
             <div class="form-group">
-                <label>Incident Location</label>
-                <input type="text" name="location" required placeholder="e.g. MG Road, Bangalore">
+                <label>{{ _t('incident_location') }}</label>
+                <div class="mic-input-wrapper">
+                    <input type="text" id="location" name="location" required placeholder="e.g. MG Road, Bangalore">
+                    {% set user_lang = current_user.preferred_language if current_user else 'English' %}
+                    <button type="button" class="mic-btn" data-mic-for="location"
+                        onclick="toggleVoiceInput('location', '{{ user_lang }}')" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="form-group">
-                <label>Incident Description</label>
-                <textarea name="description" rows="5" required
-                    placeholder="Describe what happened in detail..."></textarea>
+                <label>{{ _t('incident_description') }}</label>
+                <div class="mic-input-wrapper">
+                    <textarea id="description" name="description" rows="5" required
+                        placeholder="Describe what happened..."></textarea>
+                    {% set user_lang = current_user.preferred_language if current_user else 'English' %}
+                    <button type="button" class="mic-btn" data-mic-for="description"
+                        onclick="toggleVoiceInput('description', '{{ user_lang }}')" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
             </div>
 
             <button type="submit" class="btn-primary">Generate Complaint Preview</button>

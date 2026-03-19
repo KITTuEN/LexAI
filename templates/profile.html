@@ -17,8 +17,16 @@
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label><i class="fas fa-user"></i> {{ _t('full_name') }}</label>
-                        <input type="text" name="name" value="{{ user.name_encrypted | decrypt_name }}" required>
+                        <label><span><i class="fas fa-user"></i> {{ _t('full_name') }}</span></label>
+                        <div class="mic-input-wrapper">
+                            <input type="text" id="name" name="name" value="{{ user.name_encrypted | decrypt_name }}"
+                                required>
+                            {% set user_lang = current_user.preferred_language if current_user else 'English' %}
+                            <button type="button" class="mic-btn" data-mic-for="name"
+                                onclick="toggleVoiceInput('name', '{{ user_lang }}')" title="Voice Input">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -29,15 +37,29 @@
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-phone"></i> {{ _t('phone_number') }}</label>
-                        <input type="tel" name="phone" value="{{ user.phone_encrypted | decrypt_name }}" required>
+                        <label><span><i class="fas fa-phone"></i> {{ _t('phone_number') }}</span></label>
+                        <div class="mic-input-wrapper">
+                            <input type="tel" id="phone" name="phone" value="{{ user.phone_encrypted | decrypt_name }}"
+                                required>
+                            {% set user_lang = current_user.preferred_language if current_user else 'English' %}
+                            <button type="button" class="mic-btn" data-mic-for="phone"
+                                onclick="toggleVoiceInput('phone', '{{ user_lang }}')" title="Voice Input">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-map-marker-alt"></i> {{ _t('your_location') }}</label>
-                        <input type="text" name="location"
-                            value="{{ user.location_encrypted | decrypt_name if user.location_encrypted else '' }}"
-                            placeholder="{{ _t('location_placeholder') }}">
+                        <label><span><i class="fas fa-map-marker-alt"></i> {{ _t('your_location') }}</span></label>
+                        <div class="mic-input-wrapper">
+                            <input type="text" id="location" name="location"
+                                value="{{ user.location_encrypted | decrypt_name }}" required>
+                            {% set user_lang = current_user.preferred_language if current_user else 'English' %}
+                            <button type="button" class="mic-btn" data-mic-for="location"
+                                onclick="toggleVoiceInput('location', '{{ user_lang }}')" title="Voice Input">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
                         <small class="form-hint">{{ _t('location_hint') }}</small>
                     </div>
 

@@ -14,7 +14,78 @@
     --glass-border-gold: 1px solid rgba(201, 168, 76, 0.3);
     --nav-height: 80px;
     --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Global Voice Input Button Styling */
+.mic-input-wrapper {
+    position: relative;
+    width: 100%;
+    display: block;
+}
+
+.mic-input-wrapper input,
+.mic-input-wrapper textarea,
+.mic-input-wrapper select {
+    width: 100% !important;
+    padding-right: 48px !important;
+}
+
+.mic-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(201, 168, 76, 0.1);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    color: var(--accent-gold);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    z-index: 5;
+}
+
+/* Adjust for textareas to be at the top right */
+.mic-input-wrapper textarea+.mic-btn {
+    top: 12px;
+    transform: none;
+}
+
+.mic-btn:hover {
+    background: var(--accent-gold);
+    color: #000;
+    box-shadow: 0 0 15px rgba(201, 168, 76, 0.4);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.mic-input-wrapper textarea+.mic-btn:hover {
+    transform: scale(1.1);
+}
+
+.mic-btn.listening {
+    background: #ff4d4d;
+    color: white;
+    border-color: #ff4d4d;
+    animation: mic-pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes mic-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(255, 77, 77, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 77, 77, 0);
+    }
 }
 
 * {
@@ -218,35 +289,41 @@ h3,
 }
 
 /* Premium Buttons */
-.btn-primary {
+.btn-primary,
+.btn-primary-gold {
     background: var(--gold-gradient);
-    color: #000;
-    padding: 0.85rem 2rem;
+    background-size: 200% auto;
+    color: #000 !important;
+    padding: 1rem 2.5rem;
     border: none;
-    border-radius: 12px;
+    border-radius: 14px;
     font-weight: 800;
-    font-size: 0.95rem;
+    font-size: 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     cursor: pointer;
-    transition: var(--transition-smooth);
-    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(201, 168, 76, 0.2);
-    position: relative;
-    overflow: hidden;
+    gap: 0.8rem;
+    box-shadow: 0 10px 20px rgba(201, 168, 76, 0.2);
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
 }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(201, 168, 76, 0.4);
+.btn-primary:hover,
+.btn-primary-gold:hover {
+    background-position: right center;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(201, 168, 76, 0.4);
     filter: brightness(1.1);
 }
 
-.btn-primary:active {
-    transform: translateY(0);
+.btn-primary:active,
+.btn-primary-gold:active {
+    transform: translateY(0) scale(0.98);
 }
 
 .w-100 {
@@ -417,19 +494,31 @@ h3,
 }
 
 .btn-primary-outline {
-    border: 1.5px solid var(--accent-gold);
-    color: var(--accent-gold);
     background: transparent;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: var(--transition-smooth);
+    border: 2px solid var(--accent-gold);
+    color: var(--accent-gold);
+    padding: 0.9rem 2.2rem;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    text-decoration: none;
+    backdrop-filter: blur(5px);
 }
 
 .btn-primary-outline:hover {
-    background: var(--gold-gradient);
-    color: #000;
-    border-color: transparent;
+    background: rgba(201, 168, 76, 0.15);
+    box-shadow: 0 0 20px rgba(201, 168, 76, 0.2);
+    transform: translateY(-2px);
+    color: var(--accent-gold-bright);
+    border-color: var(--accent-gold-bright);
 }
 
 /* Footer Premium Design */

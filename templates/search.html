@@ -6,8 +6,15 @@
         <h1>{{ _t('search_ipc_bns') }}</h1>
         <p>{{ _t('search_hint') }}</p>
         <div class="search-input-wrapper">
-            <input type="text" id="searchInput" placeholder="{{ _t('search_placeholder') }}">
-            <button id="searchBtn" class="btn-primary">{{ _t('search') }}</button>
+            <div class="mic-input-wrapper" style="flex: 1;">
+                <input type="text" id="searchInput" placeholder="{{ _t('search_placeholder') }}">
+                {% set user_lang = current_user.preferred_language if current_user else 'English' %}
+                <button type="button" class="mic-btn" data-mic-for="searchInput"
+                    onclick="toggleVoiceInput('searchInput', '{{ user_lang }}')" title="Voice Input">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+            <button id="searchBtn" class="btn-primary" style="white-space: nowrap;">{{ _t('search') }}</button>
         </div>
     </div>
 

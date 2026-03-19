@@ -13,11 +13,18 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
             <div class="form-group">
-                <label>Experience & Success Stories</label>
+                <label>{{ _t('experience_success_stories') }}</label>
                 <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">This information is
                     visible to all citizens looking for legal help.</p>
-                <textarea name="experience_summary" rows="10" required
-                    placeholder="Describe your landmark cases, years of practice, and areas of expertise...">{{ user.experience_summary }}</textarea>
+                <div class="mic-input-wrapper">
+                    <textarea id="experience_summary" name="experience_summary" rows="10" required
+                        placeholder="Describe your landmark cases, years of practice, and areas of expertise...">{{ user.experience_summary }}</textarea>
+                    {% set user_lang = current_user.preferred_language if current_user else 'English' %}
+                    <button type="button" class="mic-btn" data-mic-for="experience_summary"
+                        onclick="toggleVoiceInput('experience_summary', '{{ user_lang }}')" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="form-group">

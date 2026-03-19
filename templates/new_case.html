@@ -24,21 +24,32 @@
 
                                 <div class="form-group">
                                     <label for="title">{{ _t('what_is_this_about') }}</label>
-                                    <input type="text" id="title" name="title" class="form-input"
-                                        placeholder="{{ _t('title_placeholder') }}" required>
+                                    <div class="mic-input-wrapper">
+                                        <input type="text" id="title" name="title" class="form-input"
+                                            placeholder="{{ _t('title_placeholder') }}" required>
+                                        {% set user_lang = current_user.preferred_language if current_user else
+                                        'English' %}
+                                        <button type="button" class="mic-btn" data-mic-for="title"
+                                            onclick="toggleVoiceInput('title', '{{ user_lang }}')" title="Voice Input">
+                                            <i class="fas fa-microphone"></i>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="situation_summary">{{ _t('describe_situation') }}
+                                    <label for="situation_summary">{{ _t('describe_situation') }}</label>
+                                    <div class="mic-input-wrapper">
+                                        <textarea id="situation_summary" name="situation_summary" class="form-input"
+                                            rows="8" placeholder="{{ _t('situation_placeholder') }}"
+                                            required></textarea>
                                         {% set user_lang = current_user.preferred_language if current_user else
                                         'English' %}
                                         <button type="button" class="mic-btn" data-mic-for="situation_summary"
-                                            onclick="toggleVoiceInput('situation_summary', '{{ user_lang }}')">
+                                            onclick="toggleVoiceInput('situation_summary', '{{ user_lang }}')"
+                                            title="Voice Input">
                                             <i class="fas fa-microphone"></i>
                                         </button>
-                                    </label>
-                                    <textarea id="situation_summary" name="situation_summary" class="form-input"
-                                        rows="8" placeholder="{{ _t('situation_placeholder') }}" required></textarea>
+                                    </div>
                                 </div>
 
                                 <button id="startAnalysisBtn" class="btn-primary-gold" style="width: 100%;">

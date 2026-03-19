@@ -46,7 +46,14 @@
         </div>
 
         <div class="chat-input-area">
-            <textarea id="message-input" placeholder="Type your message here..." rows="1"></textarea>
+            <div class="mic-input-wrapper" style="flex: 1;">
+                <textarea id="message-input" placeholder="Type your message here..." rows="1"></textarea>
+                {% set user_lang = current_user.preferred_language if current_user else 'English' %}
+                <button type="button" class="mic-btn" data-mic-for="message-input"
+                    onclick="toggleVoiceInput('message-input', '{{ user_lang }}')" title="Voice Input">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
             <button id="send-btn" class="btn-action-round gold">
                 <i class="fas fa-paper-plane"></i>
             </button>

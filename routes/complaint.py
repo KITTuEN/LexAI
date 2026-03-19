@@ -74,7 +74,18 @@ def get_complaint_data(case_id):
     if not case or str(case['user_id']) != user_id:
         return jsonify({"error": "Access Denied"}), 403
     
+    details = case.get('complaint_data', {})
+    
+    # Auto-populate description if empty
+    if not details.get('description'):
+        # Fallback 1: AI Case Summary
+        if case.get('analysis_result') and case['analysis_result'].get('case_summary'):
+            details['description'] = case['analysis_result']['case_summary']
+        # Fallback 2: Original User Summary
+        else:
+            details['description'] = case.get('situation_summary', "")
+            
     return jsonify({
-        "details": case.get('complaint_data', {}),
+        "details": details,
         "final_text": case.get('final_complaint_text', "")
     })
