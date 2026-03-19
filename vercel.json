@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "app.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/robots.txt",
+      "dest": "app.py"
+    },
+    {
+      "src": "/sitemap.xml",
+      "dest": "app.py"
+    },
+    {
+      "src": "/google10c68f1d7dfe2f5f.html",
+      "dest": "app.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "app.py"
+    }
+  ]
+}
