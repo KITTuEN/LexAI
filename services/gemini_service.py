@@ -19,6 +19,8 @@ class GeminiService:
         
         # Using gemini-flash-latest as the standard reliable model for this project
         self.model_name = 'gemini-flash-latest'
+        self.embed_model = 'models/gemini-embedding-001'
+        self.types = types
         self.spatial_cache = {} # Cache for nearby resources
 
     def _call_with_retry(self, api_func, *args, **kwargs):
@@ -68,6 +70,27 @@ class GeminiService:
 
         response = self._call_with_retry(_execute)
         return response.text
+
+    def embed_content(self, text, task_type="RETRIEVAL_DOCUMENT", title=None):
+        """Generates embeddings using Gemini's text-embedding model. Supports batching."""
+        def _execute(client):
+            return client.models.embed_content(
+                model=self.embed_model,
+                contents=text,
+                config=types.EmbedContentConfig(
+                    task_type=task_type,
+                    title=title
+                )
+            )
+        
+        response = self._call_with_retry(_execute)
+        
+        # If it's a list (batch), return list of embeddings
+        if isinstance(text, list):
+            return [e.values for e in response.embeddings]
+        
+        # Otherwise return single embedding
+        return response.embeddings[0].values
 
     def analyze_case(self, situation, chat_history, system_prompt, lang='English'):
         def _execute(client):
@@ -256,6 +279,18 @@ class GeminiService:
                 "recommendation": "Error in AI generation.",
                 "raw_text": str(e)
             }
+
+    def extract_text_from_media(self, media_data, mime_type):
+        """Extracts all text from an image or PDF using Gemini."""
+        def _execute(client):
+            prompt = "Extract all text from this document accurately. Provide only the text content."
+            return client.models.generate_content(
+                model=self.model_name,
+                contents=[types.Part.from_bytes(data=media_data, mime_type=mime_type), prompt]
+            )
+        
+        response = self._call_with_retry(_execute)
+        return response.text
 
     def find_nearby_legal_resources(self, lat, lng, lang='English'):
         # Cache key based on rounded coordinates (2 decimal places ~1km accuracy)

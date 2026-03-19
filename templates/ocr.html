@@ -109,6 +109,43 @@
             <button class="btn-secondary w-100" style="margin-top: 2rem;" onclick="resetOCR()">{{ _t('analyze_doc')
                 }}</button>
         </div>
+
+        <!-- History Section (Always Visible if results exist) -->
+        <div class="ocr-history-section animate-up" style="margin-top: 3rem;">
+            <h3><i class="fas fa-history gold-text"></i> Recent Analyses</h3>
+            <div id="historyList" class="history-grid">
+                <!-- History items will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Strategy Room (Initially Hidden) -->
+        <div id="strategyRoom" class="strategy-room animate-up" style="display: none; margin-top: 2rem;">
+            <div class="strategy-header">
+                <i class="fas fa-chess-knight gold-text"></i>
+                <div>
+                    <h3>Strategic Insight / Argument Builder</h3>
+                    <p class="subtitle">AI-generated legal strategy based on this document</p>
+                </div>
+            </div>
+            <div id="strategyContent" class="strategy-body"></div>
+        </div>
+
+        <!-- Document Chat Interface (Initially Hidden) -->
+        <div id="docChatContainer" class="doc-chat-container animate-up" style="display: none; margin-top: 2rem;">
+            <div class="chat-header">
+                <h3><i class="fas fa-comments gold-text"></i> Ask Doubts from Document</h3>
+                <p class="subtitle">Get clarification on specific clauses or terms</p>
+            </div>
+            <div id="chatMessages" class="chat-messages">
+                <div class="message ai-message">
+                    Hello! I've analyzed your document. Do you have any specific questions about it?
+                </div>
+            </div>
+            <form id="chatForm" class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Ask a question..." autocomplete="off">
+                <button type="submit" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -336,6 +373,204 @@
             grid-column: span 1;
         }
     }
+
+    /* Strategy Room */
+    .strategy-room {
+        background: linear-gradient(135deg, rgba(201, 168, 76, 0.15) 0%, rgba(13, 17, 23, 1) 100%);
+        border: 1px solid var(--accent-gold);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .strategy-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .strategy-header i {
+        font-size: 2.5rem;
+    }
+
+    .strategy-body {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: var(--text-secondary);
+        white-space: pre-wrap;
+    }
+
+    /* Doc Chat Styles */
+    .doc-chat-container {
+        background: #0D1117;
+        border: 1px solid #30363d;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        height: 500px;
+        overflow: hidden;
+    }
+
+    .chat-header {
+        padding: 1.5rem;
+        background: #161b22;
+        border-bottom: 1px solid #30363d;
+    }
+
+    .chat-messages {
+        flex: 1;
+        padding: 1.5rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .message {
+        max-width: 85%;
+        padding: 1rem 1.5rem;
+        border-radius: 15px;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        text-align: left;
+    }
+
+    .message p {
+        margin-bottom: 0.8rem;
+    }
+
+    .message p:last-child {
+        margin-bottom: 0;
+    }
+
+    .message ul,
+    .message ol {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .message h1,
+    .message h2,
+    .message h3 {
+        font-size: 1.1rem;
+        color: var(--accent-gold);
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .ai-message {
+        background: #21262d;
+        color: #fff;
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+    }
+
+    .user-message {
+        background: var(--accent-gold);
+        color: #000;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+        font-weight: 500;
+    }
+
+    .chat-input-area {
+        padding: 1.2rem;
+        background: #161b22;
+        display: flex;
+        gap: 1rem;
+        border-top: 1px solid #30363d;
+    }
+
+    .chat-input-area input {
+        flex: 1;
+        background: #0D1117;
+        border: 1px solid #30363d;
+        padding: 0.8rem 1.2rem;
+        border-radius: 10px;
+        color: #fff;
+    }
+
+    .chat-input-area button {
+        background: var(--accent-gold);
+        color: #000;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .chat-input-area button:hover {
+        transform: scale(1.05);
+    }
+
+    /* History Grid */
+    .history-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .history-item {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .history-item:hover {
+        border-color: var(--accent-gold);
+        transform: translateY(-5px);
+        background: #1c2128;
+    }
+
+    .history-item h4 {
+        color: var(--accent-gold);
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .history-item p {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .history-date {
+        font-size: 0.75rem !important;
+        margin-top: 0.8rem;
+        display: block;
+        opacity: 0.7;
+    }
+
+    .typing-indicator {
+        font-style: italic;
+        opacity: 0.7;
+        background: transparent !important;
+        border: none !important;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            opacity: 0.4;
+        }
+
+        50% {
+            opacity: 0.8;
+        }
+
+        100% {
+            opacity: 0.4;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -357,6 +592,70 @@
     const importantPointsCard = document.getElementById('importantPointsCard');
     const beneficiaryCard = document.getElementById('beneficiaryCard');
     const clausesCard = document.getElementById('clausesCard');
+    const strategyRoom = document.getElementById('strategyRoom');
+    const docChatContainer = document.getElementById('docChatContainer');
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const chatMessages = document.getElementById('chatMessages');
+
+    let currentDocId = null;
+
+    // Load history on start
+    document.addEventListener('DOMContentLoaded', loadHistory);
+
+    async function loadHistory() {
+        try {
+            const response = await fetch('/ocr/history', {
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' }
+            });
+            const history = await response.json();
+            const list = document.getElementById('historyList');
+
+            if (history.length === 0) {
+                list.innerHTML = '<p class="subtitle">No past analyses found.</p>';
+                return;
+            }
+
+            list.innerHTML = history.map(item => {
+                const result = item.analysis_result || {};
+                const typeName = (result.document_type || 'other').replace('_', ' ').toUpperCase();
+                return `
+                    <div class="history-item" onclick="loadAnalysis('${item.doc_id}')">
+                        <h4>${item.file_name || 'Document'}</h4>
+                        <p>${typeName}</p>
+                        <span class="history-date">${new Date(item.created_at).toLocaleDateString()}</span>
+                    </div>
+                `;
+            }).join('');
+        } catch (error) {
+            console.error('History Error:', error);
+        }
+    }
+
+    async function loadAnalysis(docId) {
+        ocrForm.style.display = 'none';
+        loading.style.display = 'block';
+        resultArea.style.display = 'none';
+
+        try {
+            const response = await fetch(`/ocr/history/${docId}`, {
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' }
+            });
+            const data = await response.json();
+            loading.style.display = 'none';
+
+            if (data.analysis_result) {
+                displayAnalysis(data.analysis_result, docId, data.messages || []);
+                // Scroll to result
+                resultArea.scrollIntoView({ behavior: 'smooth' });
+            }
+        } catch (error) {
+            console.error('Load Error:', error);
+            loading.style.display = 'none';
+            alert('Failed to load analysis');
+            resetOCR();
+        }
+    }
 
     fileInput.onchange = () => {
         if (fileInput.files.length > 0) {
@@ -385,71 +684,10 @@
             loading.style.display = 'none';
             if (data.analysis) {
                 const analysis = data.analysis;
+                currentDocId = data.doc_id;
                 const type = analysis.document_type || 'other';
-                resultArea.style.display = 'block';
-
-                // Reset visibility
-                [riskCard, firCard, prosCard, consCard, sectionsCard, importantPointsCard, beneficiaryCard, clausesCard].forEach(c => c.style.display = 'none');
-
-                // Header mapping
-                const typeLabels = {
-                    'case_file': 'Case Analysis',
-                    'contract_policy': 'Contract Analysis',
-                    'fir': 'FIR Breakdown',
-                    'other': 'Document Analysis'
-                };
-                document.getElementById('documentTypeHeader').textContent = typeLabels[type] || 'Analysis Results';
-                document.getElementById('simplifiedSummary').textContent = analysis.simplified_summary;
-
-                // Document specific logic
-                if (type === 'case_file') {
-                    riskCard.style.display = 'block';
-                    importantPointsCard.style.display = 'block';
-                    sectionsCard.style.display = 'block';
-
-                    const risk = analysis.risk_percentage || 0;
-                    document.getElementById('riskFill').style.width = risk + '%';
-                    document.getElementById('riskText').textContent = risk + '%';
-
-                    const pointsList = document.getElementById('importantPointsList');
-                    pointsList.innerHTML = (analysis.important_points || []).map(p => `<li>${p}</li>`).join('');
-                }
-                else if (type === 'contract_policy') {
-                    prosCard.style.display = 'block';
-                    consCard.style.display = 'block';
-                    beneficiaryCard.style.display = 'block';
-
-                    document.getElementById('prosList').innerHTML = (analysis.pros || []).map(p => `<li>${p}</li>`).join('');
-                    document.getElementById('consList').innerHTML = (analysis.cons || []).map(c => `<li>${c}</li>`).join('');
-                    document.getElementById('beneficiaryParty').textContent = analysis.beneficiary?.party || 'N/A';
-                    document.getElementById('beneficiaryReason').textContent = analysis.beneficiary?.reason || 'N/A';
-                }
-                else if (type === 'fir') {
-                    firCard.style.display = 'block';
-                    sectionsCard.style.display = 'block';
-                    document.getElementById('completeAnalysisText').textContent = analysis.complete_analysis;
-                }
-
-                // Sections (Shared)
-                if (analysis.sections && analysis.sections.length > 0) {
-                    sectionsCard.style.display = 'block';
-                    document.getElementById('sectionsList').innerHTML = analysis.sections.map(s => `<span class="tag-item">${s}</span>`).join('');
-                }
-
-                // Clauses (Fallthrough for all)
-                if (analysis.key_clauses && analysis.key_clauses.length > 0) {
-                    clausesCard.style.display = 'block';
-                    document.getElementById('clausesContainer').innerHTML = analysis.key_clauses.map(c => `
-                        <div class="clause-item">
-                            <h5>${c.clause}</h5>
-                            <p>${c.impact}</p>
-                        </div>
-                    `).join('');
-                }
-
-                // Recommendation
-                document.getElementById('recommendationText').textContent = analysis.recommendation;
-
+                displayAnalysis(analysis, currentDocId, []); // New analysis, empty chat
+                loadHistory(); // Refresh history
             } else {
                 alert(data.error || 'Failed to analyze');
                 resetOCR();
@@ -462,12 +700,173 @@
         }
     };
 
+    chatForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const question = chatInput.value.trim();
+        if (!question || !currentDocId) return;
+
+        // Add user message
+        addMessage(question, 'user');
+        chatInput.value = '';
+
+        // Typing indicator
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message ai-message typing-indicator';
+        typingDiv.textContent = 'LexAI is thinking...';
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        try {
+            const response = await fetch('/ocr/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    doc_id: currentDocId,
+                    question: question
+                })
+            });
+
+            chatMessages.removeChild(typingDiv);
+
+            const data = await response.json();
+            if (data.answer) {
+                addMessage(data.answer, 'ai');
+            } else {
+                addMessage('Sorry, I encountered an error.', 'ai');
+            }
+        } catch (error) {
+            if (chatMessages.contains(typingDiv)) chatMessages.removeChild(typingDiv);
+            console.error(error);
+            addMessage('Failed to connect to assistant.', 'ai');
+        }
+    };
+
+    function addMessage(text, sender) {
+        const div = document.createElement('div');
+        div.className = `message ${sender}-message`;
+        if (sender === 'ai') {
+            try {
+                if (typeof marked !== 'undefined') {
+                    div.innerHTML = marked.parse(text);
+                } else {
+                    console.warn('Marked library not loaded, using plain text');
+                    div.textContent = text;
+                }
+            } catch (e) {
+                console.error('Markdown parse error:', e);
+                div.textContent = text;
+            }
+        } else {
+            div.textContent = text;
+        }
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function displayAnalysis(analysis, docId, messages = []) {
+        currentDocId = docId;
+        const type = analysis.document_type || 'other';
+        resultArea.style.display = 'block';
+        docChatContainer.style.display = 'flex';
+
+        // Clear and Render chat history
+        chatMessages.innerHTML = `
+            <div class="message ai-message">
+                Hello! I've analyzed your document. Do you have any specific questions about it?
+            </div>
+        `;
+        if (messages && messages.length > 0) {
+            messages.forEach(msg => {
+                addMessage(msg.text, msg.role === 'user' ? 'user' : 'ai');
+            });
+        }
+
+        // Reset visibility
+        [riskCard, firCard, prosCard, consCard, sectionsCard, importantPointsCard, beneficiaryCard, clausesCard, strategyRoom].forEach(c => c.style.display = 'none');
+
+        // Header mapping
+        const typeLabels = {
+            'case_file': 'Case Analysis',
+            'contract_policy': 'Contract Analysis',
+            'fir': 'FIR Breakdown',
+            'other': 'Document Analysis'
+        };
+        document.getElementById('documentTypeHeader').textContent = typeLabels[type] || 'Analysis Results';
+        document.getElementById('simplifiedSummary').textContent = analysis.simplified_summary || 'No summary available.';
+
+        // Document specific logic
+        if (type === 'case_file') {
+            riskCard.style.display = 'block';
+            importantPointsCard.style.display = 'block';
+            sectionsCard.style.display = 'block';
+
+            const risk = analysis.risk_percentage || 0;
+            document.getElementById('riskFill').style.width = risk + '%';
+            document.getElementById('riskText').textContent = risk + '%';
+
+            const pointsList = document.getElementById('importantPointsList');
+            pointsList.innerHTML = (analysis.important_points || []).map(p => `<li>${p}</li>`).join('') || '<li>No points found</li>';
+        }
+        else if (type === 'contract_policy') {
+            prosCard.style.display = 'block';
+            consCard.style.display = 'block';
+            beneficiaryCard.style.display = 'block';
+
+            document.getElementById('prosList').innerHTML = (analysis.pros || []).map(p => `<li>${p}</li>`).join('') || '<li>No pros found</li>';
+            document.getElementById('consList').innerHTML = (analysis.cons || []).map(c => `<li>${c}</li>`).join('') || '<li>No cons found</li>';
+            document.getElementById('beneficiaryParty').textContent = analysis.beneficiary?.party || 'N/A';
+            document.getElementById('beneficiaryReason').textContent = analysis.beneficiary?.reason || 'N/A';
+        }
+        else if (type === 'fir') {
+            firCard.style.display = 'block';
+            sectionsCard.style.display = 'block';
+            document.getElementById('completeAnalysisText').textContent = analysis.complete_analysis || 'No detailed analysis found.';
+        }
+
+        // Strategy Room
+        if (analysis.strategic_insight) {
+            strategyRoom.style.display = 'block';
+            document.getElementById('strategyContent').textContent = analysis.strategic_insight;
+        }
+
+        // Sections & Citations (Shared)
+        let combinedTags = [];
+        if (analysis.sections) combinedTags = [...combinedTags, ...analysis.sections];
+        if (analysis.citations) combinedTags = [...combinedTags, ...analysis.citations];
+
+        if (combinedTags.length > 0) {
+            sectionsCard.style.display = 'block';
+            document.getElementById('sectionsList').innerHTML = combinedTags.map(s => `<span class="tag-item">${s}</span>`).join('');
+        }
+
+        // Clauses (Fallthrough for all)
+        if (analysis.key_clauses && analysis.key_clauses.length > 0) {
+            clausesCard.style.display = 'block';
+            document.getElementById('clausesContainer').innerHTML = analysis.key_clauses.map(c => `
+                <div class="clause-item">
+                    <h5>${c.clause || 'Clause'}</h5>
+                    <p>${c.impact || 'No impact described'}</p>
+                </div>
+            `).join('');
+        }
+
+        // Recommendation
+        document.getElementById('recommendationText').textContent = analysis.recommendation || 'No recommendation provided.';
+    }
+
     function resetOCR() {
         ocrForm.reset();
         fileName.textContent = '{{ _t("ocr_upload_hint") }}';
         analyzeBtn.disabled = true;
         ocrForm.style.display = 'block';
         resultArea.style.display = 'none';
+        strategyRoom.style.display = 'none';
+        docChatContainer.style.display = 'none';
+        chatMessages.innerHTML = '';
+        currentDocId = null;
     }
 </script>
 {% endblock %}

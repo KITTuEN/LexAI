@@ -11,4 +11,5 @@ pdfkit
 bleach
 Pillow
 PyPDF2
+pinecone
 flask-wtf
