@@ -54,7 +54,7 @@ class GeminiService:
 
     def get_chat_response(self, chat_history, system_prompt, lang='English'):
         def _execute(client):
-            localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: YOU MUST RESPOND ONLY IN {lang}."
+            localized_system_prompt = f"You are the NyayaVyavasth Legal Intelligence AI. {system_prompt}\n\nIMPORTANT: YOU MUST RESPOND ONLY IN {lang}."
             formatted_history = []
             for msg in chat_history[:-1]:
                 role = "user" if msg['role'] == 'user' else "model"
@@ -194,7 +194,7 @@ class GeminiService:
     def generate_legal_document(self, doc_type, form_data, lang='English'):
         def _execute(client):
             system_prompt = f"""
-            You are an expert Indian Legal Advisor and Document Drafter. 
+            You are NyayaVyavasth, an expert Indian Legal Advisor and Document Drafter. 
             Your task is to generate a professional, legally valid {doc_type} based on the user's details.
 
             STRICT RULES:
@@ -216,7 +216,7 @@ class GeminiService:
 
     def analyze_document(self, image_data, mime_type, system_prompt, lang='English'):
         def _execute(client):
-            localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: ALL JSON VALUES MUST BE PROVIDED IN {lang}."
+            localized_system_prompt = f"You are NyayaVyavasth, a World-Class Legal Document Analyst. {system_prompt}\n\nIMPORTANT: ALL JSON VALUES MUST BE PROVIDED IN {lang}."
             prompt = """
             Analyze this legal document (Case File, FIR, Contract, or Policy) and identify its type.
             Provide a professional breakdown in Indian Legal context.

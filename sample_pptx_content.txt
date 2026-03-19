@@ -6,7 +6,7 @@ The ideal size of the presentation should not be more than 10 slides.
 You are welcome to add as many POCs and design concepts to support your project.
 The project should be feasible and the team members should be capable enough, to come up with the fully functioning prototype of the same idea, if required.
 In case of queries, kindly reach out to us at solutionchallengesupport@hack2skill.com
-Note: Prototype must include cloud deployment and use at least one Google AI model or service (e.g., Gemini) as part of the solution.
+Note: Prototype must include cloud deployment and use at least one Google AI model or service (e.g., NyayaVyavasth) as part of the solution.
 --- Slide 2 ---
 
 Team Details

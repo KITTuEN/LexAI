@@ -9,7 +9,7 @@ India's legal system remains complex and largely inaccessible to the general pub
 - **Lack of Awareness**: Many citizens are unaware of their fundamental rights or the specific statutes applicable to their situations, leading to exploitation or unnecessary legal trouble.
 
 ## 2. PROPOSED SOLUTION: LEXAI
-NyayaVyavasth is an advanced, AI-powered platform designed to democratize legal access. It leverages cutting-edge NLP via Google Gemini AI to act as a bridge between complex law and everyday citizen needs. 
+NyayaVyavasth is an advanced, AI-powered platform designed to democratize legal access. It leverages cutting-edge NLP via NyayaVyavasth AI AI to act as a bridge between complex law and everyday citizen needs. 
 - **AI-Powered Consultations**: A 24/7 chatbot that provides instant, natural language responses to legal queries.
 - **Automated Document Generation**: Instant drafting of usable legal documents like FIRs, legal notices, and case summaries.
 - **OCR Analysis**: Seamless digitization and simplification of physical legal notices using Optical Character Recognition.
@@ -24,7 +24,7 @@ NyayaVyavasth is an advanced, AI-powered platform designed to democratize legal 
 - **Prepare for Consultation**: Assist users in creating structured case summaries to make professional lawyer consultations more effective and less time-consuming.
 
 ## 4. CORE FEATURES & DETAILS
-- **AI Legal Chatbot**: Built with Google Gemini Pro, providing interactive and context-aware legal advice.
+- **AI Legal Chatbot**: Built with NyayaVyavasth AI Pro, providing interactive and context-aware legal advice.
 - **Smart Complaint Builder**: A semi-automated tool where users provide basic incident details, and the AI generates a formal police complaint or legal notice in PDF format.
 - **Notice Analyzer (OCR)**: Users can upload photos of physical legal notices; the system extracts the text and provides a simplified summary and recommended next steps.
 - **Rights Repository**: A simplified, searchable database containing key sections of the IPC/BNS and fundamental citizen rights.
@@ -33,7 +33,7 @@ NyayaVyavasth is an advanced, AI-powered platform designed to democratize legal 
 ## 5. TECHNICAL ARCHITECTURE & STACK
 - **Frontend**: Responsive web interface using HTML5, CSS3, and Vanilla JavaScript, ensuring mobile accessibility.
 - **Backend Framework**: Python Flask for a robust and scalable REST API architecture.
-- **AI Layer**: Integration with Google Gemini AI for natural language processing, text summarization, and document drafting.
+- **AI Layer**: Integration with NyayaVyavasth AI AI for natural language processing, text summarization, and document drafting.
 - **Database**: MongoDB Atlas for flexible, cloud-native storage of user data, case histories, and chat sessions.
 - **Security**: JWT-based authentication (Flask-JWT-Extended) to ensure data privacy and secure user sessions.
 
