@@ -130,5 +130,9 @@ def sitemap_xml():
 """
     return content, 200, {'Content-Type': 'application/xml'}
 
+@app.route('/google10c68f1d7dfe2f5f.html')
+def google_verify():
+    return render_template('google10c68f1d7dfe2f5f.html')
+
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
