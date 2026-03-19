@@ -98,11 +98,37 @@ def index():
         pass
     return render_template('index.html')
 
-@app.route('/lawyers')
-@jwt_required()
-def list_lawyers():
-    lawyers = user_model.get_lawyers()
-    return render_template('lawyers.html', lawyers=lawyers)
+@app.route('/robots.txt')
+def robots_txt():
+    content = """User-agent: *
+Allow: /
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /case/
+Disallow: /ocr/
+Sitemap: https://nyayavyavasth.com/sitemap.xml
+"""
+    return content, 200, {'Content-Type': 'text/plain'}
+
+@app.route('/sitemap.xml')
+def sitemap_xml():
+    content = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://nyayavyavasth.com/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://nyayavyavasth.com/auth/login</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nyayavyavasth.com/auth/signup</loc>
+    <priority>0.8</priority>
+  </url>
+</urlset>
+"""
+    return content, 200, {'Content-Type': 'application/xml'}
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
