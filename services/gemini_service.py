@@ -17,97 +17,117 @@ class GeminiService:
         self.clients = [genai.Client(api_key=k) for k in self.api_keys]
         self.current_client_index = 0
         
-        # Using gemini-flash-latest as the standard reliable model
+        # Using gemini-flash-latest as the standard reliable model for this project
         self.model_name = 'gemini-flash-latest'
         self.spatial_cache = {} # Cache for nearby resources
 
-    def _get_client(self):
+    def _call_with_retry(self, api_func, *args, **kwargs):
+        """Executes a Gemini API call with automatic key rotation on 429 Resource Exhausted errors."""
         if not self.clients:
-            print("WARNING: No valid Gemini clients could be initialized.")
+            raise Exception("No Gemini clients available.")
+        
+        max_attempts = len(self.clients)
+        last_error = None
+
+        for _ in range(max_attempts):
+            client = self.clients[self.current_client_index]
+            try:
+                return api_func(client, *args, **kwargs)
+            except Exception as e:
+                err_str = str(e).upper()
+                if "429" in err_str or "EXHAUSTED" in err_str or "QUOTA" in err_str:
+                    print(f"Gemini Key {self.current_client_index} exhausted. Rotating...")
+                    self.current_client_index = (self.current_client_index + 1) % len(self.clients)
+                    last_error = e
+                    continue
+                raise e
+        
+        raise last_error or Exception("All Gemini API keys failed.")
+
+    def _get_client(self):
+        # Deprecated in favor of _call_with_retry, but kept for compatibility
+        if not self.clients:
             return None
-        client = self.clients[self.current_client_index]
-        self.current_client_index = (self.current_client_index + 1) % len(self.clients)
-        return client
+        return self.clients[self.current_client_index]
 
     def get_chat_response(self, chat_history, system_prompt, lang='English'):
-        localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: YOU MUST RESPOND ONLY IN {lang}."
-        
-        # Format history for new SDK
-        formatted_history = []
-        for msg in chat_history[:-1]:
-            role = "user" if msg['role'] == 'user' else "model"
-            formatted_history.append(types.Content(role=role, parts=[types.Part(text=msg['content'])]))
-        
-        last_message = chat_history[-1]['content']
-        client = self._get_client()
-        chat = client.chats.create(
-            model=self.model_name,
-            config=types.GenerateContentConfig(system_instruction=localized_system_prompt),
-            history=formatted_history
-        )
-        response = chat.send_message(message=last_message)
+        def _execute(client):
+            localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: YOU MUST RESPOND ONLY IN {lang}."
+            formatted_history = []
+            for msg in chat_history[:-1]:
+                role = "user" if msg['role'] == 'user' else "model"
+                formatted_history.append(types.Content(role=role, parts=[types.Part(text=msg['content'])]))
+            
+            last_message = chat_history[-1]['content']
+            chat = client.chats.create(
+                model=self.model_name,
+                config=types.GenerateContentConfig(system_instruction=localized_system_prompt),
+                history=formatted_history
+            )
+            return chat.send_message(message=last_message)
+
+        response = self._call_with_retry(_execute)
         return response.text
 
     def analyze_case(self, situation, chat_history, system_prompt, lang='English'):
-        localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: THE JSON VALUES (descriptions, steps, strategies, etc.) MUST BE IN {lang}."
-        
-        serializable_history = []
-        for msg in chat_history:
-            m = msg.copy()
-            if 'timestamp' in m and hasattr(m['timestamp'], 'isoformat'):
-                m['timestamp'] = m['timestamp'].isoformat()
-            serializable_history.append(m)
+        def _execute(client):
+            localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: THE JSON VALUES (descriptions, steps, strategies, etc.) MUST BE IN {lang}."
+            serializable_history = []
+            for msg in chat_history:
+                m = msg.copy()
+                if 'timestamp' in m and hasattr(m['timestamp'], 'isoformat'):
+                    m['timestamp'] = m['timestamp'].isoformat()
+                serializable_history.append(m)
 
-        prompt = f"""
-        User Situation: {situation}
-        Chat History: {json.dumps(serializable_history)}
-        
-        Analyze the case fully based on Indian Law. Use BNS 2023 as primary with IPC references.
-        Provide the analysis in the following strict JSON format:
-        {{
-            "case_summary": "Short 2-3 sentence summary",
-            "immediate_steps": ["Step 1", "Step 2", "Step 3"],
-            "applicable_sections": [
-                {{
-                    "section": "Section number",
-                    "title": "Title of section",
-                    "description": "Description of the offense",
-                    "bailable": true or false,
-                    "punishment": "Duration/Type of punishment"
-                }}
-            ],
-            "defense_strategies": [
-                {{
-                    "strategy": "Strategy name",
-                    "strength": "High/Medium/Low",
-                    "details": "Detailed explanation"
-                }}
-            ],
-            "evidence_to_gather": ["Item 1", "Item 2"]
-        }}
-        """
-        
-        client = self._get_client()
-        response = client.models.generate_content(
-            model=self.model_name,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                system_instruction=localized_system_prompt,
-                response_mime_type="application/json",
+            prompt = f"""
+            User Situation: {situation}
+            Chat History: {json.dumps(serializable_history)}
+            
+            Analyze the case fully based on Indian Law. Use BNS 2023 as primary with IPC references.
+            Provide the analysis in the following strict JSON format:
+            {{
+                "case_summary": "Short 2-3 sentence summary",
+                "immediate_steps": ["Step 1", "Step 2", "Step 3"],
+                "applicable_sections": [
+                    {{
+                        "section": "Section number",
+                        "title": "Title of section",
+                        "description": "Description of the offense",
+                        "bailable": true or false,
+                        "punishment": "Duration/Type of punishment"
+                    }}
+                ],
+                "defense_strategies": [
+                    {{
+                        "strategy": "Strategy name",
+                        "strength": "High/Medium/Low",
+                        "details": "Detailed explanation"
+                    }}
+                ],
+                "evidence_to_gather": ["Item 1", "Item 2"]
+            }}
+            """
+            return client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=localized_system_prompt,
+                    response_mime_type="application/json",
+                )
             )
-        )
+
         try:
+            response = self._call_with_retry(_execute)
             return json.loads(response.text)
         except Exception as e:
             print(f"Error parsing Gemini response: {e}")
-            return {"error": "Failed to generate structured analysis", "raw_text": response.text}
+            return {"error": "Failed to generate structured analysis", "raw_text": str(e)}
 
     def search_section(self, query, system_prompt, lang='English'):
-        try:
+        def _execute(client):
             localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: ALL ANALYSIS AND DESCRIPTIONS WITHIN THE JSON MUST BE IN {lang}."
             prompt = f"Analyze legal query: {query}. Respond in STRICT JSON format."
-            client = self._get_client()
-            response = client.models.generate_content(
+            return client.models.generate_content(
                 model=self.model_name,
                 contents=prompt,
                 config=types.GenerateContentConfig(
@@ -116,7 +136,9 @@ class GeminiService:
                     temperature=0.1
                 )
             )
-            
+
+        try:
+            response = self._call_with_retry(_execute)
             return json.loads(response.text)
         except Exception as e:
             print(f"Search Error: {e}")
@@ -134,73 +156,75 @@ class GeminiService:
             }
 
     def generate_complaint(self, details, system_prompt, lang='English'):
-        localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: YOU MUST GENERATE THE COMPLAINT TEXT ONLY IN {lang}."
-        prompt = f"Complaint Details: {json.dumps(details, default=str)}\n\nGenerate the formal complaint text."
-        client = self._get_client()
-        response = client.models.generate_content(
-            model=self.model_name,
-            contents=prompt,
-            config=types.GenerateContentConfig(system_instruction=localized_system_prompt)
-        )
+        def _execute(client):
+            localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: YOU MUST GENERATE THE COMPLAINT TEXT ONLY IN {lang}."
+            prompt = f"Complaint Details: {json.dumps(details, default=str)}\n\nGenerate the formal complaint text."
+            return client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(system_instruction=localized_system_prompt)
+            )
+        
+        response = self._call_with_retry(_execute)
         return response.text
 
     def generate_legal_document(self, doc_type, form_data, lang='English'):
-        system_prompt = f"""
-        You are an expert Indian Legal Advisor and Document Drafter. 
-        Your task is to generate a professional, legally valid {doc_type} based on the user's details.
+        def _execute(client):
+            system_prompt = f"""
+            You are an expert Indian Legal Advisor and Document Drafter. 
+            Your task is to generate a professional, legally valid {doc_type} based on the user's details.
 
-        STRICT RULES:
-        1. Format the document properly with clear headings, subheadings, and sections.
-        2. Use formal Indian legal language.
-        3. Incorporate all the details provided by the user.
-        4. CRITICAL: For any details or optional information NOT provided by the user, DO NOT remove the section and DO NOT use placeholder variables like [Your Name] or <Address>. Instead, leave a clear blank line (e.g., "_________________________") so the user can fill it in manually later.
-        5. MUST respond ONLY in {lang}.
-        """
+            STRICT RULES:
+            1. Format the document properly with clear headings, subheadings, and sections.
+            2. Use formal Indian legal language.
+            3. Incorporate all the details provided by the user.
+            4. CRITICAL: For any details or optional information NOT provided by the user, DO NOT remove the section and DO NOT use placeholder variables like [Your Name] or <Address>. Instead, leave a clear blank line (e.g., "_________________________") so the user can fill it in manually later.
+            5. MUST respond ONLY in {lang}.
+            """
+            prompt = f"Document Type: {doc_type}\n\nUser Provided Details:\n{json.dumps(form_data, default=str)}\n\nPlease draft the complete {doc_type} now."
+            return client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(system_instruction=system_prompt)
+            )
         
-        prompt = f"Document Type: {doc_type}\n\nUser Provided Details:\n{json.dumps(form_data, default=str)}\n\nPlease draft the complete {doc_type} now."
-        
-        client = self._get_client()
-        response = client.models.generate_content(
-            model=self.model_name,
-            contents=prompt,
-            config=types.GenerateContentConfig(system_instruction=system_prompt)
-        )
+        response = self._call_with_retry(_execute)
         return response.text
 
     def analyze_document(self, image_data, mime_type, system_prompt, lang='English'):
-        localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: ALL JSON VALUES MUST BE PROVIDED IN {lang}."
-        
-        prompt = """
-        Analyze this legal document (Contract, Policy, or Notice) and provide a professional breakdown in Indian Legal context.
-        Provide the analysis in STRICT JSON format:
-        {
-            "simplified_summary": "An easy-to-understand explanation for a common person",
-            "pros": ["Benefit 1", "Benefit 2"],
-            "cons": ["Risk 1", "Risk 2"],
-            "beneficiary": {
-                "party": "Who does this favor more?",
-                "reason": "Why?"
-            },
-            "key_clauses": [
-                {
-                    "clause": "Name of clause",
-                    "impact": "What does it mean for the user?"
-                }
-            ],
-            "recommendation": "Final professional advice"
-        }
-        """
-        
-        client = self._get_client()
-        response = client.models.generate_content(
-            model=self.model_name,
-            contents=[types.Part.from_bytes(data=image_data, mime_type=mime_type), prompt],
-            config=types.GenerateContentConfig(
-                system_instruction=localized_system_prompt,
-                response_mime_type="application/json",
+        def _execute(client):
+            localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: ALL JSON VALUES MUST BE PROVIDED IN {lang}."
+            prompt = """
+            Analyze this legal document (Contract, Policy, or Notice) and provide a professional breakdown in Indian Legal context.
+            Provide the analysis in STRICT JSON format:
+            {
+                "simplified_summary": "An easy-to-understand explanation for a common person",
+                "pros": ["Benefit 1", "Benefit 2"],
+                "cons": ["Risk 1", "Risk 2"],
+                "beneficiary": {
+                    "party": "Who does this favor more?",
+                    "reason": "Why?"
+                },
+                "key_clauses": [
+                    {
+                        "clause": "Name of clause",
+                        "impact": "What does it mean for the user?"
+                    }
+                ],
+                "recommendation": "Final professional advice"
+            }
+            """
+            return client.models.generate_content(
+                model=self.model_name,
+                contents=[types.Part.from_bytes(data=image_data, mime_type=mime_type), prompt],
+                config=types.GenerateContentConfig(
+                    system_instruction=localized_system_prompt,
+                    response_mime_type="application/json",
+                )
             )
-        )
+
         try:
+            response = self._call_with_retry(_execute)
             return json.loads(response.text)
         except Exception as e:
             print(f"Error parsing Document Analysis: {e}")
@@ -208,7 +232,7 @@ class GeminiService:
                 "simplified_summary": "Failed to parse analysis.",
                 "pros": [], "cons": [], "beneficiary": {"party": "N/A", "reason": "N/A"},
                 "key_clauses": [], "recommendation": "Error in AI generation.",
-                "raw_text": response.text
+                "raw_text": str(e)
             }
 
     def find_nearby_legal_resources(self, lat, lng, lang='English'):
@@ -218,27 +242,24 @@ class GeminiService:
             print(f"Returning cached spatial results for {cache_key}")
             return self.spatial_cache[cache_key]
 
-        # Area context is now simplified to strictly rely on India
-        prompt = f"""
-        Identify 4 real-world legal landmarks (Police, Courts, Legal Aid) near Lat {lat}, Lng {lng} in {lang}. 
-        The location is in India.
-        
-        You MUST return valid JSON in this exact structure:
-        [
-            {{
-                "name": "Official Landmark Name",
-                "type": "Police Station | Court | Legal Aid | Lawyer",
-                "lat": (exact float), 
-                "lng": (exact float),
-                "status": "Localized status (e.g. Open 24/7)", 
-                "icon": "fa-shield-alt | fa-gavel | fa-hand-holding-heart | fa-user-tie"
-            }}
-        ]
-        """
-        
-        try:
-            client = self._get_client()
-            response = client.models.generate_content(
+        def _execute(client):
+            prompt = f"""
+            Identify 4 real-world legal landmarks (Police, Courts, Legal Aid) near Lat {lat}, Lng {lng} in {lang}. 
+            The location is in India.
+            
+            You MUST return valid JSON in this exact structure:
+            [
+                {{
+                    "name": "Official Landmark Name",
+                    "type": "Police Station | Court | Legal Aid | Lawyer",
+                    "lat": (exact float), 
+                    "lng": (exact float),
+                    "status": "Localized status (e.g. Open 24/7)", 
+                    "icon": "fa-shield-alt | fa-gavel | fa-hand-holding-heart | fa-user-tie"
+                }}
+            ]
+            """
+            return client.models.generate_content(
                 model=self.model_name,
                 contents=prompt,
                 config=types.GenerateContentConfig(
@@ -246,67 +267,67 @@ class GeminiService:
                     temperature=0.1
                 )
             )
+        
+        try:
+            response = self._call_with_retry(_execute)
             result = json.loads(response.text)
             self.spatial_cache[cache_key] = result
             return result
         except Exception as e:
-            error_msg = str(e)
-            if "429" in error_msg or "ResourceExhausted" in error_msg:
-                print("Gemini API Quota Exceeded.")
-                return []
-            
             print(f"Error in find_nearby_legal_resources: {e}")
             return []
 
     def geocode_location(self, query):
-        prompt = f"""
-        Convert this location name or pincode into Latitude and Longitude coordinates.
-        Location: {query}
-        Assume India if country is not specified.
-        
-        Return ONLY a JSON object:
-        {{
-            "lat": float,
-            "lng": float,
-            "display_name": "Full official name of the location"
-        }}
-        """
-        
-        client = self._get_client()
-        response = client.models.generate_content(
-            model=self.model_name,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                temperature=0.0
+        def _execute(client):
+            prompt = f"""
+            Convert this location name or pincode into Latitude and Longitude coordinates.
+            Location: {query}
+            Assume India if country is not specified.
+            
+            Return ONLY a JSON object:
+            {{
+                "lat": float,
+                "lng": float,
+                "display_name": "Full official name of the location"
+            }}
+            """
+            return client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    temperature=0.0
+                )
             )
-        )
+        
         try:
+            response = self._call_with_retry(_execute)
             return json.loads(response.text)
         except Exception as e:
             print(f"Geocoding Error: {e}")
             return None
 
     def generate_rights_guide(self, topic, lang='English'):
-        prompt = f"""
-        Provide a detailed legal guide on the topic: '{topic}' in the context of Indian Law (BNS 2023 / BNSS / BSA / Constitution of India).
-        The response MUST be in {lang}.
+        def _execute(client):
+            prompt = f"""
+            Provide a detailed legal guide on the topic: '{topic}' in the context of Indian Law (BNS 2023 / BNSS / BSA / Constitution of India).
+            The response MUST be in {lang}.
+            
+            Provide the response in STRICT JSON format:
+            {{
+                "title": "A clear, localized title for the guide",
+                "points": ["Short, impactful point 1", "Short, impactful point 2", "Point 3", "Point 4"],
+                "tips": "A helpful, localized summary tip for the user"
+            }}
+            """
+            return client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(response_mime_type="application/json")
+            )
         
-        Provide the response in STRICT JSON format:
-        {{
-            "title": "A clear, localized title for the guide",
-            "points": ["Short, impactful point 1", "Short, impactful point 2", "Point 3", "Point 4"],
-            "tips": "A helpful, localized summary tip for the user"
-        }}
-        """
-        
-        client = self._get_client()
-        response = client.models.generate_content(
-            model=self.model_name,
-            contents=prompt,
-            config=types.GenerateContentConfig(response_mime_type="application/json")
-        )
         try:
+            response = self._call_with_retry(_execute)
             return json.loads(response.text)
         except Exception as e:
             print(f"Error parsing rights guide: {e}")
