@@ -263,19 +263,27 @@
         margin-bottom: 4rem;
     }
 
+    .hero-actions {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
     /* Buttons */
     .btn-primary.main-cta {
-        padding: 1.2rem 2.8rem;
-        font-size: 1.05rem;
+        padding: 1.1rem 2.5rem;
+        font-size: 1rem;
         border-radius: 12px;
         background: var(--vibrant-gradient);
         position: relative;
         overflow: hidden;
+        white-space: nowrap;
     }
 
     .btn-glass {
-        padding: 1.2rem 2.8rem;
-        font-size: 1.05rem;
+        padding: 1.1rem 2.5rem;
+        font-size: 1rem;
         border-radius: 12px;
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -283,6 +291,10 @@
         text-decoration: none;
         font-weight: 600;
         transition: var(--transition-smooth);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
     }
 
     .btn-glass:hover {
