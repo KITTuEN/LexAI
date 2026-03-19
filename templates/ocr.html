@@ -26,24 +26,58 @@
             <!-- Hero Summary -->
             <div class="result-hero animate-up">
                 <div class="hero-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                <h2 class="gold-text">{{ _t('simplified_summary') }}</h2>
+                <h2 class="gold-text" id="documentTypeHeader">{{ _t('simplified_summary') }}</h2>
                 <p id="simplifiedSummary" class="hero-text"></p>
             </div>
 
             <div class="analysis-grid">
-                <!-- Pros & Cons -->
-                <div class="grid-card pros-card animate-up" style="animation-delay: 0.1s;">
+                <!-- Risk Percentage (Case File Only) -->
+                <div id="riskCard" class="grid-card full-width animate-up"
+                    style="display: none; animation-delay: 0.1s;">
+                    <h3><i class="fa-solid fa-gauge-high gold-text"></i> Case Risk / Strength Estimate</h3>
+                    <div class="risk-meter-container">
+                        <div class="risk-meter-bar">
+                            <div id="riskFill" class="risk-meter-fill"></div>
+                        </div>
+                        <span id="riskText" class="risk-label">0%</span>
+                    </div>
+                </div>
+
+                <!-- Complete Analysis (FIR Only) -->
+                <div id="firAnalysisCard" class="grid-card full-width animate-up"
+                    style="display: none; animation-delay: 0.15s;">
+                    <h3><i class="fa-solid fa-scale-balanced gold-text"></i> Detailed FIR Analysis</h3>
+                    <p id="completeAnalysisText" class="b-reason"></p>
+                </div>
+
+                <!-- Pros & Cons (Contract/Policy) -->
+                <div id="prosCard" class="grid-card animate-up" style="animation-delay: 0.2s;">
                     <h3><i class="fa-solid fa-circle-check gold-text"></i> {{ _t('pros_benefits') }}</h3>
                     <ul id="prosList" class="detail-list"></ul>
                 </div>
 
-                <div class="grid-card cons-card animate-up" style="animation-delay: 0.2s;">
+                <div id="consCard" class="grid-card animate-up" style="animation-delay: 0.2s;">
                     <h3><i class="fa-solid fa-circle-exclamation gold-text"></i> {{ _t('risks_cons') }}</h3>
                     <ul id="consList" class="detail-list"></ul>
                 </div>
 
-                <!-- Beneficiary Card -->
-                <div class="grid-card full-width beneficiary-card animate-up" style="animation-delay: 0.3s;">
+                <!-- Sections (Case File & FIR) -->
+                <div id="sectionsCard" class="grid-card full-width animate-up"
+                    style="display: none; animation-delay: 0.25s;">
+                    <h3><i class="fa-solid fa-list-check gold-text"></i> Document Sections / IPC References</h3>
+                    <div id="sectionsList" class="tag-container"></div>
+                </div>
+
+                <!-- Important Points (Case File) -->
+                <div id="importantPointsCard" class="grid-card full-width animate-up"
+                    style="display: none; animation-delay: 0.3s;">
+                    <h3><i class="fa-solid fa-thumbtack gold-text"></i> Key Points to Analyze</h3>
+                    <ul id="importantPointsList" class="detail-list"></ul>
+                </div>
+
+                <!-- Beneficiary Card (Contract/Policy) -->
+                <div id="beneficiaryCard" class="grid-card full-width beneficiary-card animate-up"
+                    style="animation-delay: 0.35s;">
                     <div class="beneficiary-header">
                         <div class="b-icon"><i class="fa-solid fa-balance-scale"></i></div>
                         <div>
@@ -55,7 +89,7 @@
                 </div>
 
                 <!-- Key Clauses -->
-                <div class="grid-card full-width animate-up" style="animation-delay: 0.4s;">
+                <div id="clausesCard" class="grid-card full-width animate-up" style="animation-delay: 0.4s;">
                     <h3>{{ _t('important_clauses') }}</h3>
                     <div id="clausesContainer" class="clauses-grid"></div>
                 </div>
@@ -80,7 +114,7 @@
 
 <style>
     .ocr-container {
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto;
         padding: 2rem;
     }
@@ -212,6 +246,7 @@
     .b-reason {
         color: var(--text-secondary);
         line-height: 1.6;
+        white-space: pre-wrap;
     }
 
     .clauses-grid {
@@ -244,6 +279,52 @@
         margin-bottom: 1rem;
     }
 
+    /* Risk Meter */
+    .risk-meter-container {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .risk-meter-bar {
+        flex: 1;
+        height: 12px;
+        background: #21262d;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .risk-meter-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(to right, #238636, #e3b341, #da3633);
+        transition: width 1s ease-out;
+    }
+
+    .risk-label {
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: var(--accent-gold);
+        min-width: 60px;
+    }
+
+    /* Tag Container */
+    .tag-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+    }
+
+    .tag-item {
+        background: rgba(201, 168, 76, 0.1);
+        border: 1px solid rgba(201, 168, 76, 0.3);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        color: var(--accent-gold);
+    }
+
     @media (max-width: 768px) {
 
         .analysis-grid,
@@ -266,7 +347,16 @@
     const ocrForm = document.getElementById('ocrForm');
     const loading = document.getElementById('ocrLoading');
     const resultArea = document.getElementById('ocrResult');
-    const analysisText = document.getElementById('analysisText');
+
+    // UI Cards
+    const riskCard = document.getElementById('riskCard');
+    const firCard = document.getElementById('firAnalysisCard');
+    const prosCard = document.getElementById('prosCard');
+    const consCard = document.getElementById('consCard');
+    const sectionsCard = document.getElementById('sectionsCard');
+    const importantPointsCard = document.getElementById('importantPointsCard');
+    const beneficiaryCard = document.getElementById('beneficiaryCard');
+    const clausesCard = document.getElementById('clausesCard');
 
     fileInput.onchange = () => {
         if (fileInput.files.length > 0) {
@@ -295,31 +385,67 @@
             loading.style.display = 'none';
             if (data.analysis) {
                 const analysis = data.analysis;
+                const type = analysis.document_type || 'other';
                 resultArea.style.display = 'block';
 
-                // Populating Data
+                // Reset visibility
+                [riskCard, firCard, prosCard, consCard, sectionsCard, importantPointsCard, beneficiaryCard, clausesCard].forEach(c => c.style.display = 'none');
+
+                // Header mapping
+                const typeLabels = {
+                    'case_file': 'Case Analysis',
+                    'contract_policy': 'Contract Analysis',
+                    'fir': 'FIR Breakdown',
+                    'other': 'Document Analysis'
+                };
+                document.getElementById('documentTypeHeader').textContent = typeLabels[type] || 'Analysis Results';
                 document.getElementById('simplifiedSummary').textContent = analysis.simplified_summary;
 
-                // Pros
-                const prosList = document.getElementById('prosList');
-                prosList.innerHTML = analysis.pros.map(p => `<li>${p}</li>`).join('');
+                // Document specific logic
+                if (type === 'case_file') {
+                    riskCard.style.display = 'block';
+                    importantPointsCard.style.display = 'block';
+                    sectionsCard.style.display = 'block';
 
-                // Cons
-                const consList = document.getElementById('consList');
-                consList.innerHTML = analysis.cons.map(c => `<li>${c}</li>`).join('');
+                    const risk = analysis.risk_percentage || 0;
+                    document.getElementById('riskFill').style.width = risk + '%';
+                    document.getElementById('riskText').textContent = risk + '%';
 
-                // Beneficiary
-                document.getElementById('beneficiaryParty').textContent = analysis.beneficiary.party;
-                document.getElementById('beneficiaryReason').textContent = analysis.beneficiary.reason;
+                    const pointsList = document.getElementById('importantPointsList');
+                    pointsList.innerHTML = (analysis.important_points || []).map(p => `<li>${p}</li>`).join('');
+                }
+                else if (type === 'contract_policy') {
+                    prosCard.style.display = 'block';
+                    consCard.style.display = 'block';
+                    beneficiaryCard.style.display = 'block';
 
-                // Clauses
-                const clausesContainer = document.getElementById('clausesContainer');
-                clausesContainer.innerHTML = analysis.key_clauses.map(c => `
-                    <div class="clause-item">
-                        <h5>${c.clause}</h5>
-                        <p>${c.impact}</p>
-                    </div>
-                `).join('');
+                    document.getElementById('prosList').innerHTML = (analysis.pros || []).map(p => `<li>${p}</li>`).join('');
+                    document.getElementById('consList').innerHTML = (analysis.cons || []).map(c => `<li>${c}</li>`).join('');
+                    document.getElementById('beneficiaryParty').textContent = analysis.beneficiary?.party || 'N/A';
+                    document.getElementById('beneficiaryReason').textContent = analysis.beneficiary?.reason || 'N/A';
+                }
+                else if (type === 'fir') {
+                    firCard.style.display = 'block';
+                    sectionsCard.style.display = 'block';
+                    document.getElementById('completeAnalysisText').textContent = analysis.complete_analysis;
+                }
+
+                // Sections (Shared)
+                if (analysis.sections && analysis.sections.length > 0) {
+                    sectionsCard.style.display = 'block';
+                    document.getElementById('sectionsList').innerHTML = analysis.sections.map(s => `<span class="tag-item">${s}</span>`).join('');
+                }
+
+                // Clauses (Fallthrough for all)
+                if (analysis.key_clauses && analysis.key_clauses.length > 0) {
+                    clausesCard.style.display = 'block';
+                    document.getElementById('clausesContainer').innerHTML = analysis.key_clauses.map(c => `
+                        <div class="clause-item">
+                            <h5>${c.clause}</h5>
+                            <p>${c.impact}</p>
+                        </div>
+                    `).join('');
+                }
 
                 // Recommendation
                 document.getElementById('recommendationText').textContent = analysis.recommendation;

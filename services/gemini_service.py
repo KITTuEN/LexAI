@@ -195,24 +195,45 @@ class GeminiService:
         def _execute(client):
             localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: ALL JSON VALUES MUST BE PROVIDED IN {lang}."
             prompt = """
-            Analyze this legal document (Contract, Policy, or Notice) and provide a professional breakdown in Indian Legal context.
+            Analyze this legal document (Case File, FIR, Contract, or Policy) and identify its type.
+            Provide a professional breakdown in Indian Legal context.
+            
+            Identify the document type as one of: 'case_file', 'contract_policy', 'fir', or 'other'.
+
             Provide the analysis in STRICT JSON format:
             {
+                "document_type": "case_file" | "contract_policy" | "fir" | "other",
                 "simplified_summary": "An easy-to-understand explanation for a common person",
-                "pros": ["Benefit 1", "Benefit 2"],
-                "cons": ["Risk 1", "Risk 2"],
+                "sections": ["List of key sections, articles, or chapters found"],
+                "recommendation": "Final professional advice for the user",
+
+                // Fields for 'case_file':
+                "risk_percentage": 0-100 (Estimate the risk/strength of the case),
+                "important_points": ["Critical facts or legal points to be analyzed"],
+
+                // Fields for 'contract_policy':
+                "pros": ["Benefits for the user"],
+                "cons": ["Risks or hidden traps for the user"],
                 "beneficiary": {
-                    "party": "Who does this favor more?",
-                    "reason": "Why?"
+                    "party": "Who does this document favor more?",
+                    "reason": "Explain why"
                 },
+
+                // Fields for 'fir':
+                "complete_analysis": "A detailed breakdown of the FIR, including offense nature and sections mentioned",
+
+                // Key clauses if applicable (optional):
                 "key_clauses": [
                     {
                         "clause": "Name of clause",
-                        "impact": "What does it mean for the user?"
+                        "impact": "What it means for the user"
                     }
-                ],
-                "recommendation": "Final professional advice"
+                ]
             }
+            
+            CRITICAL: 
+            - If a field is not relevant to the document type, return [] or null for it.
+            - Ensure "risk_percentage" is a number.
             """
             return client.models.generate_content(
                 model=self.model_name,
@@ -229,9 +250,10 @@ class GeminiService:
         except Exception as e:
             print(f"Error parsing Document Analysis: {e}")
             return {
+                "document_type": "other",
                 "simplified_summary": "Failed to parse analysis.",
-                "pros": [], "cons": [], "beneficiary": {"party": "N/A", "reason": "N/A"},
-                "key_clauses": [], "recommendation": "Error in AI generation.",
+                "sections": [],
+                "recommendation": "Error in AI generation.",
                 "raw_text": str(e)
             }
 
