@@ -787,15 +787,18 @@
         // Reset visibility
         [riskCard, firCard, prosCard, consCard, sectionsCard, importantPointsCard, beneficiaryCard, clausesCard, strategyRoom].forEach(c => c.style.display = 'none');
 
-        // Header mapping
+        console.log("LexAI Analysis Received:", analysis);
+
         const typeLabels = {
             'case_file': 'Case Analysis',
             'contract_policy': 'Contract Analysis',
             'fir': 'FIR Breakdown',
             'other': 'Document Analysis'
         };
+
         document.getElementById('documentTypeHeader').textContent = typeLabels[type] || 'Analysis Results';
-        document.getElementById('simplifiedSummary').textContent = analysis.simplified_summary || 'No summary available.';
+        document.getElementById('simplifiedSummary').textContent = analysis.simplified_summary || 'Analyzing document... if this persists, try refreshing history.';
+        document.getElementById('recommendationText').textContent = analysis.recommendation || 'No legal recommendation was generated for this section.';
 
         // Document specific logic
         if (type === 'case_file') {

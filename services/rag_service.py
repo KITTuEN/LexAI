@@ -163,10 +163,16 @@ class RagService:
         Performs a full RAG-based analysis of a document.
         """
         # Query for general summary, pros/cons, and risks
-        matches = pinecone_service.query_context("Give me a summary, pros, cons, and hidden traps in this document.", doc_id=doc_id, top_k=15)
+        # Use a small retry loop if Pinecone hasn't indexed yet
+        import time
+        matches = []
+        for _ in range(3):
+            matches = pinecone_service.query_context("Give me a summary, pros, cons, and hidden traps in this document.", doc_id=doc_id, top_k=15)
+            if matches: break
+            time.sleep(2)
         
         if not matches:
-            return {"error": "No context found for this document."}
+            return {"error": "No context found for this document. Please wait a moment and try refreshing from history."}
 
         context = "\n\n".join([m.metadata['text'] for m in matches])
         
