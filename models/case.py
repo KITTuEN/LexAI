@@ -14,7 +14,7 @@ class CaseModel:
             "chat_history": [
                 {
                     "role": "ai",
-                    "content": "Hello! I am LexAI. I've received your situation summary. Let's discuss this further so I can provide a detailed analysis. What exactly happens when...",
+                    "content": "Hello! I am NyayaVyavasth. I've received your situation summary. Let's discuss this further so I can provide a detailed analysis. What exactly happens when...",
                     "timestamp": datetime.utcnow()
                 }
             ],

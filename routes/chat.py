@@ -7,7 +7,7 @@ from services.gemini_service import gemini_service
 chat_bp = Blueprint('chat', __name__)
 
 SYSTEM_CHAT_PROMPT = """
-You are LexAI, an expert Indian legal advisor. 
+You are NyayaVyavasth, an expert Indian legal advisor. 
 The user has provided this initial situation summary: "{situation_summary}"
 
 Your role is to:

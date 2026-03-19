@@ -16,7 +16,7 @@ class RagService:
         context = "\n\n".join([m.metadata['text'] for m in matches])
         
         system_prompt = f"""
-        You are the LexAI Legal Intelligence Assistant, an expert in Indian Law.
+        You are the NyayaVyavasth Legal Intelligence Assistant, an expert in Indian Law.
         Your goal is to provide accurate, grounded answers to legal queries while ELIMINATING hallucinations.
 
         You have been provided with specific context retrieved from our specialized legal datasets (IPC, BNS, and Indian Law Precedents).
@@ -177,7 +177,7 @@ class RagService:
         context = "\n\n".join([m.metadata['text'] for m in matches])
         
         prompt = f"""
-        You are the LexAI Document Analyst. Analyze the provided context from a legal document.
+        You are the NyayaVyavasth Document Analyst. Analyze the provided context from a legal document.
         Your goal is to provide a clear, grounded, and authoritative breakdown.
 
         Context:

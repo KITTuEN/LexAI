@@ -9,7 +9,7 @@ India's legal system remains complex and largely inaccessible to the general pub
 - **Lack of Awareness**: Many citizens are unaware of their fundamental rights or the specific statutes applicable to their situations, leading to exploitation or unnecessary legal trouble.
 
 ## 2. PROPOSED SOLUTION: LEXAI
-LexAI is an advanced, AI-powered platform designed to democratize legal access. It leverages cutting-edge NLP via Google Gemini AI to act as a bridge between complex law and everyday citizen needs. 
+NyayaVyavasth is an advanced, AI-powered platform designed to democratize legal access. It leverages cutting-edge NLP via Google Gemini AI to act as a bridge between complex law and everyday citizen needs. 
 - **AI-Powered Consultations**: A 24/7 chatbot that provides instant, natural language responses to legal queries.
 - **Automated Document Generation**: Instant drafting of usable legal documents like FIRs, legal notices, and case summaries.
 - **OCR Analysis**: Seamless digitization and simplification of physical legal notices using Optical Character Recognition.
@@ -38,4 +38,4 @@ LexAI is an advanced, AI-powered platform designed to democratize legal access. 
 - **Security**: JWT-based authentication (Flask-JWT-Extended) to ensure data privacy and secure user sessions.
 
 ---
-This document provides an elaborated overview of LexAI, its mission, and its implementation. For further technical details, refer to the source code and documentation in the root directory.
+This document provides an elaborated overview of NyayaVyavasth, its mission, and its implementation. For further technical details, refer to the source code and documentation in the root directory.

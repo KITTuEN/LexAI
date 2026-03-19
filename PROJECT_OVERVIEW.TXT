@@ -1,7 +1,7 @@
 LEXAI: PROJECT OVERVIEW
 
 1. ABSTRACT
-LexAI is an advanced AI-powered legal assistant designed to democratize access to legal information and streamline legal procedures for the general public. It uses Google Gemini Pro to provide real-time consultations, automated document generation, and OCR analysis.
+NyayaVyavasth is an advanced AI-powered legal assistant designed to democratize access to legal information and streamline legal procedures for the general public. It uses Google Gemini Pro to provide real-time consultations, automated document generation, and OCR analysis.
 
 2. PROBLEM STATEMENT
 India's legal system is complex and often inaccessible due to:

@@ -1,8 +1,8 @@
 --- Slide 1: Title Slide ---
-LexAI: Your Virtual Legal Assistant
+NyayaVyavasth: Your Virtual Legal Assistant
 
 [Note: This slide follows the Hack2Skill Guidelines]
-Project: LexAI
+Project: NyayaVyavasth
 Cloud Deployment & AI: Deployed on Cloud with Google Gemini AI Integration.
 "Democratizing legal access and streamlining legal procedures for the general public."
 
@@ -13,11 +13,11 @@ Problem Statement:
 Legal procedures and jargons are complex and expensive for common citizens. People struggle to understand their rights, draft simple police complaints, or access basic legal help without costly lawyer fees.
 
 --- Slide 3: Brief about your solution ---
-LexAI is an advanced AI-powered platform designed to provide accessible initial legal guidance. It acts as a bridge between complex legal language and everyday citizen needs. By using Google Gemini AI, it answers common legal queries, automatically drafts legal complaints, and extracts text from physical legal documents using OCR.
+NyayaVyavasth is an advanced AI-powered platform designed to provide accessible initial legal guidance. It acts as a bridge between complex legal language and everyday citizen needs. By using Google Gemini AI, it answers common legal queries, automatically drafts legal complaints, and extracts text from physical legal documents using OCR.
 
 --- Slide 4: Opportunities ---
 How different is it from existing ideas?
-Traditional platforms only list lawyers. LexAI instantly answers legal questions and drafts actual usable legal documents autonomously.
+Traditional platforms only list lawyers. NyayaVyavasth instantly answers legal questions and drafts actual usable legal documents autonomously.
 
 How will it be able to solve the problem?
 By giving users a 24/7 AI legal chatbot, ordinary people can understand their rights immediately without paying upfront consultation fees.
@@ -113,7 +113,7 @@ Total MVP Cost: Extremely low due to cloud free-tiers and efficient AI API usage
 
 --- Slide 11: Snapshots of the MVP ---
 [Insert Working MVP Screenshots Here]
-- Snap 1: LexAI Landing Page
+- Snap 1: NyayaVyavasth Landing Page
 - Snap 2: Chatting with the AI Legal Bot
 - Snap 3: AI-Generated Legal Draft Output
 
