@@ -100,14 +100,7 @@ def index():
 
 @app.route('/robots.txt')
 def robots_txt():
-    content = f"""User-agent: *
-Allow: /
-Disallow: /auth/
-Disallow: /dashboard/
-Disallow: /case/
-Disallow: /ocr/
-Sitemap: {request.host_url}sitemap.xml
-"""
+    content = f"User-agent: *\nAllow: /\nDisallow: /auth/\nDisallow: /dashboard/\nDisallow: /case/\nDisallow: /ocr/\nSitemap: {request.host_url}sitemap.xml"
     return content, 200, {'Content-Type': 'text/plain'}
 
 @app.route('/sitemap.xml')
@@ -127,8 +120,7 @@ def sitemap_xml():
     <loc>{base_url}/auth/signup</loc>
     <priority>0.8</priority>
   </url>
-</urlset>
-"""
+</urlset>""".strip()
     return content, 200, {'Content-Type': 'application/xml'}
 
 @app.route('/google10c68f1d7dfe2f5f.html')
