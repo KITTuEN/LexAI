@@ -4,7 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ _t('app_title') }}</title>
+    <title>{% block title %}{{ _t('app_title') }}{% endblock %}</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="{% block meta_description %}NyayaVyavasth - Your AI-powered Indian Legal Assistant. Get instant legal information, draft complaints, and more.{% endblock %}">
+    <meta name="keywords"
+        content="{% block meta_keywords %}Indian Law, BNS 2023, IPC, Legal Assistant, AI Lawyer, Police Complaint, Legal Rights{% endblock %}">
+    <meta name="author" content="NyayaVyavasth">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="{% block og_title %}{{ _t('app_title') }}{% endblock %}">
+    <meta property="og:description"
+        content="{% block og_description %}Get instant AI-driven legal guidance on Indian laws (BNS, IPC) and generate professional police complaints.{% endblock %}">
+    <meta property="og:image" content="{{ url_for('static', filename='lexai_logo.png', _external=True) }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.url }}">
+    <meta property="twitter:title" content="{% block twitter_title %}{{ _t('app_title') }}{% endblock %}">
+    <meta property="twitter:description"
+        content="{% block twitter_description %}Your AI-powered Indian Legal Assistant for BNS, IPC, and more.{% endblock %}">
+    <meta property="twitter:image" content="{{ url_for('static', filename='lexai_logo.png', _external=True) }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='lexai_logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
