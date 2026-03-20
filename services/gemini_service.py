@@ -302,17 +302,21 @@ class GeminiService:
 
         def _execute(client):
             prompt = f"""
-            Identify 4 real-world legal landmarks (Police, Courts, Legal Aid) near Lat {lat}, Lng {lng} in {lang}. 
+            Identify up to 4 REAL-WORLD legal landmarks (Police Stations, Courts, Legal Aid centers, or verified Law Firms) near Lat {lat}, Lng {lng} in {lang}. 
             The location is in India.
             
-            You MUST return valid JSON in this exact structure:
+            CRITICAL RULES:
+            1. NO HALLUCINATIONS: Only return landmarks that actually exist at these coordinates.
+            2. HONESTY: If you cannot find real landmarks for this specific area, return an empty array [].
+            
+            Return valid JSON:
             [
                 {{
                     "name": "Official Landmark Name",
                     "type": "Police Station | Court | Legal Aid | Lawyer",
-                    "lat": (exact float), 
-                    "lng": (exact float),
-                    "status": "Localized status (e.g. Open 24/7)", 
+                    "lat": (float), 
+                    "lng": (float),
+                    "status": "Localized status", 
                     "icon": "fa-shield-alt | fa-gavel | fa-hand-holding-heart | fa-user-tie"
                 }}
             ]

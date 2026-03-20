@@ -100,43 +100,39 @@ def nearby_help():
     lng = request.args.get('lng')
     query = request.args.get('query')
     
-    # ⚡ OPTIMIZATION: Instant Search Resolution
-    # Instead of blocking the thread waiting 15+ seconds for Gemini to hallucinate 
-    # exact coordinates and landmarks, we instantly construct stylized localized data.
-    location_name = query if query else "Your Area"
-    display_name = query if query else (f"{float(lat):.4f}, {float(lng):.4f}" if lat and lng else "Local Zone")
+    # Resolve Coordinates
+    resolved_lat = float(lat) if lat and lat != 'null' else None
+    resolved_lng = float(lng) if lng and lng != 'null' else None
+    display_name = query if query else (f"{resolved_lat:.4f}, {resolved_lng:.4f}" if resolved_lat else "Local Zone")
 
-    # Generate instant formatted results
-    instant_data = [
-        {
-            "name": f"{location_name.title()} Central Police Station", 
-            "type": "Police Station", 
-            "status": "Open 24/7", 
-            "icon": "fa-shield-alt"
-        },
-        {
-            "name": f"District High Court - {location_name.title()}", 
-            "type": "Court", 
-            "status": "Closes at 5 PM", 
-            "icon": "fa-gavel"
-        },
-        {
-            "name": f"{location_name.title()} Legal Aid Foundation", 
-            "type": "Legal Aid", 
-            "status": "Free Support", 
-            "icon": "fa-hand-holding-heart"
-        },
-        {
-            "name": "Adv. Rajesh Kumar (Expert Counsel)", 
-            "type": "Verified Lawyer", 
-            "status": "Available Now", 
-            "icon": "fa-user-tie"
-        }
-    ]
+    # If we have a query but no coords, geocode it first
+    if query and (resolved_lat is None or resolved_lat == 0.0):
+        try:
+            geo = gemini_service.geocode_location(query)
+            if geo:
+                resolved_lat = geo.get('lat')
+                resolved_lng = geo.get('lng')
+                display_name = geo.get('display_name', query)
+        except:
+            pass
 
+    # Fetch Real Landmarks
+    if resolved_lat:
+        try:
+            real_data = gemini_service.find_nearby_legal_resources(resolved_lat, resolved_lng, lang)
+            return jsonify({
+                "results": real_data,
+                "lat": resolved_lat,
+                "lng": resolved_lng,
+                "display_name": display_name
+            })
+        except Exception as e:
+            print(f"Error fetching real landmarks: {e}")
+
+    # Fallback to empty if nothing found or error
     return jsonify({
-        "results": instant_data,
-        "lat": float(lat) if lat else 0.0,
-        "lng": float(lng) if lng else 0.0,
+        "results": [],
+        "lat": resolved_lat or 0.0,
+        "lng": resolved_lng or 0.0,
         "display_name": display_name
     })
