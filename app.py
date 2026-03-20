@@ -116,27 +116,40 @@ def robots_txt():
 @app.route('/sitemap.xml/')
 def sitemap_xml():
     # Use url_for with _external=True for more reliable absolute URLs
-    urls = [
-        url_for('index', _external=True),
-        url_for('auth.login', _external=True),
-        url_for('auth.signup', _external=True)
-    ]
+    urls = {
+        'index': url_for('index', _external=True),
+        'login': url_for('auth.login', _external=True),
+        'signup': url_for('auth.signup', _external=True)
+    }
     
-    # Pre-clean the URLs to avoid any double slashes from url_for in some environments
-    cleaned_urls = [u.rstrip('/') for u in urls]
+    # Pre-clean the URLs to avoid any double slashes from url_for
+    for key in urls:
+        urls[key] = urls[key].rstrip('/')
+    
+    from datetime import datetime
+    today = datetime.now().strftime('%Y-%m-%d')
     
     content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Landing Page -->
   <url>
-    <loc>{cleaned_urls[0]}/</loc>
+    <loc>{urls['index']}/</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+  <!-- Login -->
   <url>
-    <loc>{cleaned_urls[1]}</loc>
+    <loc>{urls['login']}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <!-- Signup -->
   <url>
-    <loc>{cleaned_urls[2]}</loc>
+    <loc>{urls['signup']}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 </urlset>""".strip()
