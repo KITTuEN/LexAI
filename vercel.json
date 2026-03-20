@@ -6,22 +6,10 @@
       "use": "@vercel/python"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/robots.txt",
-      "dest": "app.py"
-    },
-    {
-      "src": "/sitemap.xml",
-      "dest": "app.py"
-    },
-    {
-      "src": "/google10c68f1d7dfe2f5f.html",
-      "dest": "app.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "app.py"
+      "source": "/(.*)",
+      "destination": "app.py"
     }
   ]
 }
