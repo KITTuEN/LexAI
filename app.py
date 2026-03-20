@@ -106,24 +106,35 @@ def index():
 
 @app.route('/robots.txt')
 def robots_txt():
-    content = f"User-agent: *\nAllow: /\nDisallow: /auth/\nDisallow: /dashboard/\nDisallow: /case/\nDisallow: /ocr/\nSitemap: {request.host_url}sitemap.xml"
+    # Clean host_url and ensure it ends without a slash before appending sitemap.xml
+    host_url = request.host_url.rstrip('/')
+    content = f"User-agent: *\nAllow: /\nDisallow: /auth/\nDisallow: /dashboard/\nDisallow: /case/\nDisallow: /ocr/\nSitemap: {host_url}/sitemap.xml"
     return content, 200, {'Content-Type': 'text/plain'}
 
 @app.route('/sitemap.xml')
 def sitemap_xml():
-    base_url = request.host_url.rstrip('/')
+    # Use url_for with _external=True for more reliable absolute URLs
+    urls = [
+        url_for('index', _external=True),
+        url_for('auth.login', _external=True),
+        url_for('auth.signup', _external=True)
+    ]
+    
+    # Pre-clean the URLs to avoid any double slashes from url_for in some environments
+    cleaned_urls = [u.rstrip('/') for u in urls]
+    
     content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>{base_url}/</loc>
+    <loc>{cleaned_urls[0]}/</loc>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>{base_url}/auth/login</loc>
+    <loc>{cleaned_urls[1]}</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>{base_url}/auth/signup</loc>
+    <loc>{cleaned_urls[2]}</loc>
     <priority>0.8</priority>
   </url>
 </urlset>""".strip()
