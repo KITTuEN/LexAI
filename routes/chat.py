@@ -36,6 +36,9 @@ def send_message(case_id):
         return jsonify({"error": "Access Denied"}), 403
 
     message = request.json.get('message')
+    if not message:
+        return jsonify({"error": "Message content is required"}), 400
+        
     case_model.add_message(case_id, 'user', message)
     
     # Get response from Gemini

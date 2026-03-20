@@ -22,7 +22,7 @@ class AnalysisModel:
             {"doc_id": doc_id},
             {"$push": {"messages": {
                 "role": role,
-                "text": text,
+                "content": text,
                 "timestamp": datetime.utcnow()
             }}}
         )

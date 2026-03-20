@@ -126,6 +126,11 @@ def get_ocr_history():
                 for m in h['messages']:
                     if isinstance(m.get('timestamp'), datetime):
                         m['timestamp'] = m['timestamp'].isoformat()
+                    # Ensure both content and text are present or aliased for the frontend
+                    if 'content' not in m and 'text' in m:
+                        m['content'] = m['text']
+                    elif 'content' in m and 'text' not in m:
+                        m['text'] = m['content']
         return jsonify(history)
     except Exception as e:
         print(f"History Error: {e}")
@@ -155,6 +160,11 @@ def get_ocr_detail(doc_id):
             for m in item['messages']:
                 if isinstance(m.get('timestamp'), datetime):
                     m['timestamp'] = m['timestamp'].isoformat()
+                # Ensure consistency for frontend
+                if 'content' not in m and 'text' in m:
+                    m['content'] = m['text']
+                elif 'content' in m and 'text' not in m:
+                    m['text'] = m['content']
         return jsonify(item)
     except Exception as e:
         print(f"Detail Error: {e}")

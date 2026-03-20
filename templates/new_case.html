@@ -123,13 +123,13 @@
                     display: flex;
                     align-items: flex-start;
                     justify-content: center;
-                    padding: 4rem 2rem;
+                    padding: 4rem 4rem;
                 }
 
                 .hub-container {
-                    max-width: 1400px;
+                    max-width: 100%;
                     width: 100%;
-                    margin: 0 auto;
+                    margin: 0;
                 }
 
                 .setup-container {
@@ -396,6 +396,11 @@
                 }
 
                 @media (max-width: 1024px) {
+                    .hub-container {
+                        max-width: 100%;
+                        padding: 0 1.5rem;
+                    }
+
                     .form-container-grid {
                         grid-template-columns: 1fr !important;
                         gap: 3rem;

@@ -151,9 +151,9 @@
 
 <style>
     .ocr-container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 2rem;
+        max-width: 100%;
+        margin: 0;
+        padding: 2rem 4rem;
     }
 
     .ocr-card {
@@ -363,6 +363,10 @@
     }
 
     @media (max-width: 768px) {
+        .ocr-container {
+            padding: 2rem 1.5rem;
+            max-width: 100%;
+        }
 
         .analysis-grid,
         .clauses-grid {
@@ -780,7 +784,7 @@
         `;
         if (messages && messages.length > 0) {
             messages.forEach(msg => {
-                addMessage(msg.text, msg.role === 'user' ? 'user' : 'ai');
+                addMessage(msg.content || msg.text, msg.role === 'user' ? 'user' : 'ai');
             });
         }
 

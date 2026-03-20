@@ -30,9 +30,9 @@
 
 <style>
     .search-container {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 0 2rem;
+        max-width: 100%;
+        margin: 0;
+        padding: 4rem 4rem;
     }
 
     .search-box {
@@ -114,6 +114,11 @@
         color: #00ff00;
     }
 
+    .badge.gold {
+        background: rgba(212, 175, 55, 0.1);
+        color: #D4AF37;
+    }
+
     .badge.blue {
         background: rgba(0, 191, 255, 0.1);
         color: #00bfff;
@@ -150,7 +155,8 @@
     /* RESPONSIVE STYLES */
     @media (max-width: 768px) {
         .search-container {
-            padding: 0 1rem;
+            padding: 2rem 1.5rem;
+            max-width: 100%;
         }
 
         .search-input-wrapper {
@@ -230,9 +236,14 @@
                 </div>
                 
                 <div class="badge-row">
-                    <span class="badge ${(data.bailable && data.bailable.toLowerCase().includes('yes')) || data.bailable === true ? 'green' : 'red'}">${(data.bailable && data.bailable.toLowerCase().includes('yes')) || data.bailable === true ? '{{ _t("bailable") }}' : '{{ _t("non_bailable") }}'}</span>
-                    <span class="badge ${(data.cognizable && data.cognizable.toLowerCase().includes('yes')) || data.cognizable === true ? 'blue' : 'red'}">${(data.cognizable && data.cognizable.toLowerCase().includes('yes')) || data.cognizable === true ? '{{ _t("cognizable") }}' : '{{ _t("non_cognizable") }}'}</span>
-                    <span class="badge blue">{{ _t("triable_by") }}: ${data.triable_by}</span>
+                    ${data.bailable && !data.bailable.includes('N/A') ? `
+                        <span class="badge ${(data.bailable.toLowerCase().includes('yes')) || data.bailable === true ? 'green' : 'red'}">${(data.bailable.toLowerCase().includes('yes')) || data.bailable === true ? '{{ _t("bailable") }}' : '{{ _t("non_bailable") }}'}</span>
+                    ` : ''}
+                    ${data.cognizable && !data.cognizable.includes('N/A') ? `
+                        <span class="badge ${(data.cognizable.toLowerCase().includes('yes')) || data.cognizable === true ? 'blue' : 'red'}">${(data.cognizable.toLowerCase().includes('yes')) || data.cognizable === true ? '{{ _t("cognizable") }}' : '{{ _t("non_cognizable") }}'}</span>
+                    ` : ''}
+                    ${data.nature ? `<span class="badge gold">${data.nature}</span>` : ''}
+                    ${data.triable_by && !data.triable_by.includes('N/A') ? `<span class="badge blue">{{ _t("triable_by") }}: ${data.triable_by}</span>` : ''}
                 </div>
 
                 <div class="info-section">

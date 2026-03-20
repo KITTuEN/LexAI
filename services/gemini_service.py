@@ -58,9 +58,10 @@ class GeminiService:
             formatted_history = []
             for msg in chat_history[:-1]:
                 role = "user" if msg['role'] == 'user' else "model"
-                formatted_history.append(types.Content(role=role, parts=[types.Part(text=msg['content'])]))
+                content = msg.get('content', msg.get('text', ''))
+                formatted_history.append(types.Content(role=role, parts=[types.Part(text=content)]))
             
-            last_message = chat_history[-1]['content']
+            last_message = chat_history[-1].get('content', chat_history[-1].get('text', ''))
             chat = client.chats.create(
                 model=self.model_name,
                 config=types.GenerateContentConfig(system_instruction=localized_system_prompt),

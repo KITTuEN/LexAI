@@ -100,13 +100,14 @@
 <style>
     .profile-page-wrapper {
         min-height: 80vh;
-        padding: 4rem 2rem;
+        padding: 4rem 4rem;
         display: flex;
         justify-content: center;
     }
 
     .profile-container {
-        max-width: 800px;
+        max-width: 100%;
+        margin: 0;
         width: 100%;
     }
 
@@ -160,6 +161,14 @@
     }
 
     @media (max-width: 768px) {
+        .profile-page-wrapper {
+            padding: 2rem 1.5rem;
+        }
+
+        .profile-container {
+            max-width: 100%;
+        }
+
         .form-grid {
             grid-template-columns: 1fr;
         }

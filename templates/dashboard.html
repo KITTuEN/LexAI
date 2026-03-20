@@ -210,9 +210,9 @@
 
 <style>
     .dashboard-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 4rem 2rem;
+        max-width: 100%;
+        margin: 0;
+        padding: 4rem 4rem;
     }
 
     .dashboard-header h1 {
@@ -455,10 +455,19 @@
     }
 
     .modal-content {
-        max-width: 900px;
-        margin: 5% auto;
+        max-width: 100%;
+        margin: 5% 4rem;
         max-height: 80vh;
         overflow-y: auto;
+    }
+
+    @media (max-width: 768px) {
+        .modal-content {
+            margin: 0;
+            height: 100vh;
+            max-height: 100vh;
+            border-radius: 0;
+        }
     }
 
     .close-modal {
@@ -553,7 +562,8 @@
 
     @media (max-width: 768px) {
         .dashboard-container {
-            padding: 2rem 1rem;
+            padding: 2rem 1.5rem;
+            max-width: 100%;
         }
 
         .dashboard-header h1 {

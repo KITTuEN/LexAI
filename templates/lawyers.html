@@ -55,9 +55,9 @@
 
 <style>
     .lawyer-listing-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 4rem 2rem;
+        max-width: 100%;
+        margin: 0;
+        padding: 4rem 4rem;
     }
 
     .listing-header {
@@ -150,6 +150,13 @@
         font-size: 3rem;
         margin-bottom: 1.5rem;
         color: var(--accent-gold);
+    }
+
+    @media (max-width: 768px) {
+        .lawyer-listing-container {
+            padding: 2rem 1.5rem;
+            max-width: 100%;
+        }
     }
 </style>
 {% endblock %}

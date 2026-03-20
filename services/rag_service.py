@@ -158,6 +158,66 @@ class RagService:
         response = gemini_service._call_with_retry(_execute)
         return response.text
 
+    def search_legal_sections(self, query, system_prompt, lang='English'):
+        """
+        Grounded RAG search for laws and sections.
+        """
+        import time
+        start_time = time.time()
+        
+        # 1. Retrieve context from Pinecone (Global search, top_k reduced for speed)
+        try:
+            matches = pinecone_service.query_context(query, top_k=5)
+            context = "\n\n".join([m.metadata['text'] for m in matches]) if matches else "No specific context found in legal datasets."
+            print(f"DEBUG: Pinecone query took {time.time() - start_time:.2f}s")
+        except Exception as e:
+            print(f"DEBUG: Pinecone query failed: {e}")
+            context = "Error retrieving specialized context."
+
+        mid_time = time.time()
+        
+        # 2. Prepare Grounded Prompt
+        prompt = f"""
+        Legal Query: {query}
+        Context: {context}
+        
+        TASK:
+        1. Definition Rule: If a section is a DEFINITION or GENERAL RULE (like IPC 34, 340), set Bailable/Cognizable to "Not applicable".
+        2. Accuracy: IPC 341/343 are Bailable/Non-Cognizable. IPC 379/BNS 303 are Non-Bailable/Cognizable.
+        3. Formatting: Provide a concise JSON array (max 3 items).
+        """
+        
+        def _execute(client):
+            localized_system_prompt = f"{system_prompt}\n\nIMPORTANT: ALL ANALYSIS AND DESCRIPTIONS WITHIN THE JSON MUST BE IN {lang}."
+            return client.models.generate_content(
+                model=gemini_service.model_name,
+                contents=prompt,
+                config=gemini_service.types.GenerateContentConfig(
+                    system_instruction=localized_system_prompt,
+                    response_mime_type="application/json",
+                    temperature=0.1
+                )
+            )
+
+        try:
+            # Added a generous but firm timeout for the AI generation
+            from google.genai.errors import ClientError
+            response = gemini_service._call_with_retry(_execute)
+            text = response.text
+            print(f"DEBUG: Gemini search took {time.time() - mid_time:.2f}s")
+            
+            # Robust JSON extraction
+            if "```json" in text:
+                text = text.split("```json")[1].split("```")[0].strip()
+            elif "```" in text:
+                text = text.split("```")[1].split("```")[0].strip()
+            
+            return json.loads(text)
+        except Exception as e:
+            print(f"RAG Search Error or Timeout: {e}")
+            # Fallback to direct search if RAG fails critically
+            return gemini_service.search_section(query, system_prompt, lang=lang)
+
     def analyze_document_with_rag(self, doc_id, lang='English'):
         """
         Performs a full RAG-based analysis of a document.
