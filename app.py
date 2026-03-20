@@ -115,45 +115,34 @@ def robots_txt():
 @app.route('/sitemap.xml')
 @app.route('/sitemap.xml/')
 def sitemap_xml():
-    # Use url_for with _external=True for more reliable absolute URLs
-    urls = {
-        'index': url_for('index', _external=True),
-        'login': url_for('auth.login', _external=True),
-        'signup': url_for('auth.signup', _external=True)
-    }
-    
-    # Pre-clean the URLs to avoid any double slashes from url_for
-    for key in urls:
-        urls[key] = urls[key].rstrip('/')
+    # Force HTTPS for URLs to match Search Console property
+    base_url = "https://nyayavyavasth.vercel.app"
     
     from datetime import datetime
     today = datetime.now().strftime('%Y-%m-%d')
     
     content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Landing Page -->
   <url>
-    <loc>{urls['index']}/</loc>
+    <loc>{base_url}/</loc>
     <lastmod>{today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-  <!-- Login -->
   <url>
-    <loc>{urls['login']}</loc>
+    <loc>{base_url}/auth/login</loc>
     <lastmod>{today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <!-- Signup -->
   <url>
-    <loc>{urls['signup']}</loc>
+    <loc>{base_url}/auth/signup</loc>
     <lastmod>{today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 </urlset>""".strip()
-    return content, 200, {'Content-Type': 'application/xml'}
+    return content, 200, {'Content-Type': 'text/xml'}
 
 @app.route('/google10c68f1d7dfe2f5f.html')
 def google_verify():
