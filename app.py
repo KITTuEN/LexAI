@@ -104,14 +104,16 @@ def index():
         pass
     return render_template('index.html')
 
-@app.route('/robots.txt', strict_slashes=False)
+@app.route('/robots.txt')
+@app.route('/robots.txt/')
 def robots_txt():
     # Clean host_url and ensure it ends without a slash before appending sitemap.xml
     host_url = request.host_url.rstrip('/')
     content = f"User-agent: *\nAllow: /\nDisallow: /auth/\nDisallow: /dashboard/\nDisallow: /case/\nDisallow: /ocr/\nSitemap: {host_url}/sitemap.xml"
     return content, 200, {'Content-Type': 'text/plain'}
 
-@app.route('/sitemap.xml', strict_slashes=False)
+@app.route('/sitemap.xml')
+@app.route('/sitemap.xml/')
 def sitemap_xml():
     # Use url_for with _external=True for more reliable absolute URLs
     urls = [
